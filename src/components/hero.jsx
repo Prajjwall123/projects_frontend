@@ -12,7 +12,7 @@ const Hero = () => {
                 <div
                     className="p-10 skewed-container text-black font-sans"
                     style={{
-                        backgroundColor: '#90A4AE',
+                        backgroundColor: '#939EA8',
                         borderRadius: '20px',
                         transform: 'skew(-10deg) translateX(-150px)',
                     }}
@@ -25,7 +25,7 @@ const Hero = () => {
                             Discover projects you love, build the career you deserve.
                         </p>
                         <div className="flex gap-4">
-                            <button className="btn bg-black text-white">I am a freelancer</button>
+                            <button className="btn bg-black text-white hover:text-black ">I am a freelancer</button>
                             <button className="btn btn-outline">I am an enterprise</button>
                         </div>
                     </div>
