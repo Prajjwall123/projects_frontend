@@ -3,7 +3,7 @@ import React from "react";
 const SearchBar = () => {
     return (
         <div className="flex items-center space-x-4 p-4 bg-white rounded-md shadow w-3/4 mx-auto">
-            <div className="flex items-center border border-gray-300 rounded-md px-2 py-1 flex-grow">
+            <div className="flex items-center rounded-md px-2 py-1 flex-grow">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 text-gray-500 mr-2"
@@ -27,7 +27,7 @@ const SearchBar = () => {
 
             <div className="relative">
                 <select
-                    className="border border-gray-300 rounded-md py-1 px-3 text-gray-700 bg-white focus:outline-none"
+                    className=" rounded-md py-1 px-3 text-gray-700 bg-white focus:outline-none"
                 >
                     <option value="">Select Category</option>
                     <option value="web">Web Development</option>
