@@ -1,7 +1,12 @@
 import React from 'react';
 import logo from '../assets/logo.png';
+import { logoutUser } from '../core/utils/authHelpers';
+
 
 const Navbar = () => {
+    const handleLogout = () => {
+        logoutUser();
+    }
     return (
         <div className="navbar bg-black">
             <div className="navbar-start">
@@ -65,7 +70,9 @@ const Navbar = () => {
                             </a>
                         </li>
                         <li><a>Settings</a></li>
-                        <li><a>Logout</a></li>
+                        <li><a onClick={handleLogout} className="cursor-pointer">
+                            Logout
+                        </a></li>
                     </ul>
                 </div>
             </div>

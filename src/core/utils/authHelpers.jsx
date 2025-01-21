@@ -28,4 +28,13 @@ const verifyOTP = async (payload) => {
     }
 };
 
-export { loginUser, registerUser, verifyOTP };
+const logoutUser = () => {
+    try {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+    } catch (error) {
+        console.error("Error during logout:", error.message);
+    }
+};
+
+export { loginUser, registerUser, verifyOTP, logoutUser };
