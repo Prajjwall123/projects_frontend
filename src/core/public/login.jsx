@@ -11,7 +11,7 @@ const Login = () => {
     const [error, setError] = useState(null);
     const { login } = useAuth();
     const navigate = useNavigate();
-    const [showPassword, setShowPassword] = useState(false); // Track password visibility
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -30,7 +30,7 @@ const Login = () => {
     };
 
     const handleTogglePassword = () => {
-        setShowPassword(!showPassword); // Toggle password visibility
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -69,7 +69,7 @@ const Login = () => {
                                 <div className="relative flex items-center">
                                     <input
                                         name="password"
-                                        type={showPassword ? "text" : "password"} // Toggle input type based on visibility
+                                        type={showPassword ? "text" : "password"}
                                         value={credentials.password}
                                         onChange={handleChange}
                                         required

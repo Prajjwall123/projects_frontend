@@ -1,12 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from '../assets/logo.png';
+import defaultProfilePicture from '../assets/default_profile_picture.jpg';
 import { logoutUser } from '../core/utils/authHelpers';
-
+import { getUserProfile } from '../core/utils/authHelpers';
 
 const Navbar = () => {
+    const [avatarUrl, setAvatarUrl] = useState(defaultProfilePicture);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                if (localStorage.getItem('token')) {
+                    const profile = await getUserProfile();
+                    if (profile && profile.profileImage) {
+                        setAvatarUrl(profile.profileImage);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error.message);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
     const handleLogout = () => {
         logoutUser();
-    }
+    };
+
     return (
         <div className="navbar bg-black">
             <div className="navbar-start">
@@ -39,7 +60,6 @@ const Navbar = () => {
                 </ul>
             </div>
 
-
             <div className="navbar-end flex items-center gap-2">
                 <div className="form-control">
                     <input
@@ -47,7 +67,6 @@ const Navbar = () => {
                         placeholder="Search Projects"
                         className="input input-bordered w-24 md:w-auto"
                     />
-
                 </div>
                 <div className="dropdown dropdown-end">
                     <div
@@ -57,7 +76,7 @@ const Navbar = () => {
                         <div className="w-10 rounded-full">
                             <img
                                 alt="Avatar"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                                src={avatarUrl}
                             />
                         </div>
                     </div>
