@@ -19,8 +19,6 @@ const registerUser = async (userData) => {
     }
 };
 
-
-
 const verifyOTP = async (payload) => {
     try {
         const response = await API.post("/auth/verify-otp", payload);
