@@ -1,14 +1,12 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { isUserLoggedIn } from "./core/utils/authHelpers";
 import { useAuth } from "./core/context/authContext";
 import Register from "./core/public/register";
-// import FreelancerRegistration from "./core/public/freelancer";
-
 const Home = lazy(() => import("./core/public/home"));
 const LoginPage = lazy(() => import("./core/public/login"));
 const RegisterSecond = lazy(() => import("./core/public/registerSecond"));
 const VerifyOTPPage = lazy(() => import("./core/public/otpVerification"));
+const Freelancer = lazy(() => import("./core/public/freelancer"));
 
 function App() {
   const { isUserLoggedIn, isAdmin } = useAuth();
@@ -57,6 +55,15 @@ function App() {
         </Suspense>
       ),
       errorElement: <div>Error loading verify OTP page</div>,
+    },
+    {
+      path: "/freelancer/:id",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <Freelancer />
+        </Suspense>
+      ),
+      errorElement: <div>Error loading freelancer profile page</div>,
     },
   ];
 

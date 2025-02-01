@@ -73,6 +73,7 @@ const isUserLoggedIn = () => {
 };
 
 const getUserProfile = async () => {
+    console.log("get user profile called");
     const isLoggedIn = isUserLoggedIn();
     if (!isLoggedIn) {
         throw { message: "User is not logged in" };
@@ -84,12 +85,13 @@ const getUserProfile = async () => {
     }
 
     try {
-        const response = await API.get("/auth/get-user-profile", {
+        const response = await API.post("/auth/get-user-profile", {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log(response.data);
+
+        // console.log(response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : { message: "Error fetching user profile" };

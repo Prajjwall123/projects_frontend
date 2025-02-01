@@ -104,7 +104,7 @@ const Login = () => {
                             <div className="!mt-8">
                                 <button
                                     type="submit"
-                                    className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                                    className="btn bg-black text-white hover:text-black w-full"
                                 >
                                     Sign in
                                 </button>

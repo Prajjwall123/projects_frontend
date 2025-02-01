@@ -3,17 +3,25 @@ import logo from '../assets/logo.png';
 import defaultProfilePicture from '../assets/default_profile_picture.jpg';
 import { logoutUser } from '../core/utils/authHelpers';
 import { getUserProfile } from '../core/utils/authHelpers';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [avatarUrl, setAvatarUrl] = useState(defaultProfilePicture);
+    const [userId, setUserId] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
                 if (localStorage.getItem('token')) {
                     const profile = await getUserProfile();
-                    if (profile && profile.profileImage) {
-                        setAvatarUrl(profile.profileImage);
+                    console.log(profile);
+                    if (profile) {
+                        const imageUrl = profile.profile.profileImage || profile.profile.logo;
+                        if (imageUrl) {
+                            setAvatarUrl(`http://localhost:3000/${imageUrl}`);
+                        }
+                        setUserId(profile.profile._id);
                     }
                 }
             } catch (error) {
@@ -26,6 +34,12 @@ const Navbar = () => {
 
     const handleLogout = () => {
         logoutUser();
+    };
+
+    const handleProfileClick = () => {
+        if (userId) {
+            navigate(`/freelancer/${userId}`);
+        }
     };
 
     return (
@@ -72,7 +86,8 @@ const Navbar = () => {
                     <div
                         tabIndex={0}
                         role="button"
-                        className="btn btn-ghost btn-circle avatar">
+                        className="btn btn-ghost btn-circle avatar"
+                    >
                         <div className="w-10 rounded-full">
                             <img
                                 alt="Avatar"
@@ -84,7 +99,7 @@ const Navbar = () => {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                         <li>
-                            <a className="justify-between">
+                            <a className="justify-between" onClick={handleProfileClick}>
                                 Profile
                             </a>
                         </li>

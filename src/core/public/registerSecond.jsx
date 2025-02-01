@@ -108,7 +108,6 @@ const RegisterSecond = () => {
 
             await registerUser(dataToSend);
 
-            alert("Registration successful!");
             navigate("/verify-otp", { state: { email: formData.email } });
 
             setFormData({
@@ -157,7 +156,7 @@ const RegisterSecond = () => {
                         </li>
 
                         {/* Step 2: Profile Info (Active step) */}
-                        <li className="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse">
+                        <li className="flex items-center text-xl text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse">
                             <span className="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">
                                 2
                             </span>
@@ -187,13 +186,13 @@ const RegisterSecond = () => {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="flex justify-center mb-4">
                                 <button
-                                    className={`px-4 py-2 rounded-l ${userType === "freelancer" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                                    className={`px-4 py-2 rounded-l ${userType === "freelancer" ? "bg-black text-white" : "bg-gray-200"}`}
                                     onClick={() => setUserType("freelancer")}
                                 >
                                     Freelancer
                                 </button>
                                 <button
-                                    className={`px-4 py-2 rounded-r ${userType === "company" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                                    className={`px-4 py-2 rounded-r ${userType === "company" ? "bg-black text-white" : "bg-gray-200"}`}
                                     onClick={() => setUserType("company")}
                                 >
                                     Company
@@ -214,7 +213,10 @@ const RegisterSecond = () => {
                                             required
                                         />
                                     </div>
+
+                                    <label className="text-gray-800 text-sm mt-2 block">Select Categories</label>
                                     <div className="w-full p-2 border rounded mb-2 flex flex-wrap gap-2">
+
                                         {skills.map((skill) => (
                                             <button
                                                 key={skill._id}
@@ -320,10 +322,10 @@ const RegisterSecond = () => {
 
                             <button
                                 type="submit"
-                                className={`w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"} focus:outline-none`}
+                                className={`btn bg-black text-white hover:text-black w-full ${loading ? "bg-gray-400" : "bg-black hover:bg-gray-600 hover:text-white"} focus:outline-none`}
                                 disabled={loading}
                             >
-                                {loading ? "Registering..." : "Register"}
+                                {loading ? "Sending OTP...." : "Send OTP"}
                             </button>
 
                             <p className="text-gray-800 text-sm text-center mt-6">
