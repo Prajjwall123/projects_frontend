@@ -46,21 +46,36 @@ const Register = () => {
 
                     {/* Stepper */}
                     <ol className="items-center w-full flex justify-center space-x-8 sm:space-y-0 mb-6">
+                        {/* Step 1: Account Info (Active step) */}
                         <li className="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse">
                             <span className="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">
                                 1
                             </span>
                             <span>
                                 <h3 className="font-medium leading-tight">Account Info</h3>
+
                             </span>
                         </li>
 
+                        {/* Step 2: Profile Info (Inactive step) */}
                         <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
                             <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
                                 2
                             </span>
                             <span>
                                 <h3 className="font-medium leading-tight">Profile Info</h3>
+
+                            </span>
+                        </li>
+
+                        {/* Step 3: OTP Verification (Inactive step) */}
+                        <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
+                            <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
+                                3
+                            </span>
+                            <span>
+                                <h3 className="font-medium leading-tight">OTP Verification</h3>
+
                             </span>
                         </li>
                     </ol>
@@ -146,7 +161,7 @@ const Register = () => {
                                     type="submit"
                                     className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                                 >
-                                    Register
+                                    Next
                                 </button>
                             </div>
 

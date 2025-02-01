@@ -152,7 +152,7 @@ const RegisterSecond = () => {
                             </span>
                             <span>
                                 <h3 className="font-medium leading-tight">Account Info</h3>
-                                <p className="text-sm">Step details here</p>
+
                             </span>
                         </li>
 
@@ -163,7 +163,18 @@ const RegisterSecond = () => {
                             </span>
                             <span>
                                 <h3 className="font-medium leading-tight">Profile Info</h3>
-                                <p className="text-sm">Step details here</p>
+
+                            </span>
+                        </li>
+
+                        {/* Step 3: OTP Verification (Inactive step) */}
+                        <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
+                            <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
+                                3
+                            </span>
+                            <span>
+                                <h3 className="font-medium leading-tight">OTP Verification</h3>
+
                             </span>
                         </li>
                     </ol>
