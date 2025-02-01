@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { verifyOTP } from "../utils/authHelpers";
 
@@ -7,6 +7,13 @@ const VerifyOTPPage = () => {
     const [error, setError] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!location.state?.email) {
+            navigate("/register"); // Redirect to register if no email is passed
+        }
+    }, [location.state?.email, navigate]);
+
 
     const handleInputChange = (value, index) => {
         if (/^\d*$/.test(value)) {
@@ -34,15 +41,15 @@ const VerifyOTPPage = () => {
         const otpCode = otp.join("");
         try {
             const payload = { email: location.state.email, otp: otpCode };
-            await verifyOTP(payload);
-            navigate("/login");
+            await verifyOTP(payload, navigate);
+            navigate("/login"); // Redirect to login page after successful verification
         } catch (err) {
             setError(err.message || "OTP verification failed");
         }
     };
 
     return (
-        <main className="bg-base-200 font-[sans-serif] relative   min-h-screen flex flex-col justify-center overflow-hidden">
+        <main className="bg-base-200 font-[sans-serif] relative min-h-screen flex flex-col justify-center overflow-hidden">
             <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-24">
                 <div className="flex justify-center">
                     <div className="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">

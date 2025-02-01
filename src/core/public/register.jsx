@@ -1,126 +1,178 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { registerUser } from "../utils/authHelpers";
-import Logo from '../../assets/black-logo.png';
+import { useState, useEffect } from "react";
+import { fetchSkills, uploadImage, registerUser } from "../utils/authHelpers";
+import { useNavigate } from 'react-router-dom';
+
 
 const Register = () => {
+    const navigate = useNavigate();
+    const [userType, setUserType] = useState("freelancer");
+    const [loading, setLoading] = useState(false);
+    const [skills, setSkills] = useState([]);
+    const [error, setError] = useState("");
+
     const [formData, setFormData] = useState({
-        name: "",
         email: "",
         password: "",
-        phone: "",
+        confirmPassword: "",
         role: "freelancer",
+        freelancerName: "",
+        skills: [],
+        experienceYears: "",
+        availability: "",
+        portfolio: "",
+        profileImage: null,
+        companyName: "",
+        companyBio: "",
+        employees: "",
+        logo: null,
     });
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (userType === "freelancer") {
+            const getSkills = async () => {
+                try {
+                    const fetchedSkills = await fetchSkills();
+                    setSkills(fetchedSkills);
+                } catch (error) {
+                    console.error("Error fetching skills:", error);
+                }
+            };
+            getSkills();
+        }
+    }, [userType]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+    };
+
+    const toggleSkill = (skillId) => {
+        setFormData((prevData) => {
+            const newSkills = prevData.skills.includes(skillId)
+                ? prevData.skills.filter((s) => s !== skillId)
+                : [...prevData.skills, skillId];
+            return { ...prevData, skills: newSkills };
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.role) {
-            setError("Role is required");
+        setError("");
+
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match!");
             return;
         }
 
+        setLoading(true);
+
         try {
-            const response = await registerUser(formData);
+            let imageUrl = "";
+            if (userType === "freelancer" && formData.profileImage) {
+                imageUrl = await uploadImage(formData.profileImage);
+            } else if (userType === "company" && formData.logo) {
+                imageUrl = await uploadImage(formData.logo);
+            }
+
+            const dataToSend = userType === "freelancer" ? {
+                email: formData.email,
+                password: formData.password,
+                role: "freelancer",
+                freelancerName: formData.freelancerName,
+                skills: formData.skills,
+                experienceYears: formData.experienceYears,
+                availability: formData.availability,
+                portfolio: formData.portfolio,
+                profileImage: imageUrl,
+            } : {
+                email: formData.email,
+                password: formData.password,
+                role: "company",
+                companyName: formData.companyName,
+                companyBio: formData.companyBio,
+                employees: formData.employees,
+                logo: imageUrl,
+            };
+
+            await registerUser(dataToSend);
+
+            alert("Registration successful!");
             navigate("/verify-otp", { state: { email: formData.email } });
-        } catch (err) {
-            setError(err.message || "Registration failed");
+
+            setFormData({
+                email: "",
+                password: "",
+                confirmPassword: "",
+                role: "freelancer",
+                freelancerName: "",
+                skills: [],
+                experienceYears: "",
+                availability: "",
+                portfolio: "",
+                profileImage: null,
+                companyName: "",
+                companyBio: "",
+                employees: "",
+                logo: null,
+            });
+        } catch (error) {
+            alert("Registration failed!");
         }
+
+        setLoading(false);
     };
 
-    return (
-        <div className="bg-base-200 font-[sans-serif]">
-            <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
-                <div className="max-w-md w-full">
-                    <a href="javascript:void(0)">
-                        <img src={Logo} alt="logo" className="w-80 mb-8 mx-auto block" />
-                    </a>
 
-                    <div className="p-8 rounded-2xl bg-white shadow">
-                        <h2 className="text-gray-800 text-center text-2xl font-bold">Register</h2>
-                        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-                        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-                            <div>
-                                <label className="text-gray-800 text-sm mb-2 block">Full Name</label>
-                                <input
-                                    name="name"
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
-                                    placeholder="Enter your full name"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-gray-800 text-sm mb-2 block">Email Address</label>
-                                <input
-                                    name="email"
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-gray-800 text-sm mb-2 block">Password</label>
-                                <input
-                                    name="password"
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
-                                    placeholder="Enter your password"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-gray-800 text-sm mb-2 block">Phone Number</label>
-                                <input
-                                    name="phone"
-                                    type="text"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
-                                    placeholder="Enter your phone number"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-gray-800 text-sm mb-2 block">I am a ...</label>
-                                <select
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
-                                >
-                                    <option value="freelancer">Freelancer</option>
-                                    <option value="company">Company</option>
-                                </select>
-                            </div>
-                            <div className="!mt-8">
-                                <button
-                                    type="submit"
-                                    className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-                                >
-                                    Register
-                                </button>
-                            </div>
-                            <p className="text-gray-800 text-sm !mt-8 text-center">
-                                Already have an account? <a href="/login" className="text-blue-600 hover:underline ml-1 font-semibold">Sign in</a>
-                            </p>
-                        </form>
-                    </div>
-                </div>
+    return (
+        <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+            <div className="flex justify-center mb-4">
+                <button className={`px-4 py-2 rounded-l ${userType === "freelancer" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setUserType("freelancer")}>Freelancer</button>
+                <button className={`px-4 py-2 rounded-r ${userType === "company" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setUserType("company")}>Company</button>
             </div>
+
+            {error && <p className="text-red-500 text-center">{error}</p>}
+
+            <form onSubmit={handleSubmit}>
+                <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
+                <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
+                <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
+
+                {userType === "freelancer" ? (
+                    <>
+                        <input type="text" name="freelancerName" placeholder="Freelancer Name" value={formData.freelancerName} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
+                        <div className="w-full p-2 border rounded mb-2 flex flex-wrap gap-2">
+                            {skills.map((skill) => (
+                                <button
+                                    key={skill._id}
+                                    type="button"
+                                    className={`px-2 py-1 rounded ${formData.skills.includes(skill._id) ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                                    onClick={() => toggleSkill(skill._id)}
+                                >
+                                    {skill.name}
+                                </button>
+                            ))}
+                        </div>
+                        <input type="number" name="experienceYears" placeholder="Experience Years" value={formData.experienceYears} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
+                        <input type="text" name="availability" placeholder="Availability" value={formData.availability} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
+                        <input type="text" name="portfolio" placeholder="Portfolio URL" value={formData.portfolio} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
+                        <input type="file" name="profileImage" onChange={handleFileChange} className="w-full p-2 border rounded mb-2" accept="image/*" />
+                    </>
+                ) : (
+                    <>
+                        <input type="text" name="companyName" placeholder="Company Name" value={formData.companyName} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
+                        <textarea name="companyBio" placeholder="Company Bio" value={formData.companyBio} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
+                        <input type="number" name="employees" placeholder="Number of Employees" value={formData.employees} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
+                        <input type="file" name="logo" onChange={handleFileChange} className="w-full p-2 border rounded mb-2" accept="image/*" />
+                    </>
+                )}
+
+                <button type="submit" className={`w-full py-2 rounded mt-4 ${loading ? "bg-gray-400" : "bg-blue-500 text-white"}`} disabled={loading}>
+                    {loading ? "Registering..." : "Register"}
+                </button>
+            </form>
         </div>
     );
 };
