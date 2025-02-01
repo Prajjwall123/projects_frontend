@@ -2,11 +2,12 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { isUserLoggedIn } from "./core/utils/authHelpers";
 import { useAuth } from "./core/context/authContext";
+import Register from "./core/public/register";
 // import FreelancerRegistration from "./core/public/freelancer";
 
 const Home = lazy(() => import("./core/public/home"));
 const LoginPage = lazy(() => import("./core/public/login"));
-const RegisterPage = lazy(() => import("./core/public/register"));
+const RegisterSecond = lazy(() => import("./core/public/registerSecond"));
 const VerifyOTPPage = lazy(() => import("./core/public/otpVerification"));
 
 function App() {
@@ -34,7 +35,16 @@ function App() {
       path: "/register",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
-          <RegisterPage />
+          <Register />
+        </Suspense>
+      ),
+      errorElement: <div>Error loading register page</div>,
+    },
+    {
+      path: "/register-second",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <RegisterSecond />
         </Suspense>
       ),
       errorElement: <div>Error loading register page</div>,

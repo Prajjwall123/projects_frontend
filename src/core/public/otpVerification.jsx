@@ -10,7 +10,7 @@ const VerifyOTPPage = () => {
 
     useEffect(() => {
         if (!location.state?.email) {
-            navigate("/register"); // Redirect to register if no email is passed
+            navigate("/register");
         }
     }, [location.state?.email, navigate]);
 
@@ -42,7 +42,7 @@ const VerifyOTPPage = () => {
         try {
             const payload = { email: location.state.email, otp: otpCode };
             await verifyOTP(payload, navigate);
-            navigate("/login"); // Redirect to login page after successful verification
+            navigate("/login");
         } catch (err) {
             setError(err.message || "OTP verification failed");
         }

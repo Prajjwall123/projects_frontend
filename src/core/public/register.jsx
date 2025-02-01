@@ -1,179 +1,164 @@
-import { useState, useEffect } from "react";
-import { fetchSkills, uploadImage, registerUser } from "../utils/authHelpers";
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import Logo from '../../assets/black-logo.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const Register = () => {
+    const [credentials, setCredentials] = useState({ email: "", password: "", confirmPassword: "" });
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [userType, setUserType] = useState("freelancer");
-    const [loading, setLoading] = useState(false);
-    const [skills, setSkills] = useState([]);
-    const [error, setError] = useState("");
-
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "freelancer",
-        freelancerName: "",
-        skills: [],
-        experienceYears: "",
-        availability: "",
-        portfolio: "",
-        profileImage: null,
-        companyName: "",
-        companyBio: "",
-        employees: "",
-        logo: null,
-    });
-
-    useEffect(() => {
-        if (userType === "freelancer") {
-            const getSkills = async () => {
-                try {
-                    const fetchedSkills = await fetchSkills();
-                    setSkills(fetchedSkills);
-                } catch (error) {
-                    console.error("Error fetching skills:", error);
-                }
-            };
-            getSkills();
-        }
-    }, [userType]);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleFileChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.files[0] });
-    };
-
-    const toggleSkill = (skillId) => {
-        setFormData((prevData) => {
-            const newSkills = prevData.skills.includes(skillId)
-                ? prevData.skills.filter((s) => s !== skillId)
-                : [...prevData.skills, skillId];
-            return { ...prevData, skills: newSkills };
-        });
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
 
-        if (formData.password !== formData.confirmPassword) {
-            setError("Passwords do not match!");
+        if (credentials.password !== credentials.confirmPassword) {
+            setError("Passwords do not match");
             return;
         }
 
-        setLoading(true);
-
-        try {
-            let imageUrl = "";
-            if (userType === "freelancer" && formData.profileImage) {
-                imageUrl = await uploadImage(formData.profileImage);
-            } else if (userType === "company" && formData.logo) {
-                imageUrl = await uploadImage(formData.logo);
-            }
-
-            const dataToSend = userType === "freelancer" ? {
-                email: formData.email,
-                password: formData.password,
-                role: "freelancer",
-                freelancerName: formData.freelancerName,
-                skills: formData.skills,
-                experienceYears: formData.experienceYears,
-                availability: formData.availability,
-                portfolio: formData.portfolio,
-                profileImage: imageUrl,
-            } : {
-                email: formData.email,
-                password: formData.password,
-                role: "company",
-                companyName: formData.companyName,
-                companyBio: formData.companyBio,
-                employees: formData.employees,
-                logo: imageUrl,
-            };
-
-            await registerUser(dataToSend);
-
-            alert("Registration successful!");
-            navigate("/verify-otp", { state: { email: formData.email } });
-
-            setFormData({
-                email: "",
-                password: "",
-                confirmPassword: "",
-                role: "freelancer",
-                freelancerName: "",
-                skills: [],
-                experienceYears: "",
-                availability: "",
-                portfolio: "",
-                profileImage: null,
-                companyName: "",
-                companyBio: "",
-                employees: "",
-                logo: null,
-            });
-        } catch (error) {
-            alert("Registration failed!");
-        }
-
-        setLoading(false);
+        navigate("/register-second", { state: { email: credentials.email, password: credentials.password } });
     };
 
 
+    const handleTogglePassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleToggleConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
     return (
-        <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-            <div className="flex justify-center mb-4">
-                <button className={`px-4 py-2 rounded-l ${userType === "freelancer" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setUserType("freelancer")}>Freelancer</button>
-                <button className={`px-4 py-2 rounded-r ${userType === "company" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setUserType("company")}>Company</button>
-            </div>
+        <div className="bg-base-200 font-[sans-serif]">
+            <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
+                <div className="max-w-md w-full">
+                    <a href="javascript:void(0)">
+                        <img src={Logo} alt="logo" className="w-80 mb-8 mx-auto block" />
+                    </a>
 
-            {error && <p className="text-red-500 text-center">{error}</p>}
+                    {/* Stepper */}
+                    <ol className="items-center w-full flex justify-center space-x-8 sm:space-y-0 mb-6">
+                        <li className="flex items-center text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse">
+                            <span className="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">
+                                1
+                            </span>
+                            <span>
+                                <h3 className="font-medium leading-tight">Account Info</h3>
+                            </span>
+                        </li>
 
-            <form onSubmit={handleSubmit}>
-                <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
-                <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
-                <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
+                        <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
+                            <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
+                                2
+                            </span>
+                            <span>
+                                <h3 className="font-medium leading-tight">Profile Info</h3>
+                            </span>
+                        </li>
+                    </ol>
+                    <div className="p-8 rounded-2xl bg-white shadow">
+                        <h2 className="text-gray-800 text-center text-2xl font-bold">Create an Account</h2>
+                        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+                        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+                            <div>
+                                <label className="text-gray-800 text-sm mb-2 block">Email Address</label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        value={credentials.email}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
+                                        placeholder="Enter Email Address"
+                                    />
+                                </div>
+                            </div>
 
-                {userType === "freelancer" ? (
-                    <>
-                        <input type="text" name="freelancerName" placeholder="Freelancer Name" value={formData.freelancerName} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
-                        <div className="w-full p-2 border rounded mb-2 flex flex-wrap gap-2">
-                            {skills.map((skill) => (
+                            <div>
+                                <label className="text-gray-800 text-sm mb-2 block">Password</label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        value={credentials.password}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
+                                        placeholder="Enter password"
+                                    />
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="#bbb"
+                                        stroke="#bbb"
+                                        className="w-4 h-4 absolute right-4 cursor-pointer"
+                                        viewBox="0 0 24 24"
+                                        onClick={handleTogglePassword}
+                                    >
+                                        {showPassword ? (
+                                            <FontAwesomeIcon icon={faEyeSlash} />
+                                        ) : (
+                                            <FontAwesomeIcon icon={faEye} />
+                                        )}
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-gray-800 text-sm mb-2 block">Confirm Password</label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        name="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        value={credentials.confirmPassword}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
+                                        placeholder="Confirm password"
+                                    />
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="#bbb"
+                                        stroke="#bbb"
+                                        className="w-4 h-4 absolute right-4 cursor-pointer"
+                                        viewBox="0 0 24 24"
+                                        onClick={handleToggleConfirmPassword}
+                                    >
+                                        {showConfirmPassword ? (
+                                            <FontAwesomeIcon icon={faEyeSlash} />
+                                        ) : (
+                                            <FontAwesomeIcon icon={faEye} />
+                                        )}
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div className="!mt-8">
                                 <button
-                                    key={skill._id}
-                                    type="button"
-                                    className={`px-2 py-1 rounded ${formData.skills.includes(skill._id) ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                                    onClick={() => toggleSkill(skill._id)}
+                                    type="submit"
+                                    className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                                 >
-                                    {skill.name}
+                                    Register
                                 </button>
-                            ))}
-                        </div>
-                        <input type="number" name="experienceYears" placeholder="Experience Years" value={formData.experienceYears} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
-                        <input type="text" name="availability" placeholder="Availability" value={formData.availability} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
-                        <input type="text" name="portfolio" placeholder="Portfolio URL" value={formData.portfolio} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
-                        <input type="file" name="profileImage" onChange={handleFileChange} className="w-full p-2 border rounded mb-2" accept="image/*" />
-                    </>
-                ) : (
-                    <>
-                        <input type="text" name="companyName" placeholder="Company Name" value={formData.companyName} onChange={handleChange} className="w-full p-2 border rounded mb-2" required />
-                        <textarea name="companyBio" placeholder="Company Bio" value={formData.companyBio} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
-                        <input type="number" name="employees" placeholder="Number of Employees" value={formData.employees} onChange={handleChange} className="w-full p-2 border rounded mb-2" />
-                        <input type="file" name="logo" onChange={handleFileChange} className="w-full p-2 border rounded mb-2" accept="image/*" />
-                    </>
-                )}
+                            </div>
 
-                <button type="submit" className={`w-full py-2 rounded mt-4 ${loading ? "bg-gray-400" : "bg-blue-500 text-white"}`} disabled={loading}>
-                    {loading ? "Registering..." : "Register"}
-                </button>
-            </form>
+                            <p className="text-gray-800 text-sm !mt-8 text-center">
+                                Already have an account? <a href="/login" className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Login here</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+
     );
 };
 
