@@ -7,6 +7,8 @@ const LoginPage = lazy(() => import("./core/public/login"));
 const RegisterSecond = lazy(() => import("./core/public/registerSecond"));
 const VerifyOTPPage = lazy(() => import("./core/public/otpVerification"));
 const Freelancer = lazy(() => import("./core/public/freelancer"));
+const Company = lazy(() => import("./core/public/company"));
+
 
 function App() {
   const { isUserLoggedIn, isAdmin } = useAuth();
@@ -57,13 +59,22 @@ function App() {
       errorElement: <div>Error loading verify OTP page</div>,
     },
     {
-      path: "/freelancer/:id",
+      path: "/freelancer",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <Freelancer />
         </Suspense>
       ),
       errorElement: <div>Error loading freelancer profile page</div>,
+    },
+    {
+      path: "/company",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <Company />
+        </Suspense>
+      ),
+      errorElement: <div>Error loading company profile page</div>,
     },
   ];
 

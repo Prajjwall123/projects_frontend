@@ -22,6 +22,7 @@ const Navbar = () => {
                             setAvatarUrl(`http://localhost:3000/${imageUrl}`);
                         }
                         setUserId(profile.profile._id);
+                        console.log(profile.profile._id);
                     }
                 }
             } catch (error) {
@@ -36,10 +37,24 @@ const Navbar = () => {
         logoutUser();
     };
 
-    const handleProfileClick = () => {
-        if (userId) {
-            navigate(`/freelancer/${userId}`);
+    const handleProfileClick = async () => {
+        const profile = await getUserProfile();
+        console.log("after profile click", profile);
+        if (profile.role == "freelancer") {
+            console.log(profile.profile);
+            if (userId) {
+                navigate("/freelancer", { state: { freelancerId: userId } });
+            }
+        } else if (profile.role == "company") {
+            console.log(profile.profile.companyId);
+            if (userId) {
+                navigate("/company", { state: { companyId: userId } });
+            }
         }
+        else {
+            console.log("no user logged in");
+        }
+
     };
 
     return (

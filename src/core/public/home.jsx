@@ -24,7 +24,6 @@ function Home() {
 
         loadProjects();
     }, []);
-
     return (
         <div className="bg-base-200 min-h-screen">
             <Navbar />
