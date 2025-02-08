@@ -1,13 +1,37 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import avatar from "../assets/avatar.png";
+import { isUserLoggedIn, getUserProfile } from "../core/utils/authHelpers";
 
 const Card = ({ project }) => {
-    // console.log(project);
+    const navigate = useNavigate();
+
+    const handleViewDetails = async () => {
+        try {
+            if (!isUserLoggedIn()) {
+                alert("Log In to view details");
+                navigate("/login");
+                return;
+            }
+
+            const userProfile = await getUserProfile();
+
+            if (userProfile.role !== "freelancer") {
+                alert("You must be a freelancer to view details");
+                return;
+            }
+
+            navigate("/project-details", { state: { project } });
+        } catch (error) {
+            console.error("Error checking user role:", error);
+        }
+    };
+
     return (
         <div className="card bg-white w-96 shadow-xl p-4 rounded-md border border-gray-200">
             <div className="flex items-center mb-4">
                 <img
-                    src={`http://localhost:3000/images/${project.company?.logo}` || avatar}
+                    src={project.company?.logo ? `http://localhost:3000/${project.company?.logo}` : avatar}
                     alt={`${project.company?.companyName || "Company"} Logo`}
                     className="w-12 h-12 rounded-full object-cover"
                 />
@@ -62,7 +86,10 @@ const Card = ({ project }) => {
             <hr className="border-gray-300 mb-4" />
 
             <div className="text-center">
-                <button className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800">
+                <button
+                    className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800"
+                    onClick={handleViewDetails}
+                >
                     View Details
                 </button>
             </div>

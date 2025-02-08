@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { fetchSkills } from "../core/utils/projectHelpers";
 
 const SearchBar = () => {
+    const [skills, setSkills] = useState([]);
+
+    useEffect(() => {
+        const fetchSkillData = async () => {
+            try {
+                const fetchedSkills = await fetchSkills();
+                setSkills(fetchedSkills);
+            } catch (err) {
+                console.error("Error fetching skills:", err);
+            }
+        };
+
+        fetchSkillData();
+    }, []);
+
     return (
         <div className="flex items-center space-x-4 p-4 bg-white rounded-md shadow w-3/4 mx-auto">
             <div className="flex items-center rounded-md px-2 py-1 flex-grow">
@@ -26,13 +42,13 @@ const SearchBar = () => {
             </div>
 
             <div className="relative">
-                <select
-                    className=" rounded-md py-1 px-3 text-gray-700 bg-white focus:outline-none"
-                >
+                <select className="rounded-md py-1 px-3 text-gray-700 bg-white focus:outline-none">
                     <option value="">Select Category</option>
-                    <option value="web">Web Development</option>
-                    <option value="mobile">Mobile Development</option>
-                    <option value="design">Design</option>
+                    {skills.map((skill) => (
+                        <option key={skill._id} value={skill._id}>
+                            {skill.name}
+                        </option>
+                    ))}
                 </select>
             </div>
 

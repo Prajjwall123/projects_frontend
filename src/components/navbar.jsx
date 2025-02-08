@@ -19,8 +19,8 @@ const Navbar = () => {
                     if (profile) {
                         const imageUrl = profile.profile.profileImage || profile.profile.logo;
                         if (imageUrl) {
-                            setAvatarUrl(`http://localhost:3000/images/${imageUrl}`);
-                            // console.log(`http://localhost:3000/images/${imageUrl}`);
+                            setAvatarUrl(`http://localhost:3000/${imageUrl}`);
+                            // console.log(`http://localhost:3000/${imageUrl}`);
                         }
                         setUserId(profile.profile._id);
                         // console.log(profile.profile._id);

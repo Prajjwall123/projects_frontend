@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers"; // Ensure fetchSkills is imported
+import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers";
 import { format } from "date-fns";
 
 const ProjectsSection = ({ companyId }) => {
@@ -44,6 +44,20 @@ const ProjectsSection = ({ companyId }) => {
         setActiveMenu(activeMenu === projectId ? null : projectId);
     };
 
+    const handleDelete = async (projectId) => {
+        if (!window.confirm("Are you sure you want to delete this project?")) return;
+
+        try {
+            await deleteProject(projectId);
+            setProjects((prevProjects) => prevProjects.filter((project) => project._id !== projectId));
+            alert("Project deleted successfully!");
+        } catch (err) {
+            console.error("Error deleting project:", err);
+            alert("Failed to delete project.");
+        }
+    };
+
+
     const handleUpdate = (project) => {
         setCurrentProject(project);
         setIsModalOpen(true);
@@ -69,7 +83,7 @@ const ProjectsSection = ({ companyId }) => {
                 )
             );
             alert("Project updated successfully!");
-            setIsModalOpen(false); // Close the modal
+            setIsModalOpen(false);
         } catch (err) {
             alert("Failed to update project.");
         }
