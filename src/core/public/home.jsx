@@ -9,12 +9,23 @@ import { fetchProjects } from "../utils/projectHelpers";
 function Home() {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [theme, setTheme] = useState("light");
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        setTheme(savedTheme);
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
+    };
 
     useEffect(() => {
         const loadProjects = async () => {
             try {
                 const data = await fetchProjects();
-                // console.log("while loading projects", data);
                 setProjects(data);
             } catch (error) {
                 console.error("Failed to load projects:", error);
@@ -25,11 +36,12 @@ function Home() {
 
         loadProjects();
     }, []);
+
     return (
-        <div className="bg-base-200 min-h-screen">
-            <Navbar />
-            <Hero />
-            <div className="text-5xl font-sans font-bold bg-base-200 text-center mt-6">
+        <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-base-200 text-black"} min-h-screen`}>
+            <Navbar toggleTheme={toggleTheme} />
+            <Hero theme={theme} />
+            <div className="text-5xl font-sans font-bold text-center mt-6">
                 Explore Projects:
             </div>
             <div className="mt-5 mb-5">
@@ -37,7 +49,7 @@ function Home() {
             </div>
 
             {loading ? (
-                <div className="text-center text-lg text-gray-500 mt-10">
+                <div className="text-center text-lg mt-10">
                     Loading projects...
                 </div>
             ) : (
@@ -47,7 +59,7 @@ function Home() {
                             <Card key={project._id} project={project} />
                         ))
                     ) : (
-                        <div className="text-center text-lg text-gray-500 col-span-full">
+                        <div className="text-center text-lg col-span-full">
                             No projects found.
                         </div>
                     )}
