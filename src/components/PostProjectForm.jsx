@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createProject, fetchSkills } from "../core/utils/projectHelpers";
 
-const PostProjectForm = ({ companyId, onProjectCreated }) => {
+const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
     const [project, setProject] = useState({
         title: "",
         description: "",
@@ -73,42 +73,46 @@ const PostProjectForm = ({ companyId, onProjectCreated }) => {
         }
     };
 
+    const formClass = "bg-white text-gray-800"; // Always light background for the form
+    const inputClass = "bg-gray-100 text-black border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none";
+    const buttonClass = theme === "dark" ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-600 hover:bg-blue-700";
+
     return (
-        <div className="bg-white p-6 rounded shadow">
+        <div className={`p-6 rounded-lg shadow-md ${formClass}`}>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-gray-700">Project Title</label>
+                    <label className="block font-medium">Project Title</label>
                     <input
                         type="text"
                         name="title"
                         value={project.title}
                         onChange={handleChange}
                         required
-                        className="w-full border rounded px-3 py-2"
+                        className={`w-full border rounded px-3 py-2 ${inputClass}`}
                         placeholder="Enter project title"
                     />
                 </div>
                 <div>
-                    <label className="block text-gray-700">Project Description</label>
+                    <label className="block font-medium">Project Description</label>
                     <textarea
                         name="description"
                         value={project.description}
                         onChange={handleChange}
                         required
-                        className="w-full border rounded px-3 py-2"
+                        className={`w-full border rounded px-3 py-2 ${inputClass}`}
                         placeholder="Enter project description"
                     />
                 </div>
                 <div>
-                    <label className="block text-gray-700">Categories</label>
+                    <label className="block font-medium">Categories</label>
                     <div className="flex flex-wrap gap-2">
                         {categories.map((category) => (
                             <button
                                 key={category._id}
                                 type="button"
-                                className={`px-3 py-1 rounded ${project.category.includes(category._id)
+                                className={`px-3 py-1 rounded border ${project.category.includes(category._id)
                                     ? "bg-blue-600 text-white"
-                                    : "bg-gray-200 hover:bg-blue-200"
+                                    : "bg-gray-200 hover:bg-blue-200 border-gray-300"
                                     }`}
                                 onClick={() => handleCategoryToggle(category._id)}
                             >
@@ -118,32 +122,32 @@ const PostProjectForm = ({ companyId, onProjectCreated }) => {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-gray-700">Requirements</label>
+                    <label className="block font-medium">Requirements</label>
                     <textarea
                         name="requirements"
                         value={project.requirements}
                         onChange={handleChange}
                         required
-                        className="w-full border rounded px-3 py-2"
+                        className={`w-full border rounded px-3 py-2 ${inputClass}`}
                         placeholder="Enter project requirements"
                     />
                 </div>
                 <div>
-                    <label className="block text-gray-700">Duration (in weeks)</label>
+                    <label className="block font-medium">Duration (in weeks)</label>
                     <input
                         type="number"
                         name="duration"
                         value={project.duration}
                         onChange={handleChange}
                         required
-                        className="w-full border rounded px-3 py-2"
+                        className={`w-full border rounded px-3 py-2 ${inputClass}`}
                         placeholder="Enter project duration"
                     />
                 </div>
                 <div className="flex justify-end">
                     <button
                         type="submit"
-                        className={`px-4 py-2 text-white rounded ${loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"}`}
+                        className={`px-4 py-2 text-white rounded ${loading ? "bg-gray-500" : buttonClass}`}
                         disabled={loading}
                     >
                         {loading ? "Posting..." : "Post Project"}
@@ -151,8 +155,8 @@ const PostProjectForm = ({ companyId, onProjectCreated }) => {
                 </div>
             </form>
 
-            {success && <p className="text-green-600 mt-4">Project posted successfully!</p>}
-            {error && <p className="text-red-600 mt-4">{error}</p>}
+            {success && <p className="text-green-500 mt-4">Project posted successfully!</p>}
+            {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
     );
 };

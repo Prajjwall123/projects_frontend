@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers";
 import { format } from "date-fns";
 
-const ProjectsSection = ({ companyId }) => {
+const ProjectsSection = ({ companyId, theme }) => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -57,7 +57,6 @@ const ProjectsSection = ({ companyId }) => {
         }
     };
 
-
     const handleUpdate = (project) => {
         setCurrentProject(project);
         setIsModalOpen(true);
@@ -89,8 +88,13 @@ const ProjectsSection = ({ companyId }) => {
         }
     };
 
+    const cardClass = theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
+    const modalClass = theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black";
+    const borderColor = theme === "dark" ? "border-gray-700" : "border-gray-300";
+    const hoverClass = theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100";
+
     return (
-        <div className="bg-gray-100 p-6 rounded shadow-md">
+        <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"} p-6 rounded shadow-md`}>
             <h2 className="text-2xl font-bold mb-6">Your Current Projects</h2>
             {loading && <p className="text-gray-600">Loading projects...</p>}
             {error && <p className="text-red-600">{error}</p>}
@@ -99,7 +103,7 @@ const ProjectsSection = ({ companyId }) => {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project) => (
-                    <div key={project._id} className="bg-white p-4 rounded shadow relative flex flex-col h-full">
+                    <div key={project._id} className={`p-4 rounded shadow relative flex flex-col h-full ${cardClass}`}>
                         <div className="flex justify-between items-center">
                             <h4 className="text-xl font-bold">{project.title}</h4>
                             <div className="relative">
@@ -111,27 +115,21 @@ const ProjectsSection = ({ companyId }) => {
                                     </svg>
                                 </button>
                                 {activeMenu === project._id && (
-                                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
-                                        <button
-                                            onClick={() => handleUpdate(project)}
-                                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                                        >
+                                    <div className={`absolute right-0 mt-2 w-32 border rounded shadow-lg z-50 ${borderColor} ${cardClass}`}>
+                                        <button onClick={() => handleUpdate(project)} className={`block w-full text-left px-4 py-2 ${hoverClass}`}>
                                             Update
                                         </button>
-                                        <button
-                                            onClick={() => handleDelete(project._id)}
-                                            className="block w-full text-left px-4 py-2 text-red-700 hover:bg-red-100"
-                                        >
+                                        <button onClick={() => handleDelete(project._id)} className={`block w-full text-left px-4 py-2 text-red-700 ${hoverClass}`}>
                                             Delete
                                         </button>
                                     </div>
                                 )}
                             </div>
                         </div>
-                        <p className="text-gray-700 mb-4 flex-grow">{project.description.substring(0, 100)}...</p>
+                        <p className="mb-4 flex-grow">{project.description.substring(0, 100)}...</p>
                         <div className="mt-auto">
-                            <hr className="my-4 border-gray-300" />
-                            <div className="flex justify-between items-center text-gray-600">
+                            <hr className={`my-4 ${borderColor}`} />
+                            <div className="flex justify-between items-center">
                                 <div>
                                     <p className="text-lg font-bold">10</p>
                                     <p>Bidders</p>
@@ -148,11 +146,11 @@ const ProjectsSection = ({ companyId }) => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded shadow-lg w-1/3">
+                    <div className={`p-6 rounded shadow-lg w-1/3 ${modalClass}`}>
                         <h3 className="text-lg font-bold mb-4">Update Project</h3>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-gray-700">Project Title</label>
+                                <label className="block">Project Title</label>
                                 <input
                                     type="text"
                                     value={currentProject?.title}
@@ -161,60 +159,19 @@ const ProjectsSection = ({ companyId }) => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700">Description</label>
+                                <label className="block">Description</label>
                                 <textarea
                                     value={currentProject?.description}
                                     onChange={(e) => setCurrentProject({ ...currentProject, description: e.target.value })}
                                     className="w-full border rounded px-3 py-2"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-gray-700">Categories</label>
-                                <div className="flex flex-wrap gap-2">
-                                    {categories.map((category) => (
-                                        <button
-                                            key={category._id}
-                                            type="button"
-                                            className={`px-3 py-1 rounded ${currentProject?.category.includes(category._id)
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-gray-200 hover:bg-blue-200"
-                                                }`}
-                                            onClick={() => handleCategoryToggle(category._id)}
-                                        >
-                                            {category.name}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-gray-700">Requirements</label>
-                                <textarea
-                                    value={currentProject?.requirements}
-                                    onChange={(e) => setCurrentProject({ ...currentProject, requirements: e.target.value })}
-                                    className="w-full border rounded px-3 py-2"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-700">Duration (in weeks)</label>
-                                <input
-                                    type="number"
-                                    value={currentProject?.duration}
-                                    onChange={(e) => setCurrentProject({ ...currentProject, duration: e.target.value })}
-                                    className="w-full border rounded px-3 py-2"
-                                />
-                            </div>
                         </div>
                         <div className="flex justify-end mt-6">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
-                            >
+                            <button onClick={() => setIsModalOpen(false)} className="bg-gray-500 text-white px-4 py-2 rounded mr-2">
                                 Cancel
                             </button>
-                            <button
-                                onClick={handleModalUpdate}
-                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                            >
+                            <button onClick={handleModalUpdate} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                                 Update
                             </button>
                         </div>
