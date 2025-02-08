@@ -59,7 +59,7 @@ const Navbar = () => {
     };
 
     return (
-        <div className="navbar bg-black">
+        <div className="navbar bg-black sticky top-0 z-50">
             <div className="navbar-start">
                 <a className="btn btn-ghost text-xl">
                     <img src={logo} alt="Logo" className="h-10" />

@@ -18,7 +18,6 @@ export const fetchSkillNames = async (skillIds) => {
 export const fetchProjects = async () => {
     try {
         const token = localStorage.getItem("token");
-
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         const response = await API.get("projects/", { headers });
@@ -30,7 +29,6 @@ export const fetchProjects = async () => {
                     const skillNames = await fetchSkillNames(project.category);
                     project.category = skillNames;
                 }
-                // console.log(project);
                 return project;
             })
         );
@@ -39,5 +37,29 @@ export const fetchProjects = async () => {
     } catch (error) {
         console.error("Error fetching projects:", error);
         throw error;
+    }
+};
+
+export const createProject = async (projectData) => {
+    try {
+        const token = localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const response = await API.post("projects/", projectData, { headers });
+        console.log("Project created successfully:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error creating project:", error);
+        throw error;
+    }
+};
+
+export const fetchSkills = async () => {
+    try {
+        const response = await API.get("/skills");
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching skills:", error);
+        return [];
     }
 };
