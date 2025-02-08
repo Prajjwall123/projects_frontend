@@ -55,10 +55,17 @@ const CompanyDashboard = () => {
                     </div>
                 )}
                 <ul className="space-y-4">
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700" onClick={() => setActiveSection("dashboard")}>
+                    <li
+                        className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700"
+                        onClick={() => {
+                            setActiveSection("dashboard");
+                            window.location.reload();
+                        }}
+                    >
                         <FaHome className="text-xl" />
                         <span>Dashboard</span>
                     </li>
+
                     <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700" onClick={() => setActiveSection("projects")}>
                         <FaProjectDiagram className="text-xl" />
                         <span>Your Projects</span>

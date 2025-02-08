@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getProjectsByCompany, updateProject, deleteProject } from "../core/utils/projectHelpers";
+import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers"; // Ensure fetchSkills is imported
 import { format } from "date-fns";
 
 const ProjectsSection = ({ companyId }) => {
@@ -7,6 +7,9 @@ const ProjectsSection = ({ companyId }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeMenu, setActiveMenu] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentProject, setCurrentProject] = useState(null);
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -24,39 +27,51 @@ const ProjectsSection = ({ companyId }) => {
             }
         };
 
+        const fetchCategoryData = async () => {
+            try {
+                const fetchedCategories = await fetchSkills();
+                setCategories(fetchedCategories);
+            } catch (err) {
+                console.error("Error fetching categories:", err);
+            }
+        };
+
         fetchProjects();
+        fetchCategoryData();
     }, [companyId]);
 
     const handleMenuToggle = (projectId) => {
         setActiveMenu(activeMenu === projectId ? null : projectId);
     };
 
-    const handleUpdate = async (projectId) => {
-        const updatedTitle = prompt("Enter new title for the project:");
-        if (!updatedTitle) return;
+    const handleUpdate = (project) => {
+        setCurrentProject(project);
+        setIsModalOpen(true);
+    };
+
+    const handleCategoryToggle = (categoryId) => {
+        setCurrentProject((prevProject) => ({
+            ...prevProject,
+            category: prevProject.category.includes(categoryId)
+                ? prevProject.category.filter((id) => id !== categoryId)
+                : [...prevProject.category, categoryId],
+        }));
+    };
+
+    const handleModalUpdate = async () => {
+        if (!currentProject) return;
 
         try {
-            const updatedProject = await updateProject(projectId, { title: updatedTitle });
+            const updatedProject = await updateProject(currentProject._id, currentProject);
             setProjects((prevProjects) =>
                 prevProjects.map((project) =>
-                    project._id === projectId ? { ...project, title: updatedProject.title } : project
+                    project._id === currentProject._id ? updatedProject : project
                 )
             );
             alert("Project updated successfully!");
+            setIsModalOpen(false); // Close the modal
         } catch (err) {
             alert("Failed to update project.");
-        }
-    };
-
-    const handleDelete = async (projectId) => {
-        if (!window.confirm("Are you sure you want to delete this project?")) return;
-
-        try {
-            await deleteProject(projectId);
-            setProjects((prevProjects) => prevProjects.filter((project) => project._id !== projectId));
-            alert("Project deleted successfully!");
-        } catch (err) {
-            alert("Failed to delete project.");
         }
     };
 
@@ -84,7 +99,7 @@ const ProjectsSection = ({ companyId }) => {
                                 {activeMenu === project._id && (
                                     <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
                                         <button
-                                            onClick={() => handleUpdate(project._id)}
+                                            onClick={() => handleUpdate(project)}
                                             className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                                         >
                                             Update
@@ -116,6 +131,82 @@ const ProjectsSection = ({ companyId }) => {
                     </div>
                 ))}
             </div>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded shadow-lg w-1/3">
+                        <h3 className="text-lg font-bold mb-4">Update Project</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-gray-700">Project Title</label>
+                                <input
+                                    type="text"
+                                    value={currentProject?.title}
+                                    onChange={(e) => setCurrentProject({ ...currentProject, title: e.target.value })}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">Description</label>
+                                <textarea
+                                    value={currentProject?.description}
+                                    onChange={(e) => setCurrentProject({ ...currentProject, description: e.target.value })}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">Categories</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {categories.map((category) => (
+                                        <button
+                                            key={category._id}
+                                            type="button"
+                                            className={`px-3 py-1 rounded ${currentProject?.category.includes(category._id)
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-gray-200 hover:bg-blue-200"
+                                                }`}
+                                            onClick={() => handleCategoryToggle(category._id)}
+                                        >
+                                            {category.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">Requirements</label>
+                                <textarea
+                                    value={currentProject?.requirements}
+                                    onChange={(e) => setCurrentProject({ ...currentProject, requirements: e.target.value })}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">Duration (in weeks)</label>
+                                <input
+                                    type="number"
+                                    value={currentProject?.duration}
+                                    onChange={(e) => setCurrentProject({ ...currentProject, duration: e.target.value })}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end mt-6">
+                            <button
+                                onClick={() => setIsModalOpen(false)}
+                                className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleModalUpdate}
+                                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            >
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
