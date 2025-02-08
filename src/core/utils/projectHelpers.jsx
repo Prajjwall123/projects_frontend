@@ -63,3 +63,46 @@ export const fetchSkills = async () => {
         return [];
     }
 };
+
+export const getProjectsByCompany = async (companyId) => {
+    try {
+        const response = await API.get(`projects/getByCompany/${companyId}`);
+        console.log(response);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching projects by company:', error);
+        throw error;
+    }
+};
+
+const getAuthToken = () => localStorage.getItem("token");
+
+export const updateProject = async (projectId, projectData) => {
+    try {
+        const token = getAuthToken();
+        const response = await API.put(`/projects/${projectId}`, projectData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error updating project:", error);
+        throw error;
+    }
+};
+
+export const deleteProject = async (projectId) => {
+    try {
+        const token = getAuthToken();
+        const response = await API.delete(`/projects/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error deleting project:", error);
+        throw error;
+    }
+};

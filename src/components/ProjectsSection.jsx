@@ -1,160 +1,121 @@
 import React, { useState, useEffect } from "react";
-import { getUserProfile } from "../core/utils/authHelpers";
-import { fetchSkills, createProject } from "../core/utils/projectHelpers"; // Importing the helper methods
+import { getProjectsByCompany, updateProject, deleteProject } from "../core/utils/projectHelpers";
+import { format } from "date-fns";
 
-const ProjectsSection = () => {
-    const [project, setProject] = useState({
-        title: "",
-        requirements: "",
-        description: "",
-        duration: "",
-        category: [],
-    });
-    const [skills, setSkills] = useState([]);
-    const [loading, setLoading] = useState(false);
+const ProjectsSection = ({ companyId }) => {
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-    const [companyId, setCompanyId] = useState(null);
+    const [activeMenu, setActiveMenu] = useState(null);
 
     useEffect(() => {
-        const initializeData = async () => {
+        const fetchProjects = async () => {
+            if (!companyId) return;
+            setLoading(true);
+            setError(null);
             try {
-                // Fetch company ID
-                const profile = await getUserProfile();
-                if (profile.role === "company") {
-                    setCompanyId(profile.profile._id);
-                } else {
-                    setError("Only companies can post projects.");
-                }
-
-                // Fetch skills
-                const allSkills = await fetchSkills();
-                setSkills(allSkills);
+                const projectsData = await getProjectsByCompany(companyId);
+                setProjects(projectsData);
             } catch (err) {
-                setError("Failed to initialize data.");
+                console.error("Error fetching projects:", err);
+                setError("Failed to fetch projects.");
+            } finally {
+                setLoading(false);
             }
         };
 
-        initializeData();
-    }, []);
+        fetchProjects();
+    }, [companyId]);
 
-    const handleChange = (e) => {
-        setProject({ ...project, [e.target.name]: e.target.value });
+    const handleMenuToggle = (projectId) => {
+        setActiveMenu(activeMenu === projectId ? null : projectId);
     };
 
-    const handleSkillToggle = (skillId) => {
-        setProject((prev) => ({
-            ...prev,
-            category: prev.category.includes(skillId)
-                ? prev.category.filter((id) => id !== skillId)
-                : [...prev.category, skillId],
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!companyId) return;
-
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
-        const projectData = {
-            ...project,
-            company: companyId,
-            postedDate: new Date(),
-            status: "posted",
-        };
+    const handleUpdate = async (projectId) => {
+        const updatedTitle = prompt("Enter new title for the project:");
+        if (!updatedTitle) return;
 
         try {
-            await createProject(projectData); // Use createProject from helper methods
-            setSuccess(true);
-            setProject({ title: "", requirements: "", description: "", duration: "", category: [] });
+            const updatedProject = await updateProject(projectId, { title: updatedTitle });
+            setProjects((prevProjects) =>
+                prevProjects.map((project) =>
+                    project._id === projectId ? { ...project, title: updatedProject.title } : project
+                )
+            );
+            alert("Project updated successfully!");
         } catch (err) {
-            setError(err.message || "Failed to create project.");
-        } finally {
-            setLoading(false);
+            alert("Failed to update project.");
+        }
+    };
+
+    const handleDelete = async (projectId) => {
+        if (!window.confirm("Are you sure you want to delete this project?")) return;
+
+        try {
+            await deleteProject(projectId);
+            setProjects((prevProjects) => prevProjects.filter((project) => project._id !== projectId));
+            alert("Project deleted successfully!");
+        } catch (err) {
+            alert("Failed to delete project.");
         }
     };
 
     return (
-        <div className="bg-white p-6 rounded shadow">
-            <h3 className="text-lg font-bold mb-4">Post a New Project</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-gray-700">Project Title</label>
-                    <input
-                        type="text"
-                        name="title"
-                        value={project.title}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded px-3 py-2"
-                        placeholder="Enter project title"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-700">Project Description</label>
-                    <textarea
-                        name="description"
-                        value={project.description}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded px-3 py-2"
-                        placeholder="Enter project description"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-700">Requirements</label>
-                    <textarea
-                        name="requirements"
-                        value={project.requirements}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded px-3 py-2"
-                        placeholder="Enter project requirements"
-                    />
-                </div>
-                <div>
-                    <label className="block text-gray-700">Categories</label>
-                    <div className="flex flex-wrap gap-2">
-                        {skills.map((skill) => (
-                            <button
-                                key={skill._id}
-                                type="button"
-                                className={`px-2 py-1 rounded ${project.category.includes(skill._id) ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                                onClick={() => handleSkillToggle(skill._id)}
-                            >
-                                {skill.name}
-                            </button>
-                        ))}
+        <div className="bg-gray-100 p-6 rounded shadow-md">
+            <h2 className="text-2xl font-bold mb-6">Your Current Projects</h2>
+            {loading && <p className="text-gray-600">Loading projects...</p>}
+            {error && <p className="text-red-600">{error}</p>}
+            {!loading && !error && projects.length === 0 && (
+                <p className="text-gray-600">No projects found.</p>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {projects.map((project) => (
+                    <div key={project._id} className="bg-white p-4 rounded shadow relative flex flex-col h-full">
+                        <div className="flex justify-between items-center">
+                            <h4 className="text-xl font-bold">{project.title}</h4>
+                            <div className="relative">
+                                <button onClick={() => handleMenuToggle(project._id)} className="text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <circle cx="5" cy="12" r="1" />
+                                        <circle cx="12" cy="12" r="1" />
+                                        <circle cx="19" cy="12" r="1" />
+                                    </svg>
+                                </button>
+                                {activeMenu === project._id && (
+                                    <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
+                                        <button
+                                            onClick={() => handleUpdate(project._id)}
+                                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                        >
+                                            Update
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(project._id)}
+                                            className="block w-full text-left px-4 py-2 text-red-700 hover:bg-red-100"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <p className="text-gray-700 mb-4 flex-grow">{project.description.substring(0, 100)}...</p>
+                        <div className="mt-auto">
+                            <hr className="my-4 border-gray-300" />
+                            <div className="flex justify-between items-center text-gray-600">
+                                <div>
+                                    <p className="text-lg font-bold">10</p>
+                                    <p>Bidders</p>
+                                </div>
+                                <div className="text-right">
+                                    <p>{format(new Date(project.postedDate || Date.now()), "dd/MM/yyyy")}</p>
+                                    <p className="text-sm">Posted Date</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label className="block text-gray-700">Duration (in weeks)</label>
-                    <input
-                        type="number"
-                        name="duration"
-                        value={project.duration}
-                        onChange={handleChange}
-                        required
-                        className="w-full border rounded px-3 py-2"
-                        placeholder="Enter project duration"
-                    />
-                </div>
-                <div className="flex justify-end">
-                    <button
-                        type="submit"
-                        className={`px-4 py-2 text-white rounded ${loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"}`}
-                        disabled={loading}
-                    >
-                        {loading ? "Posting..." : "Post Project"}
-                    </button>
-                </div>
-            </form>
-
-            {success && <p className="text-green-600 mt-4">Project posted successfully!</p>}
-            {error && <p className="text-red-600 mt-4">{error}</p>}
+                ))}
+            </div>
         </div>
     );
 };

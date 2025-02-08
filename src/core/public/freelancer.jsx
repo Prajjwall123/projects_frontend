@@ -44,7 +44,7 @@ function ProfilePage() {
                 <div>
                     <h1>{freelancer.freelancerName}'s Profile</h1>
                     <img
-                        src={`http://localhost:3000/${freelancer.profileImage}`}
+                        src={`http://localhost:3000/images/${freelancer.profileImage}`}
                         alt="Profile"
                         style={{ width: '150px', height: '150px', borderRadius: '50%' }}
                     />
