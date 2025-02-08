@@ -14,6 +14,7 @@ function Home() {
         const loadProjects = async () => {
             try {
                 const data = await fetchProjects();
+                // console.log(data);
                 setProjects(data);
             } catch (error) {
                 console.error("Failed to load projects:", error);

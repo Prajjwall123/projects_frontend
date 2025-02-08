@@ -73,7 +73,7 @@ const isUserLoggedIn = () => {
 };
 
 const getUserProfile = async () => {
-    console.log("get user profile called");
+    // console.log("get user profile called");
     const isLoggedIn = isUserLoggedIn();
     if (!isLoggedIn) {
         throw { message: "User is not logged in" };
