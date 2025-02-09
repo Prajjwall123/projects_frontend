@@ -89,7 +89,7 @@ const ProjectsSection = ({ companyId, theme }) => {
     };
 
     const cardClass = theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
-    const modalClass = theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black";
+    const modalClass = theme === "dark" ? "bg-gray-900 text-black" : "bg-white text-gray-800";
     const borderColor = theme === "dark" ? "border-gray-700" : "border-gray-300";
     const hoverClass = theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100";
 
@@ -143,30 +143,75 @@ const ProjectsSection = ({ companyId, theme }) => {
                     </div>
                 ))}
             </div>
-
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className={`p-6 rounded shadow-lg w-1/3 ${modalClass}`}>
-                        <h3 className="text-lg font-bold mb-4">Update Project</h3>
+                    <div className="relative bg-white p-8 rounded-lg shadow-lg max-w-3xl w-full overflow-auto">
+                        <h3 className="text-2xl font-bold mb-6 text-center text-black">Update Project</h3>
                         <div className="space-y-4">
+                            {/* Project Title */}
                             <div>
-                                <label className="block">Project Title</label>
+                                <label className="block font-medium text-black">Project Title</label>
                                 <input
                                     type="text"
-                                    value={currentProject?.title}
+                                    value={currentProject?.title || ""}
                                     onChange={(e) => setCurrentProject({ ...currentProject, title: e.target.value })}
-                                    className="w-full border rounded px-3 py-2"
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-black"
+                                    placeholder="Enter project title"
                                 />
                             </div>
+
+                            {/* Description */}
                             <div>
-                                <label className="block">Description</label>
+                                <label className="block font-medium text-black">Description</label>
                                 <textarea
-                                    value={currentProject?.description}
+                                    value={currentProject?.description || ""}
                                     onChange={(e) => setCurrentProject({ ...currentProject, description: e.target.value })}
-                                    className="w-full border rounded px-3 py-2"
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-black"
+                                    placeholder="Enter project description "
+                                />
+                            </div>
+
+                            {/* Categories (Skills Tags) */}
+                            <div>
+                                <label className="block font-medium  text-black">Categories </label>
+                                <div className="w-full p-2 border border-gray-300 rounded-md flex flex-wrap gap-2  text-black">
+                                    {categories.map((category) => (
+                                        <button
+                                            key={category._id}
+                                            type="button"
+                                            className={`px-3 py-1 rounded-md ${currentProject?.category.includes(category._id) ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-blue-200"}`}
+                                            onClick={() => handleCategoryToggle(category._id)}
+                                        >
+                                            {category.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Duration */}
+                            <div>
+                                <label className="block font-medium  text-black">Duration (in weeks)</label>
+                                <input
+                                    type="number"
+                                    value={currentProject?.duration || ""}
+                                    onChange={(e) => setCurrentProject({ ...currentProject, duration: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-black"
+                                    placeholder="Enter duration in weeks"
+                                />
+                            </div>
+
+                            {/* Requirements */}
+                            <div>
+                                <label className="block font-medium  text-black">Requirements</label>
+                                <textarea
+                                    value={currentProject?.requirements || ""}
+                                    onChange={(e) => setCurrentProject({ ...currentProject, requirements: e.target.value })}
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2  text-black"
+                                    placeholder="Enter project requirements"
                                 />
                             </div>
                         </div>
+
                         <div className="flex justify-end mt-6">
                             <button onClick={() => setIsModalOpen(false)} className="bg-gray-500 text-white px-4 py-2 rounded mr-2">
                                 Cancel
@@ -178,6 +223,7 @@ const ProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };

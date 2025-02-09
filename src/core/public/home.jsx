@@ -39,7 +39,7 @@ function Home() {
 
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-base-200 text-black"} min-h-screen`}>
-            <Navbar toggleTheme={toggleTheme} />
+            <Navbar theme={theme} toggleTheme={toggleTheme} />
             <Hero theme={theme} />
             <div className="text-5xl font-sans font-bold text-center mt-6">
                 Explore Projects:

@@ -6,6 +6,7 @@ import { isUserLoggedIn, getUserProfile } from "../core/utils/authHelpers";
 const Card = ({ project }) => {
     const navigate = useNavigate();
 
+
     const handleViewDetails = async () => {
         try {
             if (!isUserLoggedIn()) {

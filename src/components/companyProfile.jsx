@@ -82,7 +82,7 @@ const CompanyProfile = ({ companyId, theme }) => {
     }
 
     const outerClass = theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-800";
-    const containerClass = "bg-white text-gray-800"; // Containers stay light in both themes
+    const containerClass = "bg-white text-gray-800"; 
     const modalClass = theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-800";
     const inputClass = theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-gray-100 text-black border-gray-300";
 

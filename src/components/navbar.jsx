@@ -9,6 +9,11 @@ const Navbar = ({ theme, toggleTheme }) => {
     const [avatarUrl, setAvatarUrl] = useState(defaultProfilePicture);
     const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
+    const [currentTheme, setCurrentTheme] = useState(theme);
+
+    useEffect(() => {
+        setCurrentTheme(theme);
+    }, [theme]);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -78,13 +83,21 @@ const Navbar = ({ theme, toggleTheme }) => {
                 </ul>
             </div>
 
+
             <div className="navbar-end flex items-center gap-2">
-                {/* Theme Toggle Button */}
                 <button
                     onClick={toggleTheme}
                     className="btn btn-outline flex items-center justify-center gap-2"
                 >
-                    {theme === "light" ? <FaMoon className="text-blue-400" /> : <FaSun className="text-yellow-400" />}
+                    {currentTheme === "light" ? (
+                        <>
+                            <FaMoon className="text-blue-400" />
+                        </>
+                    ) : (
+                        <>
+                            <FaSun className="text-yellow-400" />
+                        </>
+                    )}
                 </button>
 
                 <div className="form-control">
