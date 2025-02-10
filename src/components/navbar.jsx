@@ -47,7 +47,7 @@ const Navbar = ({ theme, toggleTheme }) => {
         } else if (profile.role === "company" && userId) {
             navigate("/company", { state: { companyId: userId } });
         } else {
-            console.log("No user logged in");
+            //console.log("No user logged in");
         }
     };
 

@@ -35,8 +35,8 @@ const RegisterSecond = () => {
         if (!location.state?.email || !location.state?.password) {
             navigate("/register");
         }
-        console.log(email);
-        console.log(password);
+        //console.log(email);
+        //console.log(password);
         if (userType === "freelancer") {
             const getSkills = async () => {
                 try {

@@ -46,7 +46,7 @@ export const createProject = async (projectData) => {
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         const response = await API.post("projects/", projectData, { headers });
-        console.log("Project created successfully:", response.data);
+        //console.log("Project created successfully:", response.data);
         return response.data;
     } catch (error) {
         console.error("Error creating project:", error);
@@ -67,7 +67,7 @@ export const fetchSkills = async () => {
 export const getProjectsByCompany = async (companyId) => {
     try {
         const response = await API.get(`projects/getByCompany/${companyId}`);
-        console.log(response);
+        //console.log(response);
         return response.data;
     } catch (error) {
         console.error('Error fetching projects by company:', error);

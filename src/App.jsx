@@ -10,6 +10,7 @@ const VerifyOTPPage = lazy(() => import("./core/public/otpVerification"));
 const Freelancer = lazy(() => import("./core/public/freelancer"));
 const Company = lazy(() => import("./core/public/company"));
 const ProjectDetails = lazy(() => import("./core/public/projectDetails"));
+const CompanyView = lazy(() => import("./core/public/companyView"));
 
 function App() {
   const { isUserLoggedIn, isAdmin } = useAuth();
@@ -93,6 +94,15 @@ function App() {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <ProjectDetails theme={theme} toggleTheme={toggleTheme} />
+        </Suspense>
+      ),
+      errorElement: <div>Error loading project details page</div>,
+    },
+    {
+      path: "/company-view",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <CompanyView theme={theme} toggleTheme={toggleTheme} />
         </Suspense>
       ),
       errorElement: <div>Error loading project details page</div>,

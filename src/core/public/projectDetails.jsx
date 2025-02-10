@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getCompanyById } from "../utils/companyHelpers";
+import { getUserProfile } from "../utils/authHelpers";
 import Navbar from "../../components/navbar";
 import { FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaCheck, FaListAlt } from "react-icons/fa";
 
@@ -8,6 +9,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
     const { state } = useLocation();
     const navigate = useNavigate();
     const project = state?.project;
+    const freelancerId = getUserProfile().freelancerId;
     const [companyDetails, setCompanyDetails] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [bidAmount, setBidAmount] = useState("");
@@ -40,9 +42,50 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
         ));
     };
 
-    const handleBid = () => {
-        alert(`Bid on the project: ${project._id}\nAmount: ${bidAmount}\nMessage: ${bidMessage}`);
-        setShowModal(false);
+    const handleBid = async () => {
+        if (!bidAmount || !bidMessage) {
+            alert("Please enter both bidding amount and a message.");
+            return;
+        }
+
+        try {
+            // Fetch the user profile to get the freelancer ID
+            const profile = await getUserProfile();
+            const freelancerId = profile?.profile?._id; // Assuming profile.id is the correct field for the freelancer ID
+            const projectId = project._id;
+
+            if (!freelancerId) {
+                alert("Freelancer ID not found. Please log in again.");
+                return;
+            }
+
+            const response = await fetch("http://localhost:3000/api/biddings/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    freelancer: freelancerId,
+                    project: projectId,
+                    amount: bidAmount,
+                    message: bidMessage,
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert("Bid successfully placed!");
+                setShowModal(false);
+                setBidAmount("");
+                setBidMessage("");
+            } else {
+                const errorData = await response.json();
+                alert(`Failed to place bid: ${errorData.message || "Unknown error"}`);
+            }
+        } catch (error) {
+            console.error("Error placing bid:", error);
+            alert("An error occurred while placing the bid.");
+        }
     };
 
 
@@ -78,51 +121,25 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
         <div className={`${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen`}>
             <Navbar theme={theme} toggleTheme={toggleTheme} />
             <div className="container mx-auto p-8">
-                {/* About the Company Section */}
-                <div className={`p-8 rounded-lg shadow-md mb-12 ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
-                    <h2 className="text-3xl font-bold mb-6">About the Company</h2>
-                    {companyDetails ? (
-                        <div className="flex items-center mb-8">
-                            <img
-                                src={companyDetails.logo ? `http://localhost:3000/${companyDetails.logo}` : "/defaultLogo.png"}
-                                alt="Company Logo"
-                                className="w-36 h-36 object-cover rounded-full shadow-lg"
-                            />
-                            <div className="ml-8">
-                                <h1 className="text-2xl font-bold">{companyDetails.companyName}</h1>
-                                <p className={`flex items-center mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                                    <FaMapMarkerAlt className="mr-2 text-blue-600" /> {companyDetails.headquarters || "N/A"}
-                                </p>
-                                <p className="mt-4">{companyDetails.companyBio || "No company bio available."}</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <p>Loading company details...</p>
-                    )}
-
-                    {/* Company Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className={`p-6 rounded-lg shadow-md text-center ${theme === "dark" ? "bg-blue-800 text-blue-200" : "bg-blue-100 text-blue-800"}`}>
-                            <FaBriefcase className="text-4xl mb-4" />
-                            <h3 className="text-xl font-semibold">Projects Posted</h3>
-                            <p className="text-2xl font-bold">{companyDetails?.projectsPosted || 0}</p>
-                        </div>
-                        <div className={`p-6 rounded-lg shadow-md text-center ${theme === "dark" ? "bg-green-800 text-green-200" : "bg-green-100 text-green-800"}`}>
-                            <FaCheck className="text-4xl mb-4" />
-                            <h3 className="text-xl font-semibold">Projects Awarded</h3>
-                            <p className="text-2xl font-bold">{companyDetails?.projectsAwarded || 0}</p>
-                        </div>
-                        <div className={`p-6 rounded-lg shadow-md text-center ${theme === "dark" ? "bg-yellow-800 text-yellow-200" : "bg-yellow-100 text-yellow-800"}`}>
-                            <FaCalendarAlt className="text-4xl mb-4" />
-                            <h3 className="text-xl font-semibold">Projects Completed</h3>
-                            <p className="text-2xl font-bold">{companyDetails?.projectsCompleted || 0}</p>
-                        </div>
-                    </div>
-                </div>
-
                 <div className={`p-8 rounded-lg shadow-md ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
-                    <h2 className="text-3xl font-bold mb-6">About the Project</h2>
+                    <h2 className="text-2xl font-bold mb-4">{project.title}</h2>
+                    <div
+                        className="flex items-center cursor-pointer mb-6"
+                        onClick={() => navigate("/company-view", { state: { companyId: project.company._id } })}
+                    >
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                            <img
+                                src={project.company?.logo ? `http://localhost:3000/${project.company.logo}` : "/defaultLogo.png"}
+                                alt="Company Logo"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <h3 className="text-lg font-medium hover:underline ml-4">
+                            {project.company?.companyName || "Unknown Company"}
+                        </h3>
+                    </div>
                     <p className={`mb-6 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>{project.description}</p>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div className={`flex items-center p-4 rounded-lg ${theme === "dark" ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-700"}`}>
                             <FaCalendarAlt className="text-blue-600 text-2xl mr-4" />
@@ -153,23 +170,24 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                             </div>
                         </div>
                     </div>
+
                     <h3 className="text-xl font-bold mb-4">Requirements</h3>
                     <ul className={`list-disc pl-6 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
                         {formatRequirements(project.requirements)}
                     </ul>
-
-                    {/* Bid Button */}
-                    <div className="mt-10 text-center">
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-lg"
-                        >
-                            Bid
-                        </button>
-                    </div>
                 </div>
 
-                {showModal && (
+                <div className="mt-10 text-center">
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-lg"
+                    >
+                        Bid
+                    </button>
+                </div>
+            </div>
+            {
+                showModal && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div className={`p-8 rounded-lg shadow-md w-full max-w-lg ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
                             <h2 className="text-2xl font-bold mb-4">Place Your Bid</h2>
@@ -217,9 +235,9 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                             </div>
                         </div>
                     </div>
-                )}
-            </div>
-        </div>
+                )
+            }
+        </div >
     );
 }
 export default ProjectDetails;
