@@ -131,3 +131,18 @@ export const getFullProjectDetails = async (projectId) => {
         throw error;
     }
 };
+
+export const createBid = async (freelancerId, projectId, amount, message) => {
+    try {
+        const response = await API.post("biddings/create", {
+            freelancer: freelancerId,
+            project: projectId,
+            amount,
+            message,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error creating bid:", error);
+        throw error.response ? error.response.data : { message: "An error occurred while placing the bid" };
+    }
+};

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getFullProjectDetails } from "../utils/projectHelpers";
+import { getFullProjectDetails, createBid } from "../utils/projectHelpers";
 import { getCompanyById } from "../utils/companyHelpers";
 import { getUserProfile } from "../utils/authHelpers";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
+import { toast } from "react-toastify";
 import { FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaCheck, FaListAlt } from "react-icons/fa";
 
 const ProjectDetails = ({ theme, toggleTheme }) => {
-    
+
     const { projectId } = useParams();
     // const { state } = useLocation();
     const navigate = useNavigate();
@@ -48,9 +49,10 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
         ));
     };
 
+
     const handleBid = async () => {
         if (!bidAmount || !bidMessage) {
-            alert("Please enter both bidding amount and a message.");
+            toast.error("Please enter both bidding amount and a message.");
             return;
         }
 
@@ -60,38 +62,20 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
             const projectId = project._id;
 
             if (!freelancerId) {
-                alert("Freelancer ID not found. Please log in again.");
+                toast.error("Freelancer ID not found. Please log in again.");
                 return;
             }
 
-            const response = await fetch("http://localhost:3000/api/biddings/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    freelancer: freelancerId,
-                    project: projectId,
-                    amount: bidAmount,
-                    message: bidMessage,
-                }),
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                alert("Bid successfully placed!");
-                setShowModal(false);
-                setBidAmount("");
-                setBidMessage("");
-            } else {
-                const errorData = await response.json();
-                alert(`Failed to place bid: ${errorData.message || "Unknown error"}`);
-            }
+            await createBid(freelancerId, projectId, bidAmount, bidMessage);
+            toast.success("Bid successfully placed!");
+            setShowModal(false);
+            setBidAmount("");
+            setBidMessage("");
         } catch (error) {
-            console.error("Error placing bid:", error);
-            alert("An error occurred while placing the bid.");
+            toast.error(error.message || "An error occurred while placing the bid.");
         }
     };
+
     const renderCategories = (categories) => {
         if (!categories) return "N/A";
 

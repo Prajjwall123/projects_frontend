@@ -1,11 +1,13 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "./core/context/authContext";
-import Register from "./core/public/register";
 
 const Home = lazy(() => import("./core/public/home"));
 const LoginPage = lazy(() => import("./core/public/login"));
 const RegisterSecond = lazy(() => import("./core/public/registerSecond"));
+const Register = lazy(() => import("./core/public/register"));
 const VerifyOTPPage = lazy(() => import("./core/public/otpVerification"));
 const Freelancer = lazy(() => import("./core/public/freelancer"));
 const Company = lazy(() => import("./core/public/company"));
@@ -27,89 +29,23 @@ function App() {
   };
 
   const publicRoutes = [
-    {
-      path: "/",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Home theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-    },
-    {
-      path: "/login",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <LoginPage theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading login page</div>,
-    },
-    {
-      path: "/register",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Register theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading register page</div>,
-    },
-    {
-      path: "/register-second",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <RegisterSecond theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading register page</div>,
-    },
-    {
-      path: "/verify-otp",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <VerifyOTPPage theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading verify OTP page</div>,
-    },
-    {
-      path: "/freelancer/:freelancerId",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Freelancer theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading freelancer profile page</div>,
-    },
-    {
-      path: "/company",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Company theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading company profile page</div>,
-    },
-    {
-      path: "/project-details/:projectId",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <ProjectDetails />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading project details</div>,
-    },
-    {
-      path: "/company-view/:companyId",
-      element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <CompanyView theme={theme} toggleTheme={toggleTheme} />
-        </Suspense>
-      ),
-      errorElement: <div>Error loading project details page</div>,
-    },
+    { path: "/", element: <Suspense fallback={<div>Loading...</div>}><Home theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/login", element: <Suspense fallback={<div>Loading...</div>}><LoginPage theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/register", element: <Suspense fallback={<div>Loading...</div>}><Register theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/register-second", element: <Suspense fallback={<div>Loading...</div>}><RegisterSecond theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/verify-otp", element: <Suspense fallback={<div>Loading...</div>}><VerifyOTPPage theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/freelancer/:freelancerId", element: <Suspense fallback={<div>Loading...</div>}><Freelancer theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/company", element: <Suspense fallback={<div>Loading...</div>}><Company theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/project-details/:projectId", element: <Suspense fallback={<div>Loading...</div>}><ProjectDetails /></Suspense> },
+    { path: "/company-view/:companyId", element: <Suspense fallback={<div>Loading...</div>}><CompanyView theme={theme} toggleTheme={toggleTheme} /></Suspense> },
   ];
 
-  return <RouterProvider router={createBrowserRouter(publicRoutes)} />;
+  return (
+    <>
+      <RouterProvider router={createBrowserRouter(publicRoutes)} />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+    </>
+  );
 }
 
 export default App;
