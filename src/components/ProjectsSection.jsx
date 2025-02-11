@@ -10,6 +10,9 @@ const ProjectsSection = ({ companyId, theme }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentProject, setCurrentProject] = useState(null);
     const [categories, setCategories] = useState([]);
+    const [activeProjectId, setActiveProjectId] = useState(null);
+    const [biddersModalOpen, setBiddersModalOpen] = useState(false);
+    const [currentBidders, setCurrentBidders] = useState([]);
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -52,6 +55,21 @@ const ProjectsSection = ({ companyId, theme }) => {
         setActiveMenu(activeMenu === projectId ? null : projectId);
     };
 
+    const toggleBiddersList = (projectId) => {
+        setActiveProjectId((prevId) => (prevId === projectId ? null : projectId));
+    };
+
+    const fetchBidders = async (projectId) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/biddings/project/${projectId}`);
+            const result = await response.json();
+            setCurrentBidders(result.data || []);
+        } catch (error) {
+            console.error("Error fetching bidders:", error);
+            setCurrentBidders([]);
+        }
+    };
+
     const fetchBiddingCount = async (projectId) => {
         try {
             const response = await fetch(`http://localhost:3000/api/biddings/count/${projectId}`);
@@ -88,6 +106,12 @@ const ProjectsSection = ({ companyId, theme }) => {
                 ? prevProject.category.filter((id) => id !== categoryId)
                 : [...prevProject.category, categoryId],
         }));
+    };
+
+    const openBiddersModal = async (project) => {
+        setCurrentProject(project.title);
+        await fetchBidders(project._id)
+        setBiddersModalOpen(true);
     };
 
     const handleModalUpdate = async () => {
@@ -150,7 +174,12 @@ const ProjectsSection = ({ companyId, theme }) => {
                             <hr className={`my-4 ${borderColor}`} />
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <p>{project.bidCount} Bidders </p>
+                                    <button
+                                        onClick={() => openBiddersModal(project)}
+                                        className={`text-lg font-bold ${hoverClass} py-1 px-3 rounded`}
+                                    >
+                                        {project.bidCount} Bidders
+                                    </button>
                                 </div>
                                 <div className="text-right">
                                     <p>{format(new Date(project.postedDate || Date.now()), "dd/MM/yyyy")}</p>
@@ -241,7 +270,44 @@ const ProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
-
+            {biddersModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className={`relative p-8 rounded-lg shadow-lg max-w-3xl w-full ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                        <h3 className="text-2xl font-bold mb-4">Bidders for {currentProject.title}</h3>
+                        <ul className={`divide-y ${theme === "dark" ? "divide-gray-700" : "divide-gray-300"}`}>
+                            {currentBidders.map((bid) => (
+                                <li key={bid._id} className="flex justify-between items-center py-4">
+                                    <div className="flex items-center">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
+                                            <img
+                                                src={bid.freelancer.profileImage ? `http://localhost:3000/${bid.freelancer.profileImage}` : "/defaultAvatar.png"}
+                                                alt="Freelancer"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="ml-4">
+                                            <h4 className={`text-lg font-semibold ${theme === "dark" ? "text-white" : "text-black"}`}>
+                                                {bid.freelancer.freelancerName || "Unknown Freelancer"}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <p className={`text-lg font-bold ${theme === "dark" ? "text-gray-300" : "text-black"}`}>
+                                        NRs {bid.amount}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="flex justify-end mt-6">
+                            <button
+                                onClick={() => setBiddersModalOpen(false)}
+                                className={`px-4 py-2 rounded ${theme === "dark" ? "bg-gray-600 hover:bg-gray-500 text-white" : "bg-gray-200 hover:bg-gray-300 text-black"}`}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
