@@ -63,6 +63,7 @@ const ProjectsSection = ({ companyId, theme }) => {
         try {
             const response = await fetch(`http://localhost:3000/api/biddings/project/${projectId}`);
             const result = await response.json();
+            // console.log(result);
             setCurrentBidders(result.data || []);
         } catch (error) {
             console.error("Error fetching bidders:", error);
@@ -109,7 +110,8 @@ const ProjectsSection = ({ companyId, theme }) => {
     };
 
     const openBiddersModal = async (project) => {
-        setCurrentProject(project.title);
+        // console.log(project);
+        setCurrentProject(project);
         await fetchBidders(project._id)
         setBiddersModalOpen(true);
     };
@@ -280,7 +282,7 @@ const ProjectsSection = ({ companyId, theme }) => {
                                     <div className="flex items-center">
                                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
                                             <img
-                                                src={bid.freelancer.profileImage ? `http://localhost:3000/${bid.freelancer.profileImage}` : "/defaultAvatar.png"}
+                                                src={bid.freelancer.profileImage ? `http://localhost:3000/images/${bid.freelancer.profileImage}` : "/defaultAvatar.png"}
                                                 alt="Freelancer"
                                                 className="w-full h-full object-cover"
                                             />
@@ -289,11 +291,19 @@ const ProjectsSection = ({ companyId, theme }) => {
                                             <h4 className={`text-lg font-semibold ${theme === "dark" ? "text-white" : "text-black"}`}>
                                                 {bid.freelancer.freelancerName || "Unknown Freelancer"}
                                             </h4>
+                                            <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                                {bid.message || "No message provided"}
+                                            </p>
                                         </div>
                                     </div>
-                                    <p className={`text-lg font-bold ${theme === "dark" ? "text-gray-300" : "text-black"}`}>
-                                        NRs {bid.amount}
-                                    </p>
+                                    <div className="text-right">
+                                        <p className={`text-lg font-bold ${theme === "dark" ? "text-gray-300" : "text-black"}`}>
+                                            NRs {bid.amount}
+                                        </p>
+                                        <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                            {new Date(bid.createdAt).toLocaleDateString()} {new Date(bid.createdAt).toLocaleTimeString()}
+                                        </p>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
@@ -308,6 +318,7 @@ const ProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };

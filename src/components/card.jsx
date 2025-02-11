@@ -22,11 +22,12 @@ const Card = ({ project }) => {
                 return;
             }
 
-            navigate("/project-details", { state: { project } });
+            navigate(`/project-details/${project._id}`);
         } catch (error) {
             console.error("Error checking user role:", error);
         }
     };
+
 
     return (
         <div className="card bg-white w-96 shadow-xl p-4 rounded-md border border-gray-200">

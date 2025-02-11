@@ -72,7 +72,7 @@ function App() {
       errorElement: <div>Error loading verify OTP page</div>,
     },
     {
-      path: "/freelancer",
+      path: "/freelancer/:freelancerId",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <Freelancer theme={theme} toggleTheme={toggleTheme} />
@@ -90,16 +90,16 @@ function App() {
       errorElement: <div>Error loading company profile page</div>,
     },
     {
-      path: "/project-details",
+      path: "/project-details/:projectId",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
-          <ProjectDetails theme={theme} toggleTheme={toggleTheme} />
+          <ProjectDetails />
         </Suspense>
       ),
-      errorElement: <div>Error loading project details page</div>,
+      errorElement: <div>Error loading project details</div>,
     },
     {
-      path: "/company-view",
+      path: "/company-view/:companyId",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <CompanyView theme={theme} toggleTheme={toggleTheme} />

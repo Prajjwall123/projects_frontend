@@ -66,7 +66,7 @@ function Home() {
                 </div>
             )}
 
-            <Footer />
+            <Footer theme={theme} />
         </div>
     );
 }

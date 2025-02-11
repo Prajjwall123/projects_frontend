@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar";
 import { FaMapMarkerAlt, FaIndustry, FaGlobe, FaUserTie, FaCalendarAlt, FaBuilding, FaCommentDots } from "react-icons/fa";
 import { getCompanyById } from "../utils/companyHelpers";
+import Footer from "../../components/footer";
 
 const CompanyView = ({ theme, toggleTheme }) => {
-    const { state } = useLocation();
+    const { companyId } = useParams(); // Get companyId from URL params
     const navigate = useNavigate();
     const [companyDetails, setCompanyDetails] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!state?.companyId) {
-            navigate("/");
-            return;
-        }
-
         const fetchCompanyDetails = async () => {
             try {
-                const companyData = await getCompanyById(state.companyId);
+                const companyData = await getCompanyById(companyId);
                 setCompanyDetails(companyData);
             } catch (error) {
                 console.error("Error fetching company details:", error);
+                navigate("/"); // Redirect to home on error
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchCompanyDetails();
-    }, [state, navigate]);
+    }, [companyId, navigate]);
 
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen`}>
@@ -33,7 +33,9 @@ const CompanyView = ({ theme, toggleTheme }) => {
             <div className="container mx-auto p-8">
                 <div className={`p-8 rounded-lg shadow-md mb-12 ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
                     <h2 className="text-3xl font-bold mb-6">About the Company</h2>
-                    {companyDetails ? (
+                    {loading ? (
+                        <p>Loading company details...</p>
+                    ) : companyDetails ? (
                         <div>
                             <div className="flex items-center mb-8">
                                 <div className="w-36 h-36 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
@@ -117,10 +119,11 @@ const CompanyView = ({ theme, toggleTheme }) => {
                             </div>
                         </div>
                     ) : (
-                        <p>Loading company details...</p>
+                        <p>Company details not found.</p>
                     )}
                 </div>
             </div>
+            <Footer theme={theme} />
         </div>
     );
 };

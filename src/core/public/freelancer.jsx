@@ -1,27 +1,17 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getFreelancerById } from "../utils/freelancerHelpers";
 import { fetchSkills } from "../utils/authHelpers";
 
 function ProfilePage() {
-    const location = useLocation();
+    const { freelancerId } = useParams();
     const navigate = useNavigate();
-
-    const [freelancerId, setFreelancerId] = useState(null);
     const [freelancer, setFreelancer] = useState(null);
     const [skills, setSkills] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (location.state && location.state.freelancerId) {
-            setFreelancerId(location.state.freelancerId);
-        } else {
-            navigate("/");
-        }
-    }, [location, navigate]);
-
-    useEffect(() => {
-        if (!freelancerId) return;
-
+        console.log(freelancerId);
         const fetchFreelancerData = async () => {
             try {
                 const freelancerData = await getFreelancerById(freelancerId);
@@ -31,16 +21,26 @@ function ProfilePage() {
                 const freelancerSkills = allSkills.filter(skill => freelancerData.skills.includes(skill._id));
                 setSkills(freelancerSkills);
             } catch (error) {
-                console.error('Error fetching freelancer data:', error);
+                console.error("Error fetching freelancer data:", error);
+                navigate("/");
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchFreelancerData();
-    }, [freelancerId]);
+        if (freelancerId) {
+            fetchFreelancerData();
+        }
+        // } else {
+        //     navigate("/");
+        // }
+    }, [freelancerId, navigate]);
 
     return (
         <div>
-            {freelancer ? (
+            {loading ? (
+                <p>Loading profile...</p>
+            ) : freelancer ? (
                 <div>
                     <h1>{freelancer.freelancerName}'s Profile</h1>
                     <img
@@ -60,7 +60,7 @@ function ProfilePage() {
                     <p><strong>Projects Completed:</strong> {freelancer.projectsCompleted}</p>
                 </div>
             ) : (
-                <p>Loading profile...</p>
+                <p>Freelancer profile not found.</p>
             )}
         </div>
     );

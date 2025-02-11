@@ -106,3 +106,28 @@ export const deleteProject = async (projectId) => {
         throw error;
     }
 };
+
+export const getFullProjectDetails = async (projectId) => {
+    try {
+        const projectResponse = await API.get(`projects/${projectId}`);
+        const projectData = projectResponse.data;
+
+        if (projectData.category && projectData.category.length > 0) {
+            const skills = await fetchSkills();
+            projectData.category = projectData.category.map((categoryId) => {
+                const skill = skills.find((s) => s._id === categoryId);
+                return skill ? skill.name : "Unknown Category";
+            });
+        }
+
+        if (projectData.company?._id) {
+            const companyResponse = await API.get(`companies/${projectData.company._id}`);
+            projectData.companyDetails = companyResponse.data;
+        }
+
+        return projectData;
+    } catch (error) {
+        console.error("Error fetching full project details:", error);
+        throw error;
+    }
+};
