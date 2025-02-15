@@ -35,7 +35,7 @@ function App() {
     { path: "/register-second", element: <Suspense fallback={<div>Loading...</div>}><RegisterSecond theme={theme} toggleTheme={toggleTheme} /></Suspense> },
     { path: "/verify-otp", element: <Suspense fallback={<div>Loading...</div>}><VerifyOTPPage theme={theme} toggleTheme={toggleTheme} /></Suspense> },
     { path: "/freelancer/:freelancerId", element: <Suspense fallback={<div>Loading...</div>}><Freelancer theme={theme} toggleTheme={toggleTheme} /></Suspense> },
-    { path: "/company", element: <Suspense fallback={<div>Loading...</div>}><Company theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/company/:id", element: <Suspense fallback={<div>Loading...</div>}><Company theme={theme} toggleTheme={toggleTheme} /></Suspense> },
     { path: "/project-details/:projectId", element: <Suspense fallback={<div>Loading...</div>}><ProjectDetails /></Suspense> },
     { path: "/company-view/:companyId", element: <Suspense fallback={<div>Loading...</div>}><CompanyView theme={theme} toggleTheme={toggleTheme} /></Suspense> },
   ];

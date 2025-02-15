@@ -1,20 +1,5 @@
 import API from './api';
 
-export const fetchSkillNames = async (skillIds) => {
-    try {
-        const skillNames = await Promise.all(
-            skillIds.map(async (id) => {
-                const response = await API.get(`/skills/${id}`);
-                return response.data.name;
-            })
-        );
-        return skillNames;
-    } catch (error) {
-        console.error("Error fetching skill names:", error);
-        throw error;
-    }
-};
-
 export const fetchProjects = async () => {
     try {
         const token = localStorage.getItem("token");
@@ -23,22 +8,18 @@ export const fetchProjects = async () => {
         const response = await API.get("projects/", { headers });
         const projects = response.data;
 
-        const projectsWithSkills = await Promise.all(
-            projects.map(async (project) => {
-                if (project.category && project.category.length > 0) {
-                    const skillNames = await fetchSkillNames(project.category);
-                    project.category = skillNames;
-                }
-                return project;
-            })
-        );
+        const projectsWithCategoryNames = projects.map((project) => ({
+            ...project,
+            category: project.category.filter((name) => name !== null)
+        }));
 
-        return projectsWithSkills;
+        return projectsWithCategoryNames;
     } catch (error) {
         console.error("Error fetching projects:", error);
         throw error;
     }
 };
+
 
 export const createProject = async (projectData) => {
     try {
@@ -109,21 +90,10 @@ export const deleteProject = async (projectId) => {
 
 export const getFullProjectDetails = async (projectId) => {
     try {
-        const projectResponse = await API.get(`projects/${projectId}`);
-        const projectData = projectResponse.data;
+        const response = await API.get(`projects/${projectId}`);
+        const projectData = response.data;
 
-        if (projectData.category && projectData.category.length > 0) {
-            const skills = await fetchSkills();
-            projectData.category = projectData.category.map((categoryId) => {
-                const skill = skills.find((s) => s._id === categoryId);
-                return skill ? skill.name : "Unknown Category";
-            });
-        }
-
-        if (projectData.company?._id) {
-            const companyResponse = await API.get(`companies/${projectData.company._id}`);
-            projectData.companyDetails = companyResponse.data;
-        }
+        projectData.category = projectData.category.filter((name) => name !== null);
 
         return projectData;
     } catch (error) {
@@ -131,6 +101,7 @@ export const getFullProjectDetails = async (projectId) => {
         throw error;
     }
 };
+
 
 export const createBid = async (freelancerId, projectId, amount, message) => {
     try {

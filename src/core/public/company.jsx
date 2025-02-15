@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getCompanyById } from "../utils/companyHelpers";
 import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
 import StatsSection from "../../components/StatsSection";
@@ -12,26 +12,16 @@ import logo from "../../assets/logo.png";
 const CompanyDashboard = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [companyId, setCompanyId] = useState(null);
+    const { companyId } = useParams();
     const [company, setCompany] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
-    useEffect(() => {
-        if (location.state?.companyId) {
-            setCompanyId(location.state.companyId);
-        } else {
-            navigate("/");
-        }
-
-        if (location.state?.activeSection) {
-            setActiveSection(location.state.activeSection);
-        }
-    }, [location, navigate]);
 
     useEffect(() => {
         if (!companyId) return;
+        console.log(companyId);
 
         const fetchCompanyData = async () => {
             try {
@@ -39,11 +29,12 @@ const CompanyDashboard = () => {
                 setCompany(companyData);
             } catch (error) {
                 console.error("Error fetching company data:", error);
+                navigate("/");
             }
         };
 
         fetchCompanyData();
-    }, [companyId]);
+    }, [companyId, navigate]);
 
     useEffect(() => {
         document.documentElement.className = theme;

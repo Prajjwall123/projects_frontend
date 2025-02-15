@@ -6,7 +6,6 @@ import { isUserLoggedIn, getUserProfile } from "../core/utils/authHelpers";
 const Card = ({ project }) => {
     const navigate = useNavigate();
 
-
     const handleViewDetails = async () => {
         try {
             if (!isUserLoggedIn()) {
@@ -22,24 +21,23 @@ const Card = ({ project }) => {
                 return;
             }
 
-            navigate(`/project-details/${project._id}`);
+            navigate(`/project-details/${project.projectId}`);
         } catch (error) {
             console.error("Error checking user role:", error);
         }
     };
 
-
     return (
         <div className="card bg-white w-96 shadow-xl p-4 rounded-md border border-gray-200">
             <div className="flex items-center mb-4">
                 <img
-                    src={project.company?.logo ? `http://localhost:3000/${project.company?.logo}` : avatar}
-                    alt={`${project.company?.companyName || "Company"} Logo`}
+                    src={project.companyLogo ? `http://localhost:3000/${project.companyLogo}` : avatar}
+                    alt={`${project.companyName || "Company"} Logo`}
                     className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="ml-4">
                     <h3 className="text-lg font-semibold text-gray-800">
-                        {project.company?.companyName || "Unknown Company"}
+                        {project.companyName || "Unknown Company"}
                     </h3>
                 </div>
             </div>
