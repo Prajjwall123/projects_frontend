@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCompanyById, handleUpdateProfile } from "../core/utils/companyHelpers";
 import defaultLogo from "../assets/default_profile_picture.jpg";
+import { FaMapMarkerAlt, FaUsers, FaIndustry, FaGlobe, FaUserTie, FaCalendarAlt, FaBuilding, FaCommentDots } from "react-icons/fa";
 
 const CompanyProfile = ({ companyId, theme }) => {
     const [company, setCompany] = useState(null);
@@ -82,36 +83,73 @@ const CompanyProfile = ({ companyId, theme }) => {
     }
 
     const outerClass = theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-800";
-    const containerClass = "bg-white text-gray-800"; 
+    const containerClass = "bg-white text-gray-800";
     const modalClass = theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-800";
     const inputClass = theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-gray-100 text-black border-gray-300";
 
     return (
-        <div className={`max-w-6xl mx-auto p-8 rounded-lg shadow-lg mt-10 ${outerClass}`}>
-            {/* Header Section */}
-            <div className="flex items-center">
-                <img
-                    src={company.logo ? `http://localhost:3000/${company.logo}` : defaultLogo}
-                    alt="Company Logo"
-                    className="w-36 h-36 object-cover rounded-full shadow-md"
-                />
-                <div className="ml-8">
-                    <h1 className="text-4xl font-bold">{company.companyName}</h1>
-                    <p className="mt-2 text-lg">{company.companyBio || "No company bio available."}</p>
-                </div>
-            </div>
+        <div className={`${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen`}>
+            <div className="container mx-auto p-8">
+                <div className="flex items-center mb-8">
+                    <div className="flex flex-col items-center mb-6">
+                        <label htmlFor="logoInput" className="cursor-pointer">
+                            <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 shadow-md">
+                                <img
+                                    src={formData.logo.startsWith("blob:") ? formData.logo : company.logo ? `http://localhost:3000/${company.logo}` : defaultLogo}
+                                    alt="Company Logo"
+                                    className="absolute top-0 left-0 w-full h-full object-cover"
+                                />
+                            </div>
+                        </label>
+                        <input id="logoInput" type="file" onChange={handleImageChange} className="hidden" />
+                    </div>
 
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className={`p-6 rounded-lg shadow-sm ${containerClass}`}>
-                    <h3 className="text-2xl font-semibold">Company Details</h3>
-                    <ul className="mt-4 space-y-3">
-                        <li><strong>Founded:</strong> {company.founded || "N/A"}</li>
-                        <li><strong>CEO:</strong> {company.ceo || "N/A"}</li>
-                        <li><strong>Headquarters:</strong> {company.headquarters || "N/A"}</li>
-                        <li><strong>Industry:</strong> {company.industry || "N/A"}</li>
-                        <li><strong>Employees:</strong> {company.employees || "N/A"}</li>
-                        <li>
-                            <strong>Website:</strong>{" "}
+                    <div className="ml-8">
+                        <h1 className="text-2xl font-bold">{company.companyName}</h1>
+                        <p className="text-gray-500 flex items-center mt-2">
+                            <FaMapMarkerAlt className="mr-2 text-blue-600" /> {company.headquarters || "N/A"}
+                        </p>
+                        <p className="mt-4">{company.companyBio || "No company bio available."}</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className={`p-6 rounded-lg shadow ${theme === "dark" ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-900"}`}>
+                        <h3 className="text-lg font-semibold">Projects Posted</h3>
+                        <p className="text-3xl font-bold">{company.projectsPosted}</p>
+                    </div>
+                    <div className={`p-6 rounded-lg shadow ${theme === "dark" ? "bg-green-900 text-green-200" : "bg-green-100 text-green-900"}`}>
+                        <h3 className="text-lg font-semibold">Projects Awarded</h3>
+                        <p className="text-3xl font-bold">{company.projectsAwarded}</p>
+                    </div>
+                    <div className={`p-6 rounded-lg shadow ${theme === "dark" ? "bg-yellow-900 text-yellow-200" : "bg-yellow-100 text-yellow-900"}`}>
+                        <h3 className="text-lg font-semibold">Projects Completed</h3>
+                        <p className="text-3xl font-bold">{company.projectsCompleted}</p>
+                    </div>
+                </div>
+
+                <div className={`p-6 rounded-lg shadow ${theme === "dark" ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-700"}`}>
+                    <h3 className="text-xl font-bold mb-4">Company Information</h3>
+                    <ul className="space-y-4">
+                        <li className="flex items-center">
+                            <FaCalendarAlt className="text-blue-600 mr-2" />
+                            <strong className="mr-2">Founded:</strong> {company.founded || "N/A"}
+                        </li>
+                        <li className="flex items-center">
+                            <FaUserTie className="text-green-600 mr-2" />
+                            <strong className="mr-2">CEO:</strong> {company.ceo || "N/A"}
+                        </li>
+                        <li className="flex items-center">
+                            <FaUsers className="text-red-600 mr-2" />
+                            <strong className="mr-2">Employees:</strong> {company.employees || "N/A"}
+                        </li>
+                        <li className="flex items-center">
+                            <FaBuilding className="text-yellow-600 mr-2" />
+                            <strong className="mr-2">Industry:</strong> {company.industry || "N/A"}
+                        </li>
+                        <li className="flex items-center">
+                            <FaGlobe className="text-red-600 mr-2" />
+                            <strong className="mr-2">Website:</strong>
                             {company.website ? (
                                 <a
                                     href={company.website.startsWith("http") ? company.website : `http://${company.website}`}
@@ -127,17 +165,8 @@ const CompanyProfile = ({ companyId, theme }) => {
                         </li>
                     </ul>
                 </div>
-                <div className={`p-6 rounded-lg shadow-sm ${containerClass}`}>
-                    <h3 className="text-2xl font-semibold">Projects Summary</h3>
-                    <ul className="mt-4 space-y-3">
-                        <li><strong>Projects Posted:</strong> {company.projectsPosted}</li>
-                        <li><strong>Projects Awarded:</strong> {company.projectsAwarded}</li>
-                        <li><strong>Projects Completed:</strong> {company.projectsCompleted}</li>
-                    </ul>
-                </div>
             </div>
-
-            <div className="mt-12 text-center">
+            <div className=" text-center">
                 <button
                     onClick={() => setIsModalOpen(true)}
                     className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-md shadow-md hover:bg-blue-700 transition duration-200"
@@ -198,6 +227,7 @@ const CompanyProfile = ({ companyId, theme }) => {
                 </div>
             )}
         </div>
+
     );
 };
 

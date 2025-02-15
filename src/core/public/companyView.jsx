@@ -6,7 +6,7 @@ import { getCompanyById } from "../utils/companyHelpers";
 import Footer from "../../components/footer";
 
 const CompanyView = ({ theme, toggleTheme }) => {
-    const { companyId } = useParams(); // Get companyId from URL params
+    const { companyId } = useParams();
     const navigate = useNavigate();
     const [companyDetails, setCompanyDetails] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const CompanyView = ({ theme, toggleTheme }) => {
                 setCompanyDetails(companyData);
             } catch (error) {
                 console.error("Error fetching company details:", error);
-                navigate("/"); // Redirect to home on error
+                navigate("/");
             } finally {
                 setLoading(false);
             }

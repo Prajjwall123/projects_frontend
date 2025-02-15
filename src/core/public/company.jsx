@@ -10,31 +10,35 @@ import CompanyProfile from "../../components/companyProfile";
 import logo from "../../assets/logo.png";
 
 const CompanyDashboard = () => {
-    const location = useLocation();
     const navigate = useNavigate();
     const { companyId } = useParams();
     const [company, setCompany] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!companyId) return;
         console.log(companyId);
+        if (!companyId) return;
 
         const fetchCompanyData = async () => {
             try {
+                setLoading(true);
                 const companyData = await getCompanyById(companyId);
                 setCompany(companyData);
+                setError(null);
             } catch (error) {
                 console.error("Error fetching company data:", error);
-                navigate("/");
+                setError("Failed to load company data. Please try again.");
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchCompanyData();
-    }, [companyId, navigate]);
+    }, [companyId]);
 
     useEffect(() => {
         document.documentElement.className = theme;
@@ -44,6 +48,19 @@ const CompanyDashboard = () => {
     const handleThemeToggle = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
+
+    if (loading) {
+        return <div className="h-screen flex justify-center items-center text-xl">Loading company data...</div>;
+    }
+
+    if (error) {
+        return (
+            <div className="h-screen flex flex-col justify-center items-center text-xl">
+                <p>{error}</p>
+                <button onClick={() => navigate("/")} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Go to Home</button>
+            </div>
+        );
+    }
 
     return (
         <div className={`flex h-screen ${theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black"}`}>
