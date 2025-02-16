@@ -103,13 +103,12 @@ export const getFullProjectDetails = async (projectId) => {
 };
 
 
-export const createBid = async (freelancerId, projectId, amount, message) => {
+export const createBid = async (formData) => {
     try {
-        const response = await API.post("biddings/create", {
-            freelancer: freelancerId,
-            project: projectId,
-            amount,
-            message,
+        const response = await API.post("biddings/create", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
         });
         return response.data;
     } catch (error) {

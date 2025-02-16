@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers";
 import { format } from "date-fns";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const ProjectsSection = ({ companyId, theme }) => {
     const [projects, setProjects] = useState([]);
@@ -272,15 +275,21 @@ const ProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
+
             {biddersModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className={`relative p-8 rounded-lg shadow-lg max-w-3xl w-full ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                        <h3 className="text-2xl font-bold mb-4">Bidders for {currentProject.title}</h3>
-                        <ul className={`divide-y ${theme === "dark" ? "divide-gray-700" : "divide-gray-300"}`}>
+                    <div className={`relative p-8 rounded-lg shadow-2xl max-w-5xl w-full ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}>
+                        <h3 className="text-2xl font-bold mb-6 text-center">{`Bidders for ${currentProject.title}`}</h3>
+                        <ul className="space-y-4">
                             {currentBidders.map((bid) => (
-                                <li key={bid._id} className="flex justify-between items-center py-4">
-                                    <div className="flex items-center">
-                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
+                                <li
+                                    key={bid._id}
+                                    onClick={() => toast.info(`View Bid: ${bid._id}`, { position: "top-right", autoClose: 3000 })}
+                                    className={`flex justify-between items-center p-5 rounded-lg transition-all cursor-pointer ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"
+                                        }`}
+                                >
+                                    <div className="flex items-center w-2/3">
+                                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
                                             <img
                                                 src={bid.freelancer.profileImage ? `http://localhost:3000/images/${bid.freelancer.profileImage}` : "/defaultAvatar.png"}
                                                 alt="Freelancer"
@@ -288,29 +297,26 @@ const ProjectsSection = ({ companyId, theme }) => {
                                             />
                                         </div>
                                         <div className="ml-4">
-                                            <h4 className={`text-lg font-semibold ${theme === "dark" ? "text-white" : "text-black"}`}>
-                                                {bid.freelancer.freelancerName || "Unknown Freelancer"}
-                                            </h4>
-                                            <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                                                {bid.message || "No message provided"}
+                                            <h4 className="text-lg font-semibold capitalize">{bid.freelancer.freelancerName || "Unknown Freelancer"}</h4>
+                                            <p className="text-sm text-gray-500">
+                                                {bid.message.length > 100 ? `${bid.message.substring(0, 100)}...` : bid.message || "No message provided"}
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className={`text-lg font-bold ${theme === "dark" ? "text-gray-300" : "text-black"}`}>
-                                            NRs {bid.amount}
-                                        </p>
-                                        <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                    <div className="text-right w-1/3">
+                                        <p className="text-lg font-bold">NRs {bid.amount}</p>
+                                        <p className="text-sm text-gray-500">
                                             {new Date(bid.createdAt).toLocaleDateString()} {new Date(bid.createdAt).toLocaleTimeString()}
                                         </p>
                                     </div>
                                 </li>
                             ))}
                         </ul>
-                        <div className="flex justify-end mt-6">
+                        <div className="flex justify-end mt-8">
                             <button
                                 onClick={() => setBiddersModalOpen(false)}
-                                className={`px-4 py-2 rounded ${theme === "dark" ? "bg-gray-600 hover:bg-gray-500 text-white" : "bg-gray-200 hover:bg-gray-300 text-black"}`}
+                                className={`px-6 py-2 font-medium rounded-md transition-all ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-300 hover:bg-gray-400 text-gray-800"
+                                    }`}
                             >
                                 Close
                             </button>

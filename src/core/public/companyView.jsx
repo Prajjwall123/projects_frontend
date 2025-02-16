@@ -38,11 +38,11 @@ const CompanyView = ({ theme, toggleTheme }) => {
                     ) : companyDetails ? (
                         <div>
                             <div className="flex items-center mb-8">
-                                <div className="w-36 h-36 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                                <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 shadow-md">
                                     <img
-                                        src={companyDetails.logo ? `http://localhost:3000/${companyDetails.logo}` : "/defaultLogo.png"}
+                                        src={`http://localhost:3000/${companyDetails.logo}`}
                                         alt="Company Logo"
-                                        className="w-full h-full object-cover"
+                                        className="absolute top-0 left-0 w-full h-full object-cover"
                                     />
                                 </div>
                                 <div className="ml-8 flex items-center">

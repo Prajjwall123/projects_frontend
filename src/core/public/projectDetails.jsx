@@ -14,6 +14,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
     const [showModal, setShowModal] = useState(false);
     const [bidAmount, setBidAmount] = useState("");
     const [bidMessage, setBidMessage] = useState("");
+    const [attachment, setAttachment] = useState(null); // New state for file attachment
 
     useEffect(() => {
         const loadProjectDetails = async () => {
@@ -44,6 +45,11 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
             return;
         }
 
+        if (!attachment || attachment.type !== "application/pdf") {
+            toast.error("Please upload a valid PDF file as an attachment.");
+            return;
+        }
+
         try {
             const profile = await getUserProfile();
             const freelancerId = profile?.profile?._id;
@@ -53,11 +59,19 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                 return;
             }
 
-            await createBid(freelancerId, project.projectId, bidAmount, bidMessage);
+            const formData = new FormData();
+            formData.append("freelancer", freelancerId);
+            formData.append("project", projectId);
+            formData.append("amount", bidAmount);
+            formData.append("message", bidMessage);
+            formData.append("file", attachment);
+
+            await createBid(formData);
             toast.success("Bid successfully placed!");
             setShowModal(false);
             setBidAmount("");
             setBidMessage("");
+            setAttachment(null);
         } catch (error) {
             toast.error(error.message || "An error occurred while placing the bid.");
         }
@@ -171,6 +185,20 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                                 onChange={(e) => setBidMessage(e.target.value)}
                             />
                         </div>
+                        <div className="mb-4">
+                            <label className="block font-semibold mb-2">Attachment (PDF only)</label>
+                            <input
+                                type="file"
+                                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                accept=".pdf"
+                                onChange={(e) => setAttachment(e.target.files[0])}
+                            />
+                            {attachment && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    Selected file: {attachment.name}
+                                </p>
+                            )}
+                        </div>
                         <div className="flex justify-end gap-4">
                             <button
                                 onClick={() => setShowModal(false)}
@@ -188,6 +216,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                     </div>
                 </div>
             )}
+
             <Footer />
         </div>
     );
