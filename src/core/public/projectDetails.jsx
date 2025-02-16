@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getFullProjectDetails, createBid, getBiddingCountByProject } from "../utils/projectHelpers";
+import { getFullProjectDetails, createBid } from "../utils/projectHelpers";
 import { getUserProfile } from "../utils/authHelpers";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import { toast } from "react-toastify";
 import { FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaCheck, FaListAlt } from "react-icons/fa";
 
-const ProjectDetails = ({ theme, toggleTheme }) => {
+const ProjectDetails = () => {
     const { projectId } = useParams();
-    const [bidCount, setBidCount] = useState(0);
     const navigate = useNavigate();
     const [project, setProject] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [bidAmount, setBidAmount] = useState("");
     const [bidMessage, setBidMessage] = useState("");
     const [attachment, setAttachment] = useState(null);
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
     useEffect(() => {
         const loadProjectDetails = async () => {
@@ -32,20 +32,15 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
     }, [projectId, navigate]);
 
     useEffect(() => {
-        const fetchBiddingCount = async () => {
-            try {
-                const count = await getBiddingCountByProject(projectId);
-                console.log("Bidding Count:", count);
-                setBidCount(count);
-            } catch (error) {
-                console.error("Failed to fetch bidding count:", error.message);
-            }
-        };
+        const savedTheme = localStorage.getItem("theme") || "light";
+        setTheme(savedTheme);
+    }, []);
 
-        if (projectId) {
-            fetchBiddingCount(projectId);
-        }
-    }, [projectId, navigate]);
+    const toggleTheme = () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
+    };
 
     const formatRequirements = (requirements) => {
         if (!requirements) return "None specified.";
@@ -114,14 +109,16 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                     <div className={`p-8 rounded-lg shadow-md ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-2xl font-bold">{project.title}</h2>
-                            <span className="text-lg font-bold text-black">{bidCount} Bids</span>
+                            <span className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
+                                {project.bidCount} Bids
+                            </span>
                         </div>
 
                         <div
                             className="flex items-center cursor-pointer mb-6"
                             onClick={() => navigate(`/company-view/${project.companyId}`)}
                         >
-                            <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+                            <div className="w-12 h-12 rounded-full overflow-hidden bg-black dark:bg-white">
                                 <img
                                     src={project.companyLogo ? `http://localhost:3000/${project.companyLogo}` : "/defaultLogo.png"}
                                     alt="Company Logo"
@@ -133,38 +130,42 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                             </h3>
                         </div>
 
-                        <p className={`mb-6 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>{project.description}</p>
+                        <p className={`mb-6 ${theme === "dark" ? "text-white" : "text-black"}`}>{project.description}</p>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div className="flex items-center p-4 rounded-lg bg-gray-200">
-                                <FaCalendarAlt className="text-blue-600 text-2xl mr-4" />
+                        <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-6`}>
+                            <div className={`flex items-center p-4 rounded-lg ${theme === "dark" ? "bg-gray-600 text-gray-100" : "bg-gray-200 text-gray-800"} shadow`}>
+                                <FaCalendarAlt className="text-blue-500 text-2xl mr-4" />
                                 <div>
                                     <strong>Posted Date:</strong>
                                     <p>{new Date(project.postedDate).toLocaleDateString()}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center p-4 rounded-lg bg-gray-200">
-                                <FaBriefcase className="text-green-600 text-2xl mr-4" />
+
+                            <div className={`flex items-center p-4 rounded-lg ${theme === "dark" ? "bg-gray-600 text-gray-100" : "bg-gray-200 text-gray-800"} shadow`}>
+                                <FaBriefcase className="text-green-500 text-2xl mr-4" />
                                 <div>
                                     <strong>Duration:</strong>
                                     <p>{project.duration || "N/A"}</p>
                                 </div>
                             </div>
-                            <div className={`flex items-center p-4 rounded-lg ${theme === "dark" ? "bg-gray-700 text-gray-300" : "bg-gray-200 text-gray-700"}`}>
-                                <FaListAlt className="text-yellow-600 text-2xl mr-4" />
+
+                            <div className={`flex items-center p-4 rounded-lg ${theme === "dark" ? "bg-gray-600 text-white" : "bg-gray-200 text-black"} shadow`}>
+                                <FaListAlt className="text-yellow-500 text-2xl mr-4" />
                                 <div>
                                     <strong>Categories:</strong>
                                     <div className="mt-2">{renderCategories(project.category)}</div>
                                 </div>
                             </div>
-                            <div className="flex items-center p-4 rounded-lg bg-gray-200">
-                                <FaCheck className="text-red-600 text-2xl mr-4" />
+
+                            <div className={`flex items-center p-4 rounded-lg ${theme === "dark" ? "bg-gray-600 text-gray-100" : "bg-gray-200 text-gray-800"} shadow`}>
+                                <FaCheck className="text-red-500 text-2xl mr-4" />
                                 <div>
                                     <strong>Status:</strong>
                                     <p>{project.status || "N/A"}</p>
                                 </div>
                             </div>
                         </div>
+
 
                         <h3 className="text-xl font-bold mb-4">Requirements</h3>
                         <ul className="list-disc pl-6">{formatRequirements(project.requirements)}</ul>
@@ -193,7 +194,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">NRs</span>
                                 <input
                                     type="number"
-                                    className="w-full pl-12 border rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                    className={`w-full pl-12 border rounded p-3 focus:outline-none focus:ring-2 ${theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"} focus:ring-blue-600`}
                                     placeholder="Enter your bidding amount"
                                     value={bidAmount}
                                     onChange={(e) => setBidAmount(e.target.value)}
@@ -201,9 +202,9 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                             </div>
                         </div>
                         <div className="mb-4">
-                            <label className="block font-semibold mb-2">Message To The Company</label>
+                            <label className="block font-semibold mb-2 ">Message To The Company</label>
                             <textarea
-                                className="w-full border rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                                className={`w-full border rounded p-3 focus:outline-none focus:ring-2 ${theme === "dark" ? "bg-gray-700 text-white border-gray-600" : "bg-white text-black border-gray-300"} focus:ring-blue-600`}
                                 placeholder="Enter your message"
                                 value={bidMessage}
                                 onChange={(e) => setBidMessage(e.target.value)}
@@ -269,7 +270,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                 </div>
             )}
 
-            <Footer />
+            <Footer theme={theme} />
         </div>
     );
 };

@@ -25,7 +25,7 @@ const Navbar = ({ theme, toggleTheme }) => {
                         const imageUrl = profile.profile.profileImage || profile.profile.logo;
                         if (imageUrl) {
                             const avatarPath = profile.role === "freelancer"
-                                ? `http://localhost:3000/images/${imageUrl}`
+                                ? `http://localhost:3000/${imageUrl}`
                                 : `http://localhost:3000/${imageUrl}`;
                             setAvatarUrl(avatarPath);
                         }

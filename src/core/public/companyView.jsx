@@ -5,8 +5,9 @@ import { FaMapMarkerAlt, FaIndustry, FaGlobe, FaUserTie, FaCalendarAlt, FaBuildi
 import { getCompanyById } from "../utils/companyHelpers";
 import Footer from "../../components/footer";
 
-const CompanyView = ({ theme, toggleTheme }) => {
+const CompanyView = () => {
     const { companyId } = useParams();
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
     const navigate = useNavigate();
     const [companyDetails, setCompanyDetails] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -26,6 +27,17 @@ const CompanyView = ({ theme, toggleTheme }) => {
 
         fetchCompanyDetails();
     }, [companyId, navigate]);
+
+    useEffect(() => {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        setTheme(savedTheme);
+    }, []);
+
+    const toggleTheme = () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+        localStorage.setItem("theme", newTheme);
+    };
 
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen`}>
