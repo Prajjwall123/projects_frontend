@@ -7,11 +7,13 @@ import ChartsSection from "../../components/ChartsSection";
 import PostProjectForm from "../../components/PostProjectForm";
 import ProjectsSection from "../../components/ProjectsSection";
 import CompanyProfile from "../../components/companyProfile";
+import BiddingSection from "../../components/BiddingSection";
 import logo from "../../assets/logo.png";
 
 const CompanyDashboard = () => {
     const navigate = useNavigate();
     const { companyId } = useParams();
+    const [selectedBidId, setSelectedBidId] = useState(null);
     const [company, setCompany] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
@@ -44,6 +46,12 @@ const CompanyDashboard = () => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
     }, [theme]);
+
+    const handleOpenBidSection = (bidId) => {
+        setSelectedBidId(bidId);  // Store the bid ID
+        setActiveSection("biddingSection");  // Switch to the Bidding Section
+        console.log("set the active section to bidding with the id:", bidId);
+    };
 
     const handleThemeToggle = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -133,18 +141,22 @@ const CompanyDashboard = () => {
                         <ChartsSection />
                     </>
                 )}
-                {activeSection === "projects" && (
-                    <div className="min-h-screen">
-                        <ProjectsSection companyId={companyId} theme={theme} />
-                    </div>
-                )}
                 {activeSection === "postProject" && (
                     <div className={`min-h-screen p-6 rounded shadow ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
                         <h2 className="text-2xl font-bold mb-4">Post a New Project</h2>
                         <PostProjectForm companyId={companyId} onProjectCreated={() => setActiveSection("projects")} theme={theme} />
                     </div>
                 )}
-
+                {activeSection === "projects" && (
+                    <ProjectsSection
+                        companyId={companyId}
+                        theme={theme}
+                        handleOpenBidSection={handleOpenBidSection}
+                    />
+                )}
+                {activeSection === "biddingSection" && selectedBidId && (
+                    <BiddingSection bidId={selectedBidId} theme={theme} onClose={() => setActiveSection("projects")} />
+                )}
                 {activeSection === "companyProfile" && (
                     <div className={`min-h-screen p-6 rounded shadow ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
                         <h2 className="text-2xl font-bold mb-4">Edit Company Profile</h2>
@@ -156,7 +168,7 @@ const CompanyDashboard = () => {
                 )}
 
             </div>
-        </div>
+        </div >
     );
 };
 

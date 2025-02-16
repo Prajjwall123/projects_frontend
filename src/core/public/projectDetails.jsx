@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getFullProjectDetails, createBid } from "../utils/projectHelpers";
+import { getFullProjectDetails, createBid, getBiddingCountByProject } from "../utils/projectHelpers";
 import { getUserProfile } from "../utils/authHelpers";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
@@ -9,12 +9,13 @@ import { FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaCheck, FaListAlt } from "
 
 const ProjectDetails = ({ theme, toggleTheme }) => {
     const { projectId } = useParams();
+    const [bidCount, setBidCount] = useState(0);
     const navigate = useNavigate();
     const [project, setProject] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [bidAmount, setBidAmount] = useState("");
     const [bidMessage, setBidMessage] = useState("");
-    const [attachment, setAttachment] = useState(null); // New state for file attachment
+    const [attachment, setAttachment] = useState(null);
 
     useEffect(() => {
         const loadProjectDetails = async () => {
@@ -28,6 +29,22 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
         };
 
         loadProjectDetails();
+    }, [projectId, navigate]);
+
+    useEffect(() => {
+        const fetchBiddingCount = async () => {
+            try {
+                const count = await getBiddingCountByProject(projectId);
+                console.log("Bidding Count:", count);
+                setBidCount(count);
+            } catch (error) {
+                console.error("Failed to fetch bidding count:", error.message);
+            }
+        };
+
+        if (projectId) {
+            fetchBiddingCount(projectId);
+        }
     }, [projectId, navigate]);
 
     const formatRequirements = (requirements) => {
@@ -95,7 +112,11 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
             <div className="container mx-auto p-8">
                 {project ? (
                     <div className={`p-8 rounded-lg shadow-md ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
-                        <h2 className="text-2xl font-bold mb-4">{project.title}</h2>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-2xl font-bold">{project.title}</h2>
+                            <span className="text-lg font-bold text-black">{bidCount} Bids</span>
+                        </div>
+
                         <div
                             className="flex items-center cursor-pointer mb-6"
                             onClick={() => navigate(`/company-view/${project.companyId}`)}
@@ -111,6 +132,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                                 {project.companyName || "Loading company details..."}
                             </h3>
                         </div>
+
                         <p className={`mb-6 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>{project.description}</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -150,6 +172,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                 ) : (
                     <p>Loading project details...</p>
                 )}
+
                 <div className="mt-10 text-center">
                     <button
                         onClick={() => setShowModal(true)}
@@ -159,6 +182,7 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                     </button>
                 </div>
             </div>
+
             {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className={`p-8 rounded-lg shadow-md w-full max-w-lg ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
@@ -186,20 +210,48 @@ const ProjectDetails = ({ theme, toggleTheme }) => {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block font-semibold mb-2">Attachment (PDF only)</label>
-                            <input
-                                type="file"
-                                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                                accept=".pdf"
-                                onChange={(e) => setAttachment(e.target.files[0])}
-                            />
-                            {attachment && (
-                                <p className="mt-2 text-sm text-gray-600">
-                                    Selected file: {attachment.name}
-                                </p>
-                            )}
+                            <label htmlFor="fileInput" className="block font-semibold mb-2">Attachment (PDF only)</label>
+                            <div
+                                onDrop={(e) => {
+                                    e.preventDefault();
+                                    const file = e.dataTransfer.files[0];
+                                    if (file && file.type === "application/pdf") {
+                                        setAttachment(file);
+                                        setFileName(file.name);
+                                    } else {
+                                        alert("Only PDF files are allowed.");
+                                    }
+                                }}
+                                onDragOver={(e) => e.preventDefault()}
+                                onClick={() => document.getElementById("fileInput").click()}
+                                className="w-full border-2 border-dashed rounded p-6 text-center cursor-pointer transition-all hover:border-blue-600 hover:bg-gray-50 focus:ring-2 focus:ring-blue-600"
+                            >
+                                <p className="text-gray-600">Select or Drop an Attachment</p>
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    className="hidden"
+                                    accept=".pdf"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file && file.type === "application/pdf") {
+                                            setAttachment(file);
+                                            setFileName(file.name);
+                                        } else {
+                                            alert("Only PDF files are allowed.");
+                                        }
+                                    }}
+                                />
+                                {attachment && (
+                                    <p className="mt-2 text-sm text-gray-600">
+                                        Selected file: <span className="font-medium">{attachment.name}</span>
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                        <div className="flex justify-end gap-4">
+
+
+                        <div className="flex justify-end gap-4 mt-4">
                             <button
                                 onClick={() => setShowModal(false)}
                                 className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"

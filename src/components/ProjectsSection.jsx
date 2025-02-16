@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
-const ProjectsSection = ({ companyId, theme }) => {
+const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -113,7 +113,6 @@ const ProjectsSection = ({ companyId, theme }) => {
     };
 
     const openBiddersModal = async (project) => {
-        // console.log(project);
         setCurrentProject(project);
         await fetchBidders(project._id)
         setBiddersModalOpen(true);
@@ -135,6 +134,7 @@ const ProjectsSection = ({ companyId, theme }) => {
             alert("Failed to update project.");
         }
     };
+
 
     const cardClass = theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
     const modalClass = theme === "dark" ? "bg-gray-900 text-black" : "bg-white text-gray-800";
@@ -284,9 +284,11 @@ const ProjectsSection = ({ companyId, theme }) => {
                             {currentBidders.map((bid) => (
                                 <li
                                     key={bid._id}
-                                    onClick={() => toast.info(`View Bid: ${bid._id}`, { position: "top-right", autoClose: 3000 })}
-                                    className={`flex justify-between items-center p-5 rounded-lg transition-all cursor-pointer ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"
-                                        }`}
+                                    onClick={() => {
+                                        handleOpenBidSection(bid._id);
+                                        setBiddersModalOpen(false);
+                                    }}
+                                    className={`flex justify-between items-center p-5 rounded-lg transition-all cursor-pointer ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"}`}
                                 >
                                     <div className="flex items-center w-2/3">
                                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
@@ -315,8 +317,7 @@ const ProjectsSection = ({ companyId, theme }) => {
                         <div className="flex justify-end mt-8">
                             <button
                                 onClick={() => setBiddersModalOpen(false)}
-                                className={`px-6 py-2 font-medium rounded-md transition-all ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-300 hover:bg-gray-400 text-gray-800"
-                                    }`}
+                                className={`px-6 py-2 font-medium rounded-md transition-all ${theme === "dark" ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-300 hover:bg-gray-400 text-gray-800"}`}
                             >
                                 Close
                             </button>

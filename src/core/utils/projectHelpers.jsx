@@ -116,3 +116,23 @@ export const createBid = async (formData) => {
         throw error.response ? error.response.data : { message: "An error occurred while placing the bid" };
     }
 };
+
+export const getBidById = async (bidId) => {
+    try {
+        const response = await API.get(`biddings/${bidId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching bid details:", error);
+        throw error.response ? error.response.data : { message: "An error occurred while fetching the bid details" };
+    }
+};
+
+export const getBiddingCountByProject = async (projectId) => {
+    try {
+        const response = await API.get(`biddings/count/${projectId}`);
+        return response.data.count;
+    } catch (error) {
+        console.error("Error fetching bidding count:", error);
+        throw error.response ? error.response.data : { message: "An error occurred while fetching the bidding count" };
+    }
+};
