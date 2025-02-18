@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchSkills } from "../core/utils/projectHelpers";
 
-const SearchBar = () => {
+const SearchBar = ({ className = "" }) => {
     const [skills, setSkills] = useState([]);
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const SearchBar = () => {
     }, []);
 
     return (
-        <div className="flex items-center space-x-4 p-4 bg-white rounded-md shadow w-3/4 mx-auto">
+        <div className={`flex items-center space-x-4 p-4 bg-white rounded-md shadow ${className}`}>
             <div className="flex items-center rounded-md px-2 py-1 flex-grow">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -36,13 +36,13 @@ const SearchBar = () => {
                 </svg>
                 <input
                     type="text"
-                    placeholder="Find Projects......"
+                    placeholder="Find Projects..."
                     className="w-full border-none focus:outline-none text-gray-700"
                 />
             </div>
 
             <div className="relative">
-                <select className="rounded-md py-1 px-3 text-gray-700 bg-white focus:outline-none">
+                <select className="rounded-md py-2 px-3 text-gray-700 bg-white focus:outline-none">
                     <option value="">Select Category</option>
                     {skills.map((skill) => (
                         <option key={skill._id} value={skill._id}>

@@ -45,7 +45,7 @@ function Home() {
                 Explore Projects:
             </div>
             <div className="mt-5 mb-5">
-                <SearchBar />
+                <SearchBar className="w-3/4 mx-auto" />
             </div>
 
             {loading ? (
