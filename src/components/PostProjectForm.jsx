@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createProject, fetchSkills } from "../core/utils/projectHelpers";
 
 const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
@@ -9,24 +10,17 @@ const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
         duration: "",
         category: [],
     });
-    const [categories, setCategories] = useState([]);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    useEffect(() => {
-        const fetchCategoryData = async () => {
-            try {
-                const fetchedCategories = await fetchSkills();
-                setCategories(fetchedCategories);
-            } catch (err) {
-                console.error("Error fetching categories:", err);
-                setError("Failed to fetch categories.");
-            }
-        };
-
-        fetchCategoryData();
-    }, []);
+    // Fetch categories using React Query
+    const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useQuery({
+        queryKey: ["categories"],
+        queryFn: fetchSkills,
+        retry: false,
+    });
 
     const handleChange = (e) => {
         setProject({ ...project, [e.target.name]: e.target.value });
@@ -73,7 +67,7 @@ const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
         }
     };
 
-    const formClass = "bg-white text-gray-800"; // Always light background for the form
+    const formClass = "bg-white text-gray-800";
     const inputClass = "bg-gray-100 text-black border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none";
     const buttonClass = theme === "dark" ? "bg-blue-500 hover:bg-blue-600" : "bg-blue-600 hover:bg-blue-700";
 

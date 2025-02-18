@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../components/navbar";
 import { FaMapMarkerAlt, FaIndustry, FaGlobe, FaUserTie, FaCalendarAlt, FaBuilding, FaCommentDots } from "react-icons/fa";
 import { getCompanyById } from "../utils/companyHelpers";
@@ -7,31 +8,8 @@ import Footer from "../../components/footer";
 
 const CompanyView = () => {
     const { companyId } = useParams();
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
     const navigate = useNavigate();
-    const [companyDetails, setCompanyDetails] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCompanyDetails = async () => {
-            try {
-                const companyData = await getCompanyById(companyId);
-                setCompanyDetails(companyData);
-            } catch (error) {
-                console.error("Error fetching company details:", error);
-                navigate("/");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCompanyDetails();
-    }, [companyId, navigate]);
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        setTheme(savedTheme);
-    }, []);
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -39,14 +17,23 @@ const CompanyView = () => {
         localStorage.setItem("theme", newTheme);
     };
 
+    const { data: companyDetails, isLoading, error } = useQuery({
+        queryKey: ["company", companyId],
+        queryFn: () => getCompanyById(companyId),
+        retry: false,
+        onError: () => navigate("/"),
+    });
+
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"} min-h-screen`}>
             <Navbar theme={theme} toggleTheme={toggleTheme} />
             <div className="container mx-auto p-8">
                 <div className={`p-8 rounded-lg shadow-md mb-12 ${theme === "dark" ? "bg-gray-800 text-gray-100" : "bg-white text-gray-900"}`}>
                     <h2 className="text-3xl font-bold mb-6">About the Company</h2>
-                    {loading ? (
+                    {isLoading ? (
                         <p>Loading company details...</p>
+                    ) : error ? (
+                        <p>Error fetching company details.</p>
                     ) : companyDetails ? (
                         <div>
                             <div className="flex items-center mb-8">
@@ -62,8 +49,7 @@ const CompanyView = () => {
                                         <h1 className="text-2xl font-bold flex items-center">
                                             {companyDetails.companyName}
                                             <div
-                                                className={`ml-3 cursor-pointer transition-colors duration-200 ${theme === "dark" ? "text-white hover:text-gray-300" : "text-blue-600 hover:text-blue-800"
-                                                    }`}
+                                                className={`ml-3 cursor-pointer transition-colors duration-200 ${theme === "dark" ? "text-white hover:text-gray-300" : "text-blue-600 hover:text-blue-800"}`}
                                                 onClick={() => alert(`Chat with Company ID: ${companyDetails._id}`)}
                                             >
                                                 <FaCommentDots className="text-3xl" />

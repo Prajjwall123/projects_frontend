@@ -1,17 +1,12 @@
 import React from "react";
 import logo from "../assets/logo.png";
-import blackLogo from "../assets/black-logo.png";
 
-const Footer = ({ theme }) => {
-    const currentTheme = theme || "light";
-
+const Footer = () => {
     return (
-        <footer
-            className={`footer p-10 ${currentTheme === "light" ? "bg-white text-black shadow-md border-t border-gray-300" : "bg-black text-white shadow-lg border-t border-gray-800"}`}
-        >
+        <footer className="footer p-10 bg-black text-white shadow-lg border-t border-gray-800">
             <aside>
                 <img
-                    src={currentTheme === "light" ? blackLogo : logo}
+                    src={logo}
                     alt="Logo"
                     width="250"
                     height="500"

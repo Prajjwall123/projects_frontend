@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getCompanyById } from "../utils/companyHelpers";
 import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
 import StatsSection from "../../components/StatsSection";
@@ -14,58 +15,43 @@ const CompanyDashboard = () => {
     const navigate = useNavigate();
     const { companyId } = useParams();
     const [selectedBidId, setSelectedBidId] = useState(null);
-    const [company, setCompany] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        console.log(companyId);
-        if (!companyId) return;
+    const { data: company, isLoading, error } = useQuery({
+        queryKey: ["company", companyId],
+        queryFn: () => getCompanyById(companyId),
+        enabled: !!companyId,
+        retry: false,
+    });
 
-        const fetchCompanyData = async () => {
-            try {
-                setLoading(true);
-                const companyData = await getCompanyById(companyId);
-                setCompany(companyData);
-                setError(null);
-            } catch (error) {
-                console.error("Error fetching company data:", error);
-                setError("Failed to load company data. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCompanyData();
-    }, [companyId]);
-
-    useEffect(() => {
+    React.useEffect(() => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
     }, [theme]);
 
     const handleOpenBidSection = (bidId) => {
-        setSelectedBidId(bidId);  // Store the bid ID
-        setActiveSection("biddingSection");  // Switch to the Bidding Section
-        console.log("set the active section to bidding with the id:", bidId);
+        setSelectedBidId(bidId);
+        setActiveSection("biddingSection");
+        console.log("Set the active section to bidding with the id:", bidId);
     };
 
     const handleThemeToggle = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
 
-    if (loading) {
+    if (isLoading) {
         return <div className="h-screen flex justify-center items-center text-xl">Loading company data...</div>;
     }
 
     if (error) {
         return (
             <div className="h-screen flex flex-col justify-center items-center text-xl">
-                <p>{error}</p>
-                <button onClick={() => navigate("/")} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Go to Home</button>
+                <p>Failed to load company data. Please try again.</p>
+                <button onClick={() => navigate("/")} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+                    Go to Home
+                </button>
             </div>
         );
     }

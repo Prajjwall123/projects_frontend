@@ -1,58 +1,57 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [activeMenu, setActiveMenu] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentProject, setCurrentProject] = useState(null);
-    const [categories, setCategories] = useState([]);
     const [activeProjectId, setActiveProjectId] = useState(null);
     const [biddersModalOpen, setBiddersModalOpen] = useState(false);
     const [currentBidders, setCurrentBidders] = useState([]);
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            if (!companyId) return;
-            setLoading(true);
-            setError(null);
-            try {
-                const projectsData = await getProjectsByCompany(companyId);
-                const projectsWithBids = await Promise.all(
-                    projectsData.map(async (project) => {
-                        const bidCount = await fetchBiddingCount(project._id);
-                        return { ...project, bidCount };
-                    })
-                );
-                setProjects(projectsWithBids);
-            } catch (err) {
-                console.error("Error fetching projects:", err);
-                setError("Failed to fetch projects.");
-            } finally {
-                setLoading(false);
-            }
-        };
+    const queryClient = useQueryClient();
 
-        fetchProjects();
+    const { data: projects, isLoading: projectsLoading, error: projectsError } = useQuery({
+        queryKey: ["companyProjects", companyId],
+        queryFn: () => getProjectsByCompany(companyId),
+        enabled: !!companyId,
+        retry: false,
+    });
 
-        const fetchCategoryData = async () => {
-            try {
-                const fetchedCategories = await fetchSkills();
-                setCategories(fetchedCategories);
-            } catch (err) {
-                console.error("Error fetching categories:", err);
-            }
-        };
+    const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useQuery({
+        queryKey: ["categories"],
+        queryFn: fetchSkills,
+        retry: false,
+    });
 
-        fetchProjects();
-        fetchCategoryData();
-    }, [companyId]);
+    const updateProjectMutation = useMutation({
+        mutationFn: ({ projectId, projectData }) => updateProject(projectId, projectData),
+        onSuccess: () => {
+            toast.success("Project updated successfully!");
+            queryClient.invalidateQueries(["companyProjects", companyId]);
+            setIsModalOpen(false);
+        },
+        onError: () => {
+            toast.error("Failed to update project.");
+        },
+    });
+
+    const deleteProjectMutation = useMutation({
+        mutationFn: deleteProject,
+        onSuccess: (_, projectId) => {
+            toast.success("Project deleted successfully!");
+            queryClient.setQueryData(["companyProjects", companyId], (oldProjects) =>
+                oldProjects.filter((project) => project._id !== projectId)
+            );
+        },
+        onError: () => {
+            toast.error("Failed to delete project.");
+        },
+    });
 
     const handleMenuToggle = (projectId) => {
         setActiveMenu(activeMenu === projectId ? null : projectId);
@@ -66,7 +65,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
         try {
             const response = await fetch(`http://localhost:3000/api/biddings/project/${projectId}`);
             const result = await response.json();
-            // console.log(result);
             setCurrentBidders(result.data || []);
         } catch (error) {
             console.error("Error fetching bidders:", error);
@@ -74,27 +72,9 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
         }
     };
 
-    const fetchBiddingCount = async (projectId) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/biddings/count/${projectId}`);
-            const result = await response.json();
-            return result.count || 0;
-        } catch (error) {
-            console.error("Error fetching bidding count:", error);
-            return 0;
-        }
-    };
-
-    const handleDelete = async (projectId) => {
-        if (!window.confirm("Are you sure you want to delete this project?")) return;
-
-        try {
-            await deleteProject(projectId);
-            setProjects((prevProjects) => prevProjects.filter((project) => project._id !== projectId));
-            alert("Project deleted successfully!");
-        } catch (err) {
-            console.error("Error deleting project:", err);
-            alert("Failed to delete project.");
+    const handleDelete = (projectId) => {
+        if (window.confirm("Are you sure you want to delete this project?")) {
+            deleteProjectMutation.mutate(projectId);
         }
     };
 
@@ -114,26 +94,22 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
 
     const openBiddersModal = async (project) => {
         setCurrentProject(project);
-        await fetchBidders(project._id)
+        await fetchBidders(project._id);
         setBiddersModalOpen(true);
     };
 
-    const handleModalUpdate = async () => {
+    const handleModalUpdate = () => {
         if (!currentProject) return;
-
-        try {
-            const updatedProject = await updateProject(currentProject._id, currentProject);
-            setProjects((prevProjects) =>
-                prevProjects.map((project) =>
-                    project._id === currentProject._id ? updatedProject : project
-                )
-            );
-            alert("Project updated successfully!");
-            setIsModalOpen(false);
-        } catch (err) {
-            alert("Failed to update project.");
-        }
+        updateProjectMutation.mutate({ projectId: currentProject._id, projectData: currentProject });
     };
+
+    if (projectsLoading) {
+        return <div className="text-center p-6">Loading projects...</div>;
+    }
+
+    if (projectsError) {
+        return <div className="text-center p-6 text-red-500">Failed to load projects.</div>;
+    }
 
 
     const cardClass = theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";

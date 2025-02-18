@@ -1,46 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getFreelancerById } from "../core/utils/freelancerHelpers";
 import { fetchSkills } from "../core/utils/authHelpers";
 import Navbar from "./navbar";
+import UpdateProfileModal from "./updateProfileModal";
 
 function FreelancerProfile() {
     const { freelancerId } = useParams();
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-    const navigate = useNavigate();
-    const [freelancer, setFreelancer] = useState(null);
-    const [skills, setSkills] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const theme = localStorage.getItem("theme") || "light";
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchFreelancerData = async () => {
-            try {
-                const freelancerData = await getFreelancerById(freelancerId);
-                setFreelancer(freelancerData);
+    const { data: freelancer, isLoading: freelancerLoading, error: freelancerError } = useQuery({
+        queryKey: ["freelancerProfile", freelancerId],
+        queryFn: () => getFreelancerById(freelancerId),
+        enabled: !!freelancerId,
+        retry: false,
+    });
 
-                const allSkills = await fetchSkills();
-                const freelancerSkills = allSkills.filter(skill => freelancerData.skills.includes(skill._id));
-                setSkills(freelancerSkills);
-            } catch (error) {
-                console.error("Error fetching freelancer data:", error);
-                navigate("/");
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data: allSkills, isLoading: skillsLoading, error: skillsError } = useQuery({
+        queryKey: ["skills"],
+        queryFn: fetchSkills,
+        retry: false,
+    });
 
-        if (freelancerId) {
-            fetchFreelancerData();
-        }
-    }, [freelancerId, navigate]);
+    const freelancerSkills = allSkills && freelancer?.skills
+        ? allSkills.filter(skill => freelancer.skills.includes(skill._id))
+        : [];
 
-    if (loading) {
+    if (freelancerLoading || skillsLoading) {
         return <div className="text-center p-6">Loading freelancer profile...</div>;
     }
 
-    if (!freelancer) {
+    if (freelancerError || skillsError || !freelancer) {
         return <div className="text-center p-6 text-red-500">Failed to load freelancer profile.</div>;
     }
+
 
     return (
         <>
@@ -53,7 +48,7 @@ function FreelancerProfile() {
                                 <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 uppercase mb-4">Profile</h2>
                                 <div className="flex flex-col items-center">
                                     <img
-                                        src={`http://localhost:3000/${freelancer.profileImage}`}
+                                        src={freelancer.profileImage ? `http://localhost:3000/${freelancer.profileImage}` : "/defaultProfile.png"}
                                         alt={freelancer.freelancerName || "Not specified"}
                                         className="w-24 h-24 rounded-full bg-gray-300 mb-4 object-cover border-4 border-blue-500"
                                     />
@@ -67,20 +62,36 @@ function FreelancerProfile() {
                                     <p className="text-gray-700 dark:text-gray-300 text-center">
                                         <strong>Experience:</strong> {freelancer.experienceYears ? `${freelancer.experienceYears} years` : "Not specified"}
                                     </p>
+
+                                    {/* View Portfolio Button */}
+                                    {freelancer.portfolio && (
+                                        <a
+                                            href={freelancer.portfolio.startsWith("http") ? freelancer.portfolio : `http://${freelancer.portfolio}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
+                                        >
+                                            View Portfolio
+                                        </a>
+                                    )}
                                 </div>
                             </div>
 
+                            {/* Skills Section */}
                             <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
                                 <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 uppercase mb-4">Skills</h2>
                                 <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
-                                    {skills.length > 0 ? (
-                                        skills.map((skill, index) => <li key={index} className="mb-2">{skill.name}</li>)
+                                    {freelancerSkills.length > 0 ? (
+                                        freelancerSkills.map((skill, index) => (
+                                            <li key={index} className="mb-2">{skill.name}</li>
+                                        ))
                                     ) : (
                                         <p className="text-gray-500">Not specified</p>
                                     )}
                                 </ul>
                             </div>
                         </div>
+
 
                         {/* Right Content (About Me, Experience & Certifications) */}
                         <div className="col-span-1 lg:col-span-3 overflow-y-auto max-h-[80vh] pr-2">
@@ -161,10 +172,30 @@ function FreelancerProfile() {
                                     <p className="text-gray-500">Not specified</p>
                                 )}
                             </div>
+
+                            {/* Update Profile Button */}
+                            <div className="flex justify-center mt-6">
+                                <button
+                                    className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+                                    onClick={() => setIsModalOpen(true)}
+                                >
+                                    Update Profile
+                                </button>
+                            </div>
+
+                            {/* Render the modal only when isModalOpen is true */}
+                            {isModalOpen && (
+                                <UpdateProfileModal
+                                    freelancer={freelancer}
+                                    onClose={() => setIsModalOpen(false)}
+                                    onUpdate={(updatedData) => setFreelancer(updatedData)}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
         </>
     );
 }

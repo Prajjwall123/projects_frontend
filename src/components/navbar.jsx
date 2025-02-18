@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaSun, FaMoon } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
 import logo from "../assets/logo.png";
 import blackLogo from "../assets/black-logo.png";
 import defaultProfilePicture from "../assets/default_profile_picture.jpg";
@@ -7,52 +8,33 @@ import { logoutUser, getUserProfile } from "../core/utils/authHelpers";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ theme, toggleTheme }) => {
-    const [avatarUrl, setAvatarUrl] = useState(defaultProfilePicture);
-    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
     const [currentTheme, setCurrentTheme] = useState(theme);
 
-    useEffect(() => {
-        setCurrentTheme(theme);
-    }, [theme]);
+    const { data: profile } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        retry: false,
+    });
 
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                if (localStorage.getItem("token")) {
-                    const profile = await getUserProfile();
-                    if (profile) {
-                        const imageUrl = profile.profile.profileImage || profile.profile.logo;
-                        if (imageUrl) {
-                            const avatarPath = profile.role === "freelancer"
-                                ? `http://localhost:3000/${imageUrl}`
-                                : `http://localhost:3000/${imageUrl}`;
-                            setAvatarUrl(avatarPath);
-                        }
-                        setUserId(profile.profile._id);
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching user profile:", error.message);
-            }
-        };
+    const avatarUrl = profile?.profile?.profileImage
+        ? `http://localhost:3000/${profile.profile.profileImage}`
+        : defaultProfilePicture;
 
-        fetchUserProfile();
-    }, []);
+    const userId = profile?.profile?._id;
 
     const handleLogout = () => {
         logoutUser();
     };
 
-    const handleProfileClick = async () => {
-        const profile = await getUserProfile();
+    const handleProfileClick = () => {
+        if (!profile) return;
         if (profile.role === "freelancer" && userId) {
             navigate(`/freelancer/${userId}`);
         } else if (profile.role === "company" && userId) {
             navigate(`/company/${userId}`);
         }
     };
-
 
     return (
         <div

@@ -1,21 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchSkills } from "../core/utils/projectHelpers";
 
 const SearchBar = ({ className = "" }) => {
-    const [skills, setSkills] = useState([]);
-
-    useEffect(() => {
-        const fetchSkillData = async () => {
-            try {
-                const fetchedSkills = await fetchSkills();
-                setSkills(fetchedSkills);
-            } catch (err) {
-                console.error("Error fetching skills:", err);
-            }
-        };
-
-        fetchSkillData();
-    }, []);
+    const { data: skills, isLoading, error } = useQuery({
+        queryKey: ["skills"],
+        queryFn: fetchSkills,
+        retry: false,
+    });
 
     return (
         <div className={`flex items-center space-x-4 p-4 bg-white rounded-md shadow ${className}`}>
@@ -44,11 +36,17 @@ const SearchBar = ({ className = "" }) => {
             <div className="relative">
                 <select className="rounded-md py-2 px-3 text-gray-700 bg-white focus:outline-none">
                     <option value="">Select Category</option>
-                    {skills.map((skill) => (
-                        <option key={skill._id} value={skill._id}>
-                            {skill.name}
-                        </option>
-                    ))}
+                    {isLoading ? (
+                        <option>Loading...</option>
+                    ) : error ? (
+                        <option>Error loading categories</option>
+                    ) : (
+                        skills?.map((skill) => (
+                            <option key={skill._id} value={skill._id}>
+                                {skill.name}
+                            </option>
+                        ))
+                    )}
                 </select>
             </div>
 

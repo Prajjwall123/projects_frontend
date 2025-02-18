@@ -1,8 +1,11 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "./core/context/authContext";
+
+const queryClient = new QueryClient(); // Create a new QueryClient instance
 
 const Home = lazy(() => import("./core/public/home"));
 const LoginPage = lazy(() => import("./core/public/login"));
@@ -41,10 +44,10 @@ function App() {
   ];
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={createBrowserRouter(publicRoutes)} />
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-    </>
+    </QueryClientProvider>
   );
 }
 

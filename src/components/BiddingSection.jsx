@@ -1,38 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getBidById } from "../core/utils/projectHelpers";
 
 const BiddingSection = ({ bidId, theme, onClose }) => {
-    const [bid, setBid] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { data: bid, isLoading, error } = useQuery({
+        queryKey: ["bidDetails", bidId],
+        queryFn: () => getBidById(bidId),
+        retry: false,
+    });
 
-    useEffect(() => {
-        const fetchBidDetails = async () => {
-            try {
-                setLoading(true);
-                const bidDetails = await getBidById(bidId);
-                setBid(bidDetails.data);
-                setError(null);
-            } catch (error) {
-                console.error("Failed to fetch bid details:", error);
-                setError(error.message || "Failed to load bid details. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBidDetails();
-    }, [bidId]);
-
-    if (loading) {
+    if (isLoading) {
         return <div className="text-center p-4">Loading bid details...</div>;
     }
 
     if (error) {
-        return <div className="text-center p-4 text-red-500">{error}</div>;
+        return <div className="text-center p-4 text-red-500">{error.message || "Failed to load bid details. Please try again."}</div>;
     }
 
-    const { freelancer, project, amount, message, fileName, createdAt } = bid;
+    const { freelancer, project, amount, message, fileName, createdAt } = bid?.data || {};
+
+
 
     return (
         <div className={`p-6 rounded shadow-lg space-y-8 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}>

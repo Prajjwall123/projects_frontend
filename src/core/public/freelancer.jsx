@@ -1,46 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getFreelancerById } from "../utils/freelancerHelpers";
 import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
 import logo from "../../assets/logo.png";
-// import ProjectsSection from "../../components/ProjectsSection";
-// import BiddingSection from "../../components/BiddingSection";
-// import FreelancerProfile from "../../components/FreelancerProfile";
 import SearchBar from "../../components/SearchBar";
 import FreelancerProfile from "../../components/FreelancerProfile";
+import BiddingSection from "../../components/BiddingSection";
+import ProjectsSection from "../../components/ProjectsSection";
 
 const FreelancerDashboard = () => {
     const navigate = useNavigate();
     const { freelancerId } = useParams();
     const [selectedBidId, setSelectedBidId] = useState(null);
-    const [freelancer, setFreelancer] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (!freelancerId) return;
+    // Fetch freelancer data using React Query
+    const { data: freelancer, isLoading, error } = useQuery({
+        queryKey: ["freelancer", freelancerId],
+        queryFn: () => getFreelancerById(freelancerId),
+        enabled: !!freelancerId,
+        retry: false,
+    });
 
-        const fetchFreelancerData = async () => {
-            try {
-                setLoading(true);
-                const freelancerData = await getFreelancerById(freelancerId);
-                setFreelancer(freelancerData);
-                setError(null);
-            } catch (error) {
-                console.error("Error fetching freelancer data:", error);
-                setError("Failed to load freelancer data. Please try again.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchFreelancerData();
-    }, [freelancerId]);
-
-    useEffect(() => {
+    // Handle theme persistence
+    React.useEffect(() => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
     }, [theme]);
@@ -54,15 +40,17 @@ const FreelancerDashboard = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
 
-    if (loading) {
+    if (isLoading) {
         return <div className="h-screen flex justify-center items-center text-xl">Loading freelancer data...</div>;
     }
 
     if (error) {
         return (
             <div className="h-screen flex flex-col justify-center items-center text-xl">
-                <p>{error}</p>
-                <button onClick={() => navigate("/")} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Go to Home</button>
+                <p>Failed to load freelancer data. Please try again.</p>
+                <button onClick={() => navigate("/")} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+                    Go to Home
+                </button>
             </div>
         );
     }

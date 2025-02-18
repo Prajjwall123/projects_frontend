@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { getFullProjectDetails, createBid } from "../utils/projectHelpers";
 import { getUserProfile } from "../utils/authHelpers";
 import Navbar from "../../components/navbar";
@@ -10,31 +11,24 @@ import { FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaCheck, FaListAlt } from "
 const ProjectDetails = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
-    const [project, setProject] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [bidAmount, setBidAmount] = useState("");
     const [bidMessage, setBidMessage] = useState("");
     const [attachment, setAttachment] = useState(null);
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
-    useEffect(() => {
-        const loadProjectDetails = async () => {
-            try {
-                const projectData = await getFullProjectDetails(projectId);
-                setProject(projectData);
-            } catch (error) {
-                console.error("Error loading project details:", error);
-                navigate("/");
-            }
-        };
+    const { data: project, isLoading, error } = useQuery({
+        queryKey: ["project", projectId],
+        queryFn: () => getFullProjectDetails(projectId),
+        retry: false,
+        onError: () => navigate("/"),
+    });
 
-        loadProjectDetails();
-    }, [projectId, navigate]);
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        setTheme(savedTheme);
-    }, []);
+    const { data: profile } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        enabled: !!showModal,
+    });
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -45,9 +39,7 @@ const ProjectDetails = () => {
     const formatRequirements = (requirements) => {
         if (!requirements) return "None specified.";
         return requirements.split("\n").map((req, index) => (
-            <li key={index} className="mb-1">
-                {req}
-            </li>
+            <li key={index} className="mb-1">{req}</li>
         ));
     };
 
@@ -63,7 +55,6 @@ const ProjectDetails = () => {
         }
 
         try {
-            const profile = await getUserProfile();
             const freelancerId = profile?.profile?._id;
 
             if (!freelancerId) {
@@ -92,10 +83,7 @@ const ProjectDetails = () => {
     const renderCategories = (categories) => {
         if (!categories || categories.length === 0) return "N/A";
         return categories.map((category, index) => (
-            <span
-                key={index}
-                className="bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 text-sm px-3 py-1 rounded-full mr-2 mb-2 inline-block"
-            >
+            <span key={index} className="bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 text-sm px-3 py-1 rounded-full mr-2 mb-2 inline-block">
                 {category}
             </span>
         ));

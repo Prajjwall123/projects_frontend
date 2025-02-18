@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getCompanyById, handleUpdateProfile } from "../core/utils/companyHelpers";
 import defaultLogo from "../assets/default_profile_picture.jpg";
 import { FaMapMarkerAlt, FaUsers, FaIndustry, FaGlobe, FaUserTie, FaCalendarAlt, FaBuilding, FaCommentDots } from "react-icons/fa";
 
 const CompanyProfile = ({ companyId, theme }) => {
-    const [company, setCompany] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         companyName: "",
@@ -19,31 +18,24 @@ const CompanyProfile = ({ companyId, theme }) => {
         logo: "",
     });
 
-    useEffect(() => {
-        const fetchCompanyData = async () => {
-            try {
-                const companyData = await getCompanyById(companyId);
-                setCompany(companyData);
-                setFormData({
-                    companyName: companyData.companyName || "",
-                    companyBio: companyData.companyBio || "",
-                    founded: companyData.founded || "",
-                    ceo: companyData.ceo || "",
-                    headquarters: companyData.headquarters || "",
-                    industry: companyData.industry || "",
-                    employees: companyData.employees || "",
-                    website: companyData.website || "",
-                    logo: companyData.logo || "",
-                });
-            } catch (error) {
-                console.error("Error fetching company data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCompanyData();
-    }, [companyId]);
+    const { data: company, isLoading, error } = useQuery({
+        queryKey: ["companyProfile", companyId],
+        queryFn: () => getCompanyById(companyId),
+        onSuccess: (companyData) => {
+            setFormData({
+                companyName: companyData.companyName || "",
+                companyBio: companyData.companyBio || "",
+                founded: companyData.founded || "",
+                ceo: companyData.ceo || "",
+                headquarters: companyData.headquarters || "",
+                industry: companyData.industry || "",
+                employees: companyData.employees || "",
+                website: companyData.website || "",
+                logo: companyData.logo || "",
+            });
+        },
+        retry: false,
+    });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,7 +58,7 @@ const CompanyProfile = ({ companyId, theme }) => {
         }
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen text-lg text-gray-600">
                 Loading company profile...
@@ -74,10 +66,10 @@ const CompanyProfile = ({ companyId, theme }) => {
         );
     }
 
-    if (!company) {
+    if (error) {
         return (
-            <div className="flex items-center justify-center min-h-screen text-lg text-gray-600">
-                Company not found.
+            <div className="flex items-center justify-center min-h-screen text-lg text-red-500">
+                Failed to load company profile. Please try again.
             </div>
         );
     }

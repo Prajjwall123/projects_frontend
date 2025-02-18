@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../components/navbar";
 import Hero from "../../components/hero";
 import Footer from "../../components/footer";
@@ -7,14 +8,7 @@ import SearchBar from "../../components/SearchBar";
 import { fetchProjects } from "../utils/projectHelpers";
 
 function Home() {
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [theme, setTheme] = useState("light");
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        setTheme(savedTheme);
-    }, []);
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
@@ -22,20 +16,10 @@ function Home() {
         localStorage.setItem("theme", newTheme);
     };
 
-    useEffect(() => {
-        const loadProjects = async () => {
-            try {
-                const data = await fetchProjects();
-                setProjects(data);
-            } catch (error) {
-                console.error("Failed to load projects:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadProjects();
-    }, []);
+    const { data: projects = [], isLoading, error } = useQuery({
+        queryKey: ["projects"],
+        queryFn: fetchProjects,
+    });
 
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-base-200 text-black"} min-h-screen`}>
@@ -48,20 +32,16 @@ function Home() {
                 <SearchBar className="w-3/4 mx-auto" />
             </div>
 
-            {loading ? (
-                <div className="text-center text-lg mt-10">
-                    Loading projects...
-                </div>
+            {isLoading ? (
+                <div className="text-center text-lg mt-10">Loading projects...</div>
+            ) : error ? (
+                <div className="text-center text-lg text-red-500 mt-10">Failed to load projects.</div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                     {projects.length > 0 ? (
-                        projects.map((project) => (
-                            <Card key={project._id} project={project} />
-                        ))
+                        projects.map((project) => <Card key={project._id} project={project} />)
                     ) : (
-                        <div className="text-center text-lg col-span-full">
-                            No projects found.
-                        </div>
+                        <div className="text-center text-lg col-span-full">No projects found.</div>
                     )}
                 </div>
             )}
