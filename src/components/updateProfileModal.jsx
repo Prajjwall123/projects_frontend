@@ -69,8 +69,12 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                     {/* Experience Section */}
                     <div>
                         <h3 className="font-bold text-gray-800 dark:text-gray-100">Experience</h3>
-                        {(formData.experience.length > 0 ? formData.experience : [{ title: "", company: "", from: "", to: "", description: "" }]).map((exp, index) => (
-                            <div key={index} className="mb-2">
+
+                        {formData.experience.length === 0 &&
+                            setFormData({ ...formData, experience: [{ title: "", company: "", from: "", to: "", description: "" }] })}
+
+                        {formData.experience.map((exp, index) => (
+                            <div key={index} className="mb-2 border p-3 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
                                 <input type="text" name={`expTitle${index}`} value={exp.title || ""} onChange={(e) => {
                                     let newExp = [...formData.experience];
                                     newExp[index] = { ...newExp[index], title: e.target.value };
@@ -83,22 +87,79 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                                     setFormData({ ...formData, experience: newExp });
                                 }} placeholder="Company Name" className="w-full p-2 border rounded" />
 
-                                <input type="text" name={`expYears${index}`} value={`${exp.from || ""} - ${exp.to || ""}`} placeholder="From - To" className="w-full p-2 border rounded" />
+                                {/* Year Fields for From - To */}
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        name={`expFrom${index}`}
+                                        value={exp.from || ""}
+                                        onChange={(e) => {
+                                            let newExp = [...formData.experience];
+                                            newExp[index] = { ...newExp[index], from: e.target.value };
+                                            setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        placeholder="From Year"
+                                        className="w-1/2 p-2 border rounded"
+                                        min="1900"
+                                        max={new Date().getFullYear()}
+                                    />
+
+                                    <input
+                                        type="number"
+                                        name={`expTo${index}`}
+                                        value={exp.to || ""}
+                                        onChange={(e) => {
+                                            let newExp = [...formData.experience];
+                                            newExp[index] = { ...newExp[index], to: e.target.value };
+                                            setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        placeholder="To Year"
+                                        className="w-1/2 p-2 border rounded"
+                                        min="1900"
+                                        max={new Date().getFullYear()}
+                                    />
+                                </div>
 
                                 <textarea name={`expDescription${index}`} value={exp.description || ""} onChange={(e) => {
                                     let newExp = [...formData.experience];
                                     newExp[index] = { ...newExp[index], description: e.target.value };
                                     setFormData({ ...formData, experience: newExp });
                                 }} placeholder="Description" className="w-full p-2 border rounded" />
+
+                                {/* Remove Experience Button */}
+                                {formData.experience.length > 1 && (
+                                    <button
+                                        className="bg-red-500 text-white px-3 py-1 mt-2 rounded-md"
+                                        onClick={() => {
+                                            setFormData({ ...formData, experience: formData.experience.filter((_, i) => i !== index) });
+                                        }}
+                                    >
+                                        Remove Experience
+                                    </button>
+                                )}
                             </div>
                         ))}
+
+                        {/* Add Experience Button */}
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md mt-3"
+                            onClick={() => setFormData({
+                                ...formData,
+                                experience: [...formData.experience, { title: "", company: "", from: "", to: "", description: "" }]
+                            })}
+                        >
+                            + Add Experience
+                        </button>
                     </div>
+
 
                     {/* Certifications Section */}
                     <div>
                         <h3 className="font-bold text-gray-800 dark:text-gray-100">Certifications</h3>
-                        {(formData.certifications.length > 0 ? formData.certifications : [{ name: "", organization: "" }]).map((cert, index) => (
-                            <div key={index} className="mb-2">
+                        {formData.certifications.length === 0 && setFormData({ ...formData, certifications: [{ name: "", organization: "" }] })}
+
+                        {formData.certifications.map((cert, index) => (
+                            <div key={index} className="mb-2 border p-3 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
                                 <input type="text" name={`certName${index}`} value={cert.name || ""} onChange={(e) => {
                                     let newCerts = [...formData.certifications];
                                     newCerts[index] = { ...newCerts[index], name: e.target.value };
@@ -110,10 +171,29 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                                     newCerts[index] = { ...newCerts[index], organization: e.target.value };
                                     setFormData({ ...formData, certifications: newCerts });
                                 }} placeholder="Issuing Organization" className="w-full p-2 border rounded" />
+
+                                {/* Remove Certification Button */}
+                                {formData.certifications.length > 1 && (
+                                    <button
+                                        className="bg-red-500 text-white px-3 py-1 mt-2 rounded-md"
+                                        onClick={() => {
+                                            setFormData({ ...formData, certifications: formData.certifications.filter((_, i) => i !== index) });
+                                        }}
+                                    >
+                                        Remove Certification
+                                    </button>
+                                )}
                             </div>
                         ))}
-                    </div>
 
+                        {/* Add Certification Button */}
+                        <button
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md mt-3"
+                            onClick={() => setFormData({ ...formData, certifications: [...formData.certifications, { name: "", organization: "" }] })}
+                        >
+                            + Add Certification
+                        </button>
+                    </div>
 
                     <div className="flex justify-end space-x-2">
                         <button type="button" className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600" onClick={onClose}>
