@@ -1,29 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getFreelancerById } from "../core/utils/freelancerHelpers";
 import { fetchSkills } from "../core/utils/authHelpers";
-import Navbar from "./navbar";
 import UpdateProfileModal from "./updateProfileModal";
 
 function FreelancerProfile() {
     const { freelancerId } = useParams();
-    const theme = localStorage.getItem("theme") || "light";
+    const theme = localStorage.getItem("theme") || "light"; // ✅ Added to fix "theme is not defined"
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [freelancer, setFreelancer] = useState(null);
 
-    const { data: freelancer, isLoading: freelancerLoading, error: freelancerError } = useQuery({
+    // Fetch freelancer data
+    const { data, isLoading: freelancerLoading, error: freelancerError } = useQuery({
         queryKey: ["freelancerProfile", freelancerId],
         queryFn: () => getFreelancerById(freelancerId),
         enabled: !!freelancerId,
         retry: false,
     });
 
+    // Fetch all skills
     const { data: allSkills, isLoading: skillsLoading, error: skillsError } = useQuery({
         queryKey: ["skills"],
         queryFn: fetchSkills,
         retry: false,
     });
 
+    // Update the freelancer state when data is available
+    useEffect(() => {
+        if (data) {
+            setFreelancer(data);
+        }
+    }, [data]);
+
+    // Filter freelancer skills
     const freelancerSkills = allSkills && freelancer?.skills
         ? allSkills.filter(skill => freelancer.skills.includes(skill._id))
         : [];
@@ -39,27 +49,28 @@ function FreelancerProfile() {
 
     return (
         <>
-            <div className={`bg-gray-100 dark:bg-gray-900 min-h-screen py-8`}>
+            <div className={`min-h-screen py-8 transition-all duration-300 ${theme === "dark" ? "bg-gray-900 text-gray-200" : "bg-gray-100 text-gray-900"}`}>
                 <div className="container mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 px-4">
-                        {/* Left Sidebar (Profile & Skills) */}
-                        <div className="col-span-1 lg:col-span-1 space-y-4 sticky top-8 h-fit">
-                            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
-                                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 uppercase mb-4">Profile</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 px-6">
+
+                        {/* Left Sidebar (Profile & Skills) - Made Wider */}
+                        <div className="col-span-1 lg:col-span-2 space-y-6 sticky top-8 h-fit">
+                            <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
+                                <h2 className="text-lg font-bold uppercase mb-4">Profile</h2>
                                 <div className="flex flex-col items-center">
                                     <img
                                         src={freelancer.profileImage ? `http://localhost:3000/${freelancer.profileImage}` : "/defaultProfile.png"}
                                         alt={freelancer.freelancerName || "Not specified"}
-                                        className="w-24 h-24 rounded-full bg-gray-300 mb-4 object-cover border-4 border-blue-500"
+                                        className="w-28 h-28 rounded-full bg-gray-300 mb-4 object-cover border-4 border-blue-500"
                                     />
-                                    <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{freelancer.freelancerName || "Not specified"}</h1>
-                                    <p className="text-gray-700 dark:text-gray-300 text-center">
+                                    <h1 className="text-2xl font-bold">{freelancer.freelancerName || "Not specified"}</h1>
+                                    <p className="mt-2">
                                         <strong>Profession:</strong> {freelancer.profession || "Not specified"}
                                     </p>
-                                    <p className="text-gray-700 dark:text-gray-300 text-center">
+                                    <p>
                                         <strong>Location:</strong> {freelancer.location || "Not specified"}
                                     </p>
-                                    <p className="text-gray-700 dark:text-gray-300 text-center">
+                                    <p>
                                         <strong>Experience:</strong> {freelancer.experienceYears ? `${freelancer.experienceYears} years` : "Not specified"}
                                     </p>
 
@@ -78,9 +89,9 @@ function FreelancerProfile() {
                             </div>
 
                             {/* Skills Section */}
-                            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
-                                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 uppercase mb-4">Skills</h2>
-                                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+                            <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
+                                <h2 className="text-lg font-bold uppercase mb-4">Skills</h2>
+                                <ul className="list-disc list-inside">
                                     {freelancerSkills.length > 0 ? (
                                         freelancerSkills.map((skill, index) => (
                                             <li key={index} className="mb-2">{skill.name}</li>
@@ -92,65 +103,45 @@ function FreelancerProfile() {
                             </div>
                         </div>
 
-
                         {/* Right Content (About Me, Experience & Certifications) */}
-                        <div className="col-span-1 lg:col-span-3 overflow-y-auto max-h-[80vh] pr-2">
-                            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-6">
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">About Me</h2>
-                                <p className="text-gray-700 dark:text-gray-300 mb-6">{freelancer.aboutMe || "Not specified"}</p>
+                        <div className="col-span-1 lg:col-span-3 overflow-y-auto max-h-[85vh] pr-2">
+                            <div className={`shadow-lg rounded-lg p-6 mb-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
+                                <h2 className="text-xl font-bold mb-4">About Me</h2>
+                                <p className="mb-6">{freelancer.aboutMe || "Not specified"}</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center">
-                                        <span className="text-blue-500 text-2xl mr-4">
-                                            <i className="fas fa-briefcase"></i>
-                                        </span>
-                                        <div>
-                                            <h3 className="font-bold text-gray-800 dark:text-gray-100">I work at</h3>
-                                            <p className="text-gray-700 dark:text-gray-300">{freelancer.workAt || "Not Specified"}</p>
+                                    {[
+                                        { icon: "fas fa-briefcase", title: "I work at", value: freelancer.workAt || "Not Specified", color: "text-blue-500" },
+                                        { icon: "fas fa-language", title: "Languages", value: freelancer.languages?.length ? freelancer.languages.join(", ") : "Not specified", color: "text-green-500" },
+                                        { icon: "fas fa-calendar-alt", title: "Joined Date", value: freelancer.createdAt ? new Date(freelancer.createdAt).toLocaleDateString() : "Not specified", color: "text-yellow-500" },
+                                        { icon: "fas fa-clock", title: "Availability", value: freelancer.availability || "Not specified", color: "text-red-500" }
+                                    ].map((item, index) => (
+                                        <div key={index} className={`p-4 rounded-lg flex items-center ${theme === "dark" ? "bg-gray-700" : "bg-gray-100"}`}>
+                                            <span className={`text-2xl mr-4 ${item.color}`}>
+                                                <i className={item.icon}></i>
+                                            </span>
+                                            <div>
+                                                <h3 className="font-bold">{item.title}</h3>
+                                                <p>{item.value}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center">
-                                        <span className="text-green-500 text-2xl mr-4">
-                                            <i className="fas fa-language"></i>
-                                        </span>
-                                        <div>
-                                            <h3 className="font-bold text-gray-800 dark:text-gray-100">Languages</h3>
-                                            <p className="text-gray-700 dark:text-gray-300">{freelancer.languages && freelancer.languages.length > 0 ? freelancer.languages.join(", ") : "Not specified"}</p>
-                                        </div>
-                                    </div>
-                                    <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center">
-                                        <span className="text-yellow-500 text-2xl mr-4">
-                                            <i className="fas fa-calendar-alt"></i>
-                                        </span>
-                                        <div>
-                                            <h3 className="font-bold text-gray-800 dark:text-gray-100">Joined Date</h3>
-                                            <p className="text-gray-700 dark:text-gray-300">{freelancer.createdAt ? new Date(freelancer.createdAt).toLocaleDateString() : "Not specified"}</p>
-                                        </div>
-                                    </div>
-                                    <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center">
-                                        <span className="text-red-500 text-2xl mr-4">
-                                            <i className="fas fa-clock"></i>
-                                        </span>
-                                        <div>
-                                            <h3 className="font-bold text-gray-800 dark:text-gray-100">Availability</h3>
-                                            <p className="text-gray-700 dark:text-gray-300">{freelancer.availability || "Not specified"}</p>
-                                        </div>
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-6">
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Experience</h2>
-                                {freelancer.experience && freelancer.experience.length > 0 ? (
+                            {/* Experience Section */}
+                            <div className={`shadow-lg rounded-lg p-6 mb-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
+                                <h2 className="text-xl font-bold mb-4">Experience</h2>
+                                {freelancer.experience?.length > 0 ? (
                                     freelancer.experience.map((exp, index) => (
                                         <div key={index} className="mb-6">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-800 font-bold dark:text-gray-200">{exp.title || "Not specified"}</span>
+                                                <span className="font-bold">{exp.title || "Not specified"}</span>
                                                 <p>
-                                                    <span className="text-gray-600 dark:text-gray-400 mr-2">at {exp.company || "Not specified"}</span>
-                                                    <span className="text-gray-600 dark:text-gray-400">{exp.from || "N/A"} - {exp.to || "Present"}</span>
+                                                    <span className="text-gray-600 mr-2">at {exp.company || "Not specified"}</span>
+                                                    <span className="text-gray-600">{exp.from || "N/A"} - {exp.to || "Present"}</span>
                                                 </p>
                                             </div>
-                                            <p className="mt-2 text-gray-700 dark:text-gray-300">{exp.description || "Not specified"}</p>
+                                            <p className="mt-2">{exp.description || "Not specified"}</p>
                                         </div>
                                     ))
                                 ) : (
@@ -158,10 +149,11 @@ function FreelancerProfile() {
                                 )}
                             </div>
 
-                            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
-                                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Certifications</h2>
-                                {freelancer.certifications && freelancer.certifications.length > 0 ? (
-                                    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+                            {/* Certifications Section */}
+                            <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
+                                <h2 className="text-xl font-bold mb-4">Certifications</h2>
+                                {freelancer.certifications?.length > 0 ? (
+                                    <ul className="list-disc list-inside">
                                         {freelancer.certifications.map((cert, index) => (
                                             <li key={index} className="mb-2">
                                                 <strong>{cert.name || "Not specified"}</strong> - {cert.organization || "Not specified"}
@@ -195,6 +187,7 @@ function FreelancerProfile() {
                     </div>
                 </div>
             </div>
+
 
         </>
     );
