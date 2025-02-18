@@ -111,7 +111,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
         return <div className="text-center p-6 text-red-500">Failed to load projects.</div>;
     }
 
-
     const cardClass = theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black";
     const modalClass = theme === "dark" ? "bg-gray-900 text-black" : "bg-white text-gray-800";
     const borderColor = theme === "dark" ? "border-gray-700" : "border-gray-300";
@@ -120,9 +119,9 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"} p-6 rounded shadow-md`}>
             <h2 className="text-2xl font-bold mb-6">Your Current Projects</h2>
-            {loading && <p className="text-gray-600">Loading projects...</p>}
-            {error && <p className="text-red-600">{error}</p>}
-            {!loading && !error && projects.length === 0 && (
+            {projectsLoading && <p className="text-gray-600">Loading projects...</p>}
+            {projectsError && <p className="text-red-600">{error}</p>}
+            {!projectsLoading && !projectsError && projects.length === 0 && (
                 <p className="text-gray-600">No projects found.</p>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -269,7 +268,7 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                                     <div className="flex items-center w-2/3">
                                         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
                                             <img
-                                                src={bid.freelancer.profileImage ? `http://localhost:3000/images/${bid.freelancer.profileImage}` : "/defaultAvatar.png"}
+                                                src={bid.freelancer.profileImage ? `http://localhost:3000/${bid.freelancer.profileImage}` : "/defaultAvatar.png"}
                                                 alt="Freelancer"
                                                 className="w-full h-full object-cover"
                                             />
