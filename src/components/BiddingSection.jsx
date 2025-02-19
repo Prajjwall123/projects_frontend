@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getBidById } from "../core/utils/projectHelpers";
 import { getFreelancerById } from "../core/utils/freelancerHelpers";
 import { fetchSkills } from "../core/utils/authHelpers";
+import { toast } from "react-toastify";
+import { updateProjectStatus } from "../core/utils/projectHelpers";
 
 const BiddingSection = ({ bidId, theme, onClose }) => {
 
@@ -15,6 +17,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
 
     // Extract freelancerId from bid data
     const freelancerId = bid?.data?.freelancer?._id;
+    const projectId = bid?.data?.project?._id;
 
     // Fetch freelancer details
     const { data: freelancer, isLoading: freelancerLoading, error: freelancerError } = useQuery({
@@ -23,6 +26,22 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
         enabled: !!freelancerId,
         retry: false,
     });
+
+    const handleApproveBid = async () => {
+        toast.success(freelancerId, projectId);
+
+        if (!freelancerId || !projectId) {
+            toast.error("Missing freelancer id or bid id");
+            return;
+        }
+        try {
+            const updatedProject = await updateProjectStatus(projectId, freelancerId);
+            toast.error("Project awarded successfully");
+
+        } catch (error) {
+            alert(" Failed to approve bid. Please try again.");
+        }
+    };
 
     // Fetch all skills
     const { data: allSkills, isLoading: skillsLoading, error: skillsError } = useQuery({
@@ -227,7 +246,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                     <div className="flex justify-center mt-6">
                         <button
                             className="bg-green-500 text-white px-6 py-3 text-lg font-bold rounded-lg hover:bg-green-600 transition"
-                            onClick={() => alert("Bid Approved Successfully!")}
+                            onClick={handleApproveBid}
                         >
                             Approve Bid
                         </button>

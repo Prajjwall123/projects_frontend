@@ -2,20 +2,24 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getFreelancerById } from "../utils/freelancerHelpers";
-import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
+import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon, FaBell } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import SearchBar from "../../components/SearchBar";
 import FreelancerProfile from "../../components/FreelancerProfile";
 import BiddingSection from "../../components/BiddingSection";
 import ProjectsSection from "../../components/ProjectsSection";
+import { fetchNotifications, markNotificationAsRead } from "../utils/notificationHelpers";
+
 
 const FreelancerDashboard = () => {
     const navigate = useNavigate();
     const { freelancerId } = useParams();
     const [selectedBidId, setSelectedBidId] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
 
     // Fetch freelancer data using React Query
     const { data: freelancer, isLoading, error } = useQuery({
@@ -34,6 +38,22 @@ const FreelancerDashboard = () => {
     const handleOpenBidSection = (bidId) => {
         setSelectedBidId(bidId);
         setActiveSection("biddingSection");
+    };
+
+    // Fetch notifications
+    const { data: notifications = [], refetch } = useQuery({
+        queryKey: ["notifications", freelancerId],
+        queryFn: () => fetchNotifications(freelancerId, "Freelancer"),
+        enabled: !!freelancerId,
+    });
+
+    // Count unread notifications
+    const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
+
+    // ✅ Mark notification as read and refetch
+    const handleMarkAsRead = async (notificationId) => {
+        await markNotificationAsRead(notificationId);
+        refetch();
     };
 
     const handleThemeToggle = () => {
@@ -96,9 +116,51 @@ const FreelancerDashboard = () => {
                     </button>
                     <h2 className="text-2xl font-bold">Hello {freelancer ? freelancer.freelancerName : "Freelancer"}</h2>
                     <div className="flex items-center space-x-4">
-                        <button onClick={handleThemeToggle} className="text-2xl">
-                            {theme === "light" ? <FaMoon /> : <FaSun />}
-                        </button>
+                        <div className="relative">
+                            <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative flex items-center justify-center p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700">
+                                <FaBell className="w-6 h-6" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {isDropdownOpen && (
+                                <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-300 shadow-xl rounded-lg overflow-hidden z-50">
+                                    <div className="p-4">
+                                        <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Notifications</h3>
+                                        {notifications.length === 0 ? (
+                                            <p className="text-gray-500 text-center text-sm py-4">No new notifications</p>
+                                        ) : (
+                                            <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                                                {notifications.map(notification => (
+                                                    <div
+                                                        key={notification._id}
+                                                        className="flex items-start justify-between p-3 bg-gray-50 hover:bg-gray-100 transition border-b"
+                                                    >
+                                                        <div className="flex flex-col">
+                                                            <p className="text-gray-800 text-sm font-medium">
+                                                                {notification.message}
+                                                            </p>
+                                                            <span className="text-xs text-gray-500 mt-1">
+                                                                {new Date(notification.createdAt).toLocaleString()}
+                                                            </span>
+                                                        </div>
+                                                        <button
+                                                            className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
+                                                            onClick={() => handleMarkAsRead(notification._id)}
+                                                        >
+                                                            Mark as Read
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <button onClick={() => navigate("/login")} className="bg-black text-white px-4 py-2 rounded">
                             Sign Out
                         </button>

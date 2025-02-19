@@ -136,3 +136,34 @@ export const getBiddingCountByProject = async (projectId) => {
         throw error.response ? error.response.data : { message: "An error occurred while fetching the bidding count" };
     }
 };
+
+
+
+export const updateProjectStatus = async (projectId, freelancerId) => {
+    try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            throw new Error("Unauthorized: No token found");
+        }
+
+        const response = await API.put(
+            `/projects/${projectId}`,
+            {
+                status: "awarded",
+                awardedTo: freelancerId,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        console.log(" Project successfully awarded:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error(" Error updating project status:", error.response?.data || error.message);
+        throw error;
+    }
+};
