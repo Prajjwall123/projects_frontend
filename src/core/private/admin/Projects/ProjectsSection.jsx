@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../core/utils/projectHelpers";
+import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from "../../../utils/projectHelpers";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

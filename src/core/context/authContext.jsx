@@ -9,16 +9,19 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
             setUser(JSON.parse(storedUser));
+            console.log("AuthContext: User logged in:", storedUser);
         }
     }, []);
 
     const login = (userData) => {
         localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", userData.token);
         setUser(userData);
     };
 
     const logout = () => {
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         setUser(null);
     };
 
@@ -31,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const getUserRole = () => {
-        return user?.role || "guest";
+        return user?.role || "freelancer";
     };
 
     return (

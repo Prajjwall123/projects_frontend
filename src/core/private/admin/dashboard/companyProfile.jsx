@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCompanyById, handleUpdateProfile } from "../core/utils/companyHelpers";
-import defaultLogo from "../assets/default_profile_picture.jpg";
+import { getCompanyById, handleUpdateProfile } from "../../../utils/companyHelpers";
+import defaultLogo from "../../../../assets/default_profile_picture.jpg";
 import { FaMapMarkerAlt, FaUsers, FaIndustry, FaGlobe, FaUserTie, FaCalendarAlt, FaBuilding, FaCommentDots } from "react-icons/fa";
 
 const CompanyProfile = ({ companyId, theme }) => {

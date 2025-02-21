@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getCompanyById } from "../utils/companyHelpers";
+import { getCompanyById } from "../../utils/companyHelpers";
 import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
-import StatsSection from "../../components/StatsSection";
-import ChartsSection from "../../components/ChartsSection";
-import PostProjectForm from "../../components/PostProjectForm";
-import ProjectsSection from "../../components/ProjectsSection";
-import CompanyProfile from "../../components/companyProfile";
-import BiddingSection from "../../components/BiddingSection";
-import logo from "../../assets/logo.png";
 
-const CompanyDashboard = () => {
+import PostProjectForm from "./Projects/PostProjectForm";
+import ProjectsSection from "./Projects/ProjectsSection";
+import BiddingSection from "./Bidding/BiddingSection";
+import CompanyProfile from "./dashboard/companyProfile";
+import Dashboard from "./dashboard/dashboard";
+import logo from "../../../assets/logo.png";
+
+
+const Layout = () => {
     const navigate = useNavigate();
     const { companyId } = useParams();
     const [selectedBidId, setSelectedBidId] = useState(null);
@@ -123,8 +124,7 @@ const CompanyDashboard = () => {
                 {/* Dynamic Content */}
                 {activeSection === "dashboard" && (
                     <>
-                        <StatsSection company={company} theme={theme} />
-                        <ChartsSection />
+                        <Dashboard company={company} theme={theme} />
                     </>
                 )}
                 {activeSection === "postProject" && (
@@ -158,4 +158,4 @@ const CompanyDashboard = () => {
     );
 };
 
-export default CompanyDashboard;
+export default Layout;

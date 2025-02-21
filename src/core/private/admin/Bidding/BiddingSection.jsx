@@ -1,10 +1,10 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getBidById } from "../core/utils/projectHelpers";
-import { getFreelancerById } from "../core/utils/freelancerHelpers";
-import { fetchSkills } from "../core/utils/authHelpers";
+import { getBidById } from "../../../utils/projectHelpers";
+import { getFreelancerById } from "../../../utils/freelancerHelpers";
+import { fetchSkills } from "../../../utils/projectHelpers";
 import { toast } from "react-toastify";
-import { updateProjectStatus } from "../core/utils/projectHelpers";
+import { updateProjectStatus } from "../../../utils/projectHelpers";
 
 const BiddingSection = ({ bidId, theme, onClose }) => {
 

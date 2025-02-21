@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { createProject, fetchSkills } from "../core/utils/projectHelpers";
+import { createProject, fetchSkills } from "../../../utils/projectHelpers";
 
 const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
     const [project, setProject] = useState({
@@ -99,21 +99,28 @@ const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
                 </div>
                 <div>
                     <label className="block font-medium">Categories</label>
-                    <div className="flex flex-wrap gap-2">
-                        {categories.map((category) => (
-                            <button
-                                key={category._id}
-                                type="button"
-                                className={`px-3 py-1 rounded border ${project.category.includes(category._id)
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-200 hover:bg-blue-200 border-gray-300"
-                                    }`}
-                                onClick={() => handleCategoryToggle(category._id)}
-                            >
-                                {category.name}
-                            </button>
-                        ))}
+                    <div>
+                        <div className="flex flex-wrap gap-2">
+                            {categories && Array.isArray(categories) ? (
+                                categories.map((category) => (
+                                    <button
+                                        key={category._id}
+                                        type="button"
+                                        className={`px-3 py-1 rounded border ${project.category.includes(category._id)
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-200 hover:bg-blue-200 border-gray-300"
+                                            }`}
+                                        onClick={() => handleCategoryToggle(category._id)}
+                                    >
+                                        {category.name}
+                                    </button>
+                                ))
+                            ) : (
+                                <p>Loading categories...</p>
+                            )}
+                        </div>
                     </div>
+
                 </div>
                 <div>
                     <label className="block font-medium">Requirements</label>
