@@ -9,7 +9,6 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: "", password: "" });
     const [error, setError] = useState(null);
-    const { login } = useAuth();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
 
@@ -21,11 +20,14 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await loginUser(credentials);
-            login({ token: response.token, user: response.user });
-            localStorage.setItem("token", response.token);
-            navigate("/");
+
+            if (response?.token) {
+                navigate("/");
+            } else {
+                setError("Invalid credentials. Please try again.");
+            }
         } catch (err) {
-            setError(err.message || "Login failed");
+            setError(err.message || "Login failed. Please try again.");
         }
     };
 

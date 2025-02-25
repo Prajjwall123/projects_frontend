@@ -30,13 +30,12 @@ function FreelancerProfile() {
     useEffect(() => {
         if (data) {
             setFreelancer(data);
+            console.log(data.skills);
         }
     }, [data]);
 
-    // Filter freelancer skills
-    const freelancerSkills = allSkills && freelancer?.skills
-        ? allSkills.filter(skill => freelancer.skills.includes(skill._id))
-        : [];
+    // Extract freelancer skills based on the new format
+    const freelancerSkills = freelancer?.skills?.map(skill => skill.name) || [];
 
     if (freelancerLoading || skillsLoading) {
         return <div className="text-center p-6">Loading freelancer profile...</div>;
@@ -45,6 +44,7 @@ function FreelancerProfile() {
     if (freelancerError || skillsError || !freelancer) {
         return <div className="text-center p-6 text-red-500">Failed to load freelancer profile.</div>;
     }
+
 
 
     return (
@@ -91,16 +91,17 @@ function FreelancerProfile() {
                             {/* Skills Section */}
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-lg font-bold uppercase mb-4">Skills</h2>
-                                <ul className="list-disc list-inside">
-                                    {freelancerSkills.length > 0 ? (
-                                        freelancerSkills.map((skill, index) => (
-                                            <li key={index} className="mb-2">{skill.name}</li>
-                                        ))
-                                    ) : (
-                                        <p className="text-gray-500">Not specified</p>
-                                    )}
-                                </ul>
+                                {freelancerSkills.length > 0 ? (
+                                    <ul className="list-disc list-inside space-y-2">
+                                        {freelancerSkills.map((skillName, index) => (
+                                            <li key={index} className="mb-2">{skillName}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-gray-500">Not specified</p>
+                                )}
                             </div>
+
                         </div>
 
                         {/* Right Content (About Me, Experience & Certifications) */}

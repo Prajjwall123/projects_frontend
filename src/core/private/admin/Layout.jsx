@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanyById } from "../../utils/companyHelpers";
-import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
+import { FaHome, FaProjectDiagram, FaBell, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
 
 import PostProjectForm from "./Projects/PostProjectForm";
 import ProjectsSection from "./Projects/ProjectsSection";
@@ -82,8 +82,8 @@ const Layout = () => {
                         <span>Your Projects</span>
                     </li>
                     <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
-                        <FaEnvelope className="text-xl" />
-                        <span>Messages</span>
+                        <FaBell className="text-xl" />
+                        <span>Notifications</span>
                     </li>
                     <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "companyProfile" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("companyProfile")}>
                         <FaUser className="text-xl" />

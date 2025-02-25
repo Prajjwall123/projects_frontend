@@ -44,8 +44,14 @@ const Navbar = ({ theme, toggleTheme }) => {
 
 
     const handleLogout = () => {
-        logoutUser();
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userId");
+
+        navigate(`/login`);
+        window.location.reload();
     };
+
 
     const handleProfileClick = () => {
         if (!profile) return;

@@ -167,3 +167,43 @@ export const updateProjectStatus = async (projectId, freelancerId) => {
         throw error;
     }
 };
+
+
+export const getProjectsByFreelancerId = async (freelancerId) => {
+    try {
+        const response = await API.get(`projects/freelancer/${freelancerId}`);
+        console.log("this freelancer has these projects:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching projects for freelancer:', error);
+        throw error;
+    }
+};
+
+
+export const updateProjectStatusInBackend = async (projectId, status, link = "", message = "") => {
+    try {
+        const token = localStorage.getItem("token");
+        console.log(token);
+
+        const response = await API.put(
+            `/projects/${projectId}`,
+            {
+                status,
+                feedbackRequestedMessage: status === "Feedback Requested" ? message : undefined,
+                link: status === "Feedback Requested" ? link : undefined,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error("Error updating project status:", error);
+        throw error;
+    }
+};
+

@@ -3,11 +3,17 @@ import API from './api';
 const loginUser = async (credentials) => {
     try {
         const response = await API.post("/auth/login", credentials);
+
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", response.data.role);
+        localStorage.setItem("userId", response.data.userId);
+
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : { message: "Network error" };
     }
 };
+
 
 // Fetch skills from database
 const fetchSkills = async () => {
@@ -61,8 +67,10 @@ const verifyOTP = async (payload, navigate) => {
 
 
 const logoutUser = () => {
-    localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
+
     window.location.href = "/login";
 };
 

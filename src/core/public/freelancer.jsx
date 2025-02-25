@@ -6,9 +6,8 @@ import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes
 import logo from "../../assets/logo.png";
 import SearchBar from "../../components/SearchBar";
 import FreelancerProfile from "../../components/FreelancerProfile";
-import BiddingSection from "../../components/BiddingSection";
-import ProjectsSection from "../../components/ProjectsSection";
 import { fetchNotifications, markNotificationAsRead } from "../utils/notificationHelpers";
+import FreelancerProjects from "./projects";
 
 
 const FreelancerDashboard = () => {
@@ -180,10 +179,10 @@ const FreelancerDashboard = () => {
                     </div>
                 )}
                 {activeSection === "projects" && (
-                    <ProjectsSection freelancerId={freelancerId} theme={theme} handleOpenBidSection={handleOpenBidSection} />
-                )}
+                    <FreelancerProjects freelancerId={freelancerId} />)}
                 {activeSection === "biddingSection" && selectedBidId && (
-                    <BiddingSection bidId={selectedBidId} theme={theme} onClose={() => setActiveSection("projects")} />
+                    <>
+                        hello</>
                 )}
                 {activeSection === "profile" && (
                     <FreelancerProfile freelancerId={freelancerId} />
