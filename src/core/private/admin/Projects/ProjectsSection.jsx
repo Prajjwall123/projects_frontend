@@ -4,6 +4,7 @@ import { getProjectsByCompany, updateProject, deleteProject, fetchSkills } from 
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UnderwayProjectsSection from "./UnderwayProjectsSection";
 
 const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
     const [activeMenu, setActiveMenu] = useState(null);
@@ -170,6 +171,8 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                     </div>
                 ))}
             </div>
+            <UnderwayProjectsSection companyId={companyId} theme={theme} />
+
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="relative bg-white p-8 rounded-lg shadow-lg max-w-3xl w-full overflow-auto">
