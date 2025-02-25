@@ -207,3 +207,31 @@ export const updateProjectStatusInBackend = async (projectId, status, link = "",
     }
 };
 
+
+export const deleteBid = async (bidId) => {
+    if (!bidId) {
+        console.error("Bid ID is required to delete a bid.");
+        return;
+    }
+
+    const confirmDelete = window.confirm("Are you sure you want to reject this bid?");
+    if (!confirmDelete) return;
+
+    try {
+        const token = localStorage.getItem("token");
+        const response = await API.delete(`/biddings/delete/${bidId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log("Bid rejected successfully:", response.data);
+        alert("Bid has been rejected successfully!");
+
+        return response.data;
+    } catch (error) {
+        console.error("Error rejecting bid:", error.response?.data || error.message);
+        alert("Failed to reject bid. Please try again.");
+        throw error;
+    }
+};

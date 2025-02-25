@@ -126,51 +126,54 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                 <p className="text-gray-600">No projects found.</p>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map((project) => (
-                    <div key={project._id} className={`p-4 rounded shadow relative flex flex-col h-full ${cardClass}`}>
-                        <div className="flex justify-between items-center">
-                            <h4 className="text-xl font-bold">{project.title}</h4>
-                            <div className="relative">
-                                <button onClick={() => handleMenuToggle(project._id)} className="text-gray-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <circle cx="5" cy="12" r="1" />
-                                        <circle cx="12" cy="12" r="1" />
-                                        <circle cx="19" cy="12" r="1" />
-                                    </svg>
-                                </button>
-                                {activeMenu === project._id && (
-                                    <div className={`absolute right-0 mt-2 w-32 border rounded shadow-lg z-50 ${borderColor} ${cardClass}`}>
-                                        <button onClick={() => handleUpdate(project)} className={`block w-full text-left px-4 py-2 ${hoverClass}`}>
-                                            Update
-                                        </button>
-                                        <button onClick={() => handleDelete(project._id)} className={`block w-full text-left px-4 py-2 text-red-700 ${hoverClass}`}>
-                                            Delete
+                {projects
+                    .filter((project) => project.status === "posted") // ✅ Filter projects with status "posted"
+                    .map((project) => (
+                        <div key={project._id} className={`p-4 rounded shadow relative flex flex-col h-full ${cardClass}`}>
+                            <div className="flex justify-between items-center">
+                                <h4 className="text-xl font-bold">{project.title}</h4>
+                                <div className="relative">
+                                    <button onClick={() => handleMenuToggle(project._id)} className="text-gray-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <circle cx="5" cy="12" r="1" />
+                                            <circle cx="12" cy="12" r="1" />
+                                            <circle cx="19" cy="12" r="1" />
+                                        </svg>
+                                    </button>
+                                    {activeMenu === project._id && (
+                                        <div className={`absolute right-0 mt-2 w-32 border rounded shadow-lg z-50 ${borderColor} ${cardClass}`}>
+                                            <button onClick={() => handleUpdate(project)} className={`block w-full text-left px-4 py-2 ${hoverClass}`}>
+                                                Update
+                                            </button>
+                                            <button onClick={() => handleDelete(project._id)} className={`block w-full text-left px-4 py-2 text-red-700 ${hoverClass}`}>
+                                                Delete
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <p className="mb-4 flex-grow">{project.description.substring(0, 100)}...</p>
+                            <div className="mt-auto">
+                                <hr className={`my-4 ${borderColor}`} />
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <button
+                                            onClick={() => openBiddersModal(project)}
+                                            className={`text-lg font-bold ${hoverClass} py-1 px-3 rounded`}
+                                        >
+                                            {project.bidCount} Bidders
                                         </button>
                                     </div>
-                                )}
-                            </div>
-                        </div>
-                        <p className="mb-4 flex-grow">{project.description.substring(0, 100)}...</p>
-                        <div className="mt-auto">
-                            <hr className={`my-4 ${borderColor}`} />
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <button
-                                        onClick={() => openBiddersModal(project)}
-                                        className={`text-lg font-bold ${hoverClass} py-1 px-3 rounded`}
-                                    >
-                                        {project.bidCount} Bidders
-                                    </button>
-                                </div>
-                                <div className="text-right">
-                                    <p>{format(new Date(project.postedDate || Date.now()), "dd/MM/yyyy")}</p>
-                                    <p className="text-sm">Posted Date</p>
+                                    <div className="text-right">
+                                        <p>{format(new Date(project.postedDate || Date.now()), "dd/MM/yyyy")}</p>
+                                        <p className="text-sm">Posted Date</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
             </div>
+
             <UnderwayProjectsSection companyId={companyId} theme={theme} />
 
             {isModalOpen && (

@@ -4,7 +4,7 @@ import { getBidById } from "../../../utils/projectHelpers";
 import { getFreelancerById } from "../../../utils/freelancerHelpers";
 import { fetchSkills } from "../../../utils/projectHelpers";
 import { toast } from "react-toastify";
-import { updateProjectStatus } from "../../../utils/projectHelpers";
+import { updateProjectStatus, deleteBid } from "../../../utils/projectHelpers";
 
 const BiddingSection = ({ bidId, theme, onClose }) => {
 
@@ -42,6 +42,16 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
             alert(" Failed to approve bid. Please try again.");
         }
     };
+
+
+    const handleRejectBid = async (bidId) => {
+        try {
+            await deleteBid(bidId);
+        } catch (error) {
+            console.error("Failed to reject bid:", error);
+        }
+    };
+
 
     // Fetch all skills
     const { data: allSkills, isLoading: skillsLoading, error: skillsError } = useQuery({
@@ -243,14 +253,23 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                     )}
 
                     {/* Approve Bid Button */}
-                    <div className="flex justify-center mt-6">
+                    <div />
+                    {/* Approve & Reject Bid Buttons */}
+                    <div className="flex justify-center mt-6 space-x-4">
                         <button
                             className="bg-green-500 text-white px-6 py-3 text-lg font-bold rounded-lg hover:bg-green-600 transition"
                             onClick={handleApproveBid}
                         >
                             Approve Bid
                         </button>
+                        <button
+                            className="bg-red-500 text-white px-6 py-3 text-lg font-bold rounded-lg hover:bg-red-600 transition"
+                            onClick={() => handleRejectBid(bidId)}
+                        >
+                            Reject Bid
+                        </button>
                     </div>
+
                 </div>
             </div>
 
