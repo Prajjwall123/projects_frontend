@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import avatar from "../assets/avatar.png";
 import { isUserLoggedIn, getUserProfile } from "../core/utils/authHelpers";
 
-const Card = ({ project }) => {
+const Card = ({ project, theme }) => {
     const navigate = useNavigate();
 
     const handleViewDetails = async () => {
@@ -27,8 +27,15 @@ const Card = ({ project }) => {
         }
     };
 
+    // Function to truncate text to approximately 50 words
+    const truncateText = (text, wordLimit) => {
+        if (!text) return "None specified.";
+        const words = text.split(" ");
+        return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + "..." : text;
+    };
+
     return (
-        <div className="card bg-white w-96 shadow-xl p-4 rounded-md border border-gray-200">
+        <div className={`card w-96 shadow-xl p-4 rounded-md border ${theme === "dark" ? "bg-gray-800 text-white border-gray-700" : "bg-white text-gray-900 border-gray-200"}`}>
             <div className="flex items-center mb-4">
                 <img
                     src={project.companyLogo ? `http://localhost:3000/${project.companyLogo}` : avatar}
@@ -36,19 +43,19 @@ const Card = ({ project }) => {
                     className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-gray-800">
+                    <h3 className="text-lg font-semibold">
                         {project.companyName || "Unknown Company"}
                     </h3>
                 </div>
             </div>
 
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{project.title}</h2>
+            <h2 className="text-xl font-bold mb-2">{project.title}</h2>
 
             <div className="flex items-center space-x-4 mb-4">
-                <div className="flex items-center border border-gray-300 rounded-full px-3 py-1 text-gray-600 text-sm">
+                <div className={`flex items-center border rounded-full px-3 py-1 text-sm ${theme === "dark" ? "border-gray-500 text-gray-300" : "border-gray-300 text-gray-600"}`}>
                     {new Date(project.postedDate).toLocaleDateString()}
                 </div>
-                <div className="flex items-center border border-gray-300 rounded-full px-3 py-1 text-gray-600 text-sm">
+                <div className={`flex items-center border rounded-full px-3 py-1 text-sm ${theme === "dark" ? "border-gray-500 text-gray-300" : "border-gray-300 text-gray-600"}`}>
                     {project.duration || "N/A"}
                 </div>
             </div>
@@ -66,28 +73,27 @@ const Card = ({ project }) => {
                     )}
                 </div>
                 <span
-                    className={`px-3 py-1 rounded-full text-sm ${project.status === "posted" ? "bg-green-500 text-white" : "bg-gray-300 text-gray-700"
-                        }`}
+                    className={`px-3 py-1 rounded-full text-sm ${project.status === "posted" ? "bg-green-500 text-white" : "bg-gray-300 text-gray-700"}`}
                 >
                     {project.status}
                 </span>
             </div>
 
-            <p className="text-gray-700 text-sm mb-4">
+            <p className={`text-sm mb-4 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
                 {project.description?.length > 100
                     ? `${project.description.substring(0, 100)}...`
                     : project.description || "No description available."}
             </p>
 
-            <p className="text-gray-600 text-sm italic mb-4">
-                <strong>Requirements:</strong> {project.requirements || "None specified."}
+            <p className={`text-sm italic mb-4 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                <strong>Requirements:</strong> {truncateText(project.requirements, 17)}
             </p>
 
-            <hr className="border-gray-300 mb-4" />
+            <hr className={`border mb-4 ${theme === "dark" ? "border-gray-600" : "border-gray-300"}`} />
 
             <div className="text-center">
                 <button
-                    className="bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800"
+                    className={`py-2 px-4 rounded-md transition duration-300 ${theme === "dark" ? "bg-blue-500 hover:bg-blue-600 text-white" : "bg-black text-white hover:bg-gray-800"}`}
                     onClick={handleViewDetails}
                 >
                     View Details

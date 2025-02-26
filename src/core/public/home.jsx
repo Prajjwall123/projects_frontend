@@ -42,7 +42,7 @@ const Home = ({ theme, toggleTheme }) => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                     {filteredProjects?.length > 0 ? (
-                        filteredProjects.map((project) => <Card key={project.projectId} project={project} />)
+                        filteredProjects.map((project) => <Card key={project.projectId} project={project} theme={theme} />)
                     ) : (
                         <div className="text-center text-lg col-span-full">No projects found.</div>
                     )}
