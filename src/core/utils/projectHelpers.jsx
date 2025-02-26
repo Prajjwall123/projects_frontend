@@ -38,7 +38,7 @@ export const createProject = async (projectData) => {
 export const fetchSkills = async () => {
     try {
         const response = await API.get("/skills");
-        return response.data;
+        return response.data || [];
     } catch (error) {
         console.error("Error fetching skills:", error);
         return [];
@@ -233,5 +233,16 @@ export const deleteBid = async (bidId) => {
         console.error("Error rejecting bid:", error.response?.data || error.message);
         alert("Failed to reject bid. Please try again.");
         throw error;
+    }
+};
+
+export const fetchProjectsByCategory = async (categoryId) => {
+    try {
+        const endpoint = categoryId && categoryId !== "" ? `/projects/category/${categoryId}` : "/projects";
+        const response = await API.get(endpoint);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching projects by category:", error);
+        return [];
     }
 };

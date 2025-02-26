@@ -2,12 +2,17 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSkills } from "../core/utils/projectHelpers";
 
-const SearchBar = ({ className = "" }) => {
+const SearchBar = ({ className = "", setSelectedCategory }) => {
     const { data: skills, isLoading, error } = useQuery({
         queryKey: ["skills"],
         queryFn: fetchSkills,
         retry: false,
     });
+
+    const handleCategoryChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedCategory(selectedValue === "" ? "" : selectedValue);
+    };
 
     return (
         <div className={`flex items-center space-x-4 p-4 bg-white rounded-md shadow ${className}`}>
@@ -34,8 +39,11 @@ const SearchBar = ({ className = "" }) => {
             </div>
 
             <div className="relative">
-                <select className="rounded-md py-2 px-3 text-gray-700 bg-white focus:outline-none">
-                    <option value="">Select Category</option>
+                <select
+                    className="rounded-md py-2 px-3 text-gray-700 bg-white focus:outline-none"
+                    onChange={handleCategoryChange}
+                >
+                    <option value="">All</option>
                     {isLoading ? (
                         <option>Loading...</option>
                     ) : error ? (
