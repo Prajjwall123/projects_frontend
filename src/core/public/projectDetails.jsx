@@ -97,9 +97,12 @@ const ProjectDetails = () => {
                     <div className={`p-8 rounded-lg shadow-md ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-2xl font-bold">{project.title}</h2>
-                            <span className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
-                                {project.bidCount} Bids
-                            </span>
+                            {project && project.status === "posted" && (
+                                <span className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
+                                    {project.bidCount} Bids
+                                </span>
+                            )}
+
                         </div>
 
                         <div
@@ -162,14 +165,17 @@ const ProjectDetails = () => {
                     <p>Loading project details...</p>
                 )}
 
-                <div className="mt-10 text-center">
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-lg"
-                    >
-                        Bid
-                    </button>
-                </div>
+                {project && project.status === "posted" && (
+                    <div className="mt-10 text-center">
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-lg"
+                        >
+                            Bid
+                        </button>
+                    </div>
+                )}
+
             </div>
 
             {showModal && (
