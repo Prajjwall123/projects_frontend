@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSkills } from "../core/utils/projectHelpers";
 
-const SearchBar = ({ className = "", setSelectedCategory }) => {
+const SearchBar = ({ className = "", setSelectedCategory, setSearchQuery }) => {
     const { data: skills, isLoading, error } = useQuery({
         queryKey: ["skills"],
         queryFn: fetchSkills,
@@ -33,8 +33,9 @@ const SearchBar = ({ className = "", setSelectedCategory }) => {
                 </svg>
                 <input
                     type="text"
-                    placeholder="Find Projects..."
+                    placeholder="Search by project title..."
                     className="w-full border-none focus:outline-none text-gray-700"
+                    onChange={(e) => setSearchQuery(e.target.value)}
                 />
             </div>
 
