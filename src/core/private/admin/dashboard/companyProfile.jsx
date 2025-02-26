@@ -51,10 +51,10 @@ const CompanyProfile = ({ companyId, theme }) => {
     const handleSubmitProfileUpdate = async () => {
         const response = await handleUpdateProfile(formData, companyId);
         if (response.success) {
-            alert("Company profile updated successfully!");
+            toast.success("Company profile updated successfully!");
             setIsModalOpen(false);
         } else {
-            alert("Failed to update company profile. Please try again.");
+            toast.error("Failed to update company profile. Please try again.");
         }
     };
 

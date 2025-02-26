@@ -127,7 +127,7 @@ const RegisterSecond = () => {
                 logo: null,
             });
         } catch (error) {
-            alert("Registration failed!");
+            toast("Registration failed!");
         }
 
         setLoading(false);

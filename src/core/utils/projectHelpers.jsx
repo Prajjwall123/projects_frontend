@@ -226,12 +226,12 @@ export const deleteBid = async (bidId) => {
         });
 
         console.log("Bid rejected successfully:", response.data);
-        alert("Bid has been rejected successfully!");
+        toast.success("Bid has been rejected successfully!");
 
         return response.data;
     } catch (error) {
         console.error("Error rejecting bid:", error.response?.data || error.message);
-        alert("Failed to reject bid. Please try again.");
+        toast.error("Failed to reject bid. Please try again.");
         throw error;
     }
 };

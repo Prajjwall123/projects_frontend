@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import avatar from "../assets/avatar.png";
 import { isUserLoggedIn, getUserProfile } from "../core/utils/authHelpers";
+import { toast } from "react-toastify";
 
 const Card = ({ project, theme }) => {
     const navigate = useNavigate();
@@ -9,7 +10,7 @@ const Card = ({ project, theme }) => {
     const handleViewDetails = async () => {
         try {
             if (!isUserLoggedIn()) {
-                alert("Log In to view details");
+                toast.error("Log In to view details");
                 navigate("/login");
                 return;
             }
@@ -17,7 +18,7 @@ const Card = ({ project, theme }) => {
             const userProfile = await getUserProfile();
 
             if (userProfile.role !== "freelancer") {
-                alert("You must be a freelancer to view details");
+                toast.error("You must be a freelancer to view details");
                 return;
             }
 

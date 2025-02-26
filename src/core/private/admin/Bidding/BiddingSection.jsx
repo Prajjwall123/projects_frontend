@@ -39,7 +39,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
             toast.error("Project awarded successfully");
 
         } catch (error) {
-            alert(" Failed to approve bid. Please try again.");
+            toast.error(" Failed to approve bid. Please try again.");
         }
     };
 

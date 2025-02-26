@@ -50,9 +50,7 @@ const CompanyView = () => {
                                             {companyDetails.companyName}
                                             <div
                                                 className={`ml-3 cursor-pointer transition-colors duration-200 ${theme === "dark" ? "text-white hover:text-gray-300" : "text-blue-600 hover:text-blue-800"}`}
-                                                onClick={() => alert(`Chat with Company ID: ${companyDetails._id}`)}
                                             >
-                                                <FaCommentDots className="text-3xl" />
                                             </div>
                                         </h1>
                                         <p className={`flex items-center mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>

@@ -214,7 +214,7 @@ const ProjectDetails = () => {
                                         setAttachment(file);
                                         setFileName(file.name);
                                     } else {
-                                        alert("Only PDF files are allowed.");
+                                        toast.error("Only PDF files are allowed.");
                                     }
                                 }}
                                 onDragOver={(e) => e.preventDefault()}
@@ -233,7 +233,7 @@ const ProjectDetails = () => {
                                             setAttachment(file);
                                             setFileName(file.name);
                                         } else {
-                                            alert("Only PDF files are allowed.");
+                                            toast.error("Only PDF files are allowed.");
                                         }
                                     }}
                                 />
