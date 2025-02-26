@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getFreelancerById } from "../utils/freelancerHelpers";
-import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon, FaBell } from "react-icons/fa";
+import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon, FaBell, FaPlus } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import SearchBar from "../../components/SearchBar";
 import FreelancerProfile from "../../components/FreelancerProfile";
 import { fetchNotifications, markNotificationAsRead } from "../utils/notificationHelpers";
 import FreelancerProjects from "./projects";
-
+import NotificationsSection from "../private/admin/notifications/NotificationsSection";
 
 const FreelancerDashboard = () => {
     const navigate = useNavigate();
@@ -18,7 +18,6 @@ const FreelancerDashboard = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
 
     // Fetch freelancer data using React Query
     const { data: freelancer, isLoading, error } = useQuery({
@@ -55,6 +54,7 @@ const FreelancerDashboard = () => {
         refetch();
     };
 
+    // ✅ Fix: Define and use this function instead of `toggleTheme`
     const handleThemeToggle = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
@@ -84,23 +84,52 @@ const FreelancerDashboard = () => {
                 <button className="absolute top-4 right-4 md:hidden" onClick={() => setIsSidebarOpen(false)}>
                     <FaTimes className="text-2xl" />
                 </button>
+
+                {/* Display Company Logo */}
                 <div className="flex items-center justify-center mb-6">
                     <img src={logo} alt="Logo" className="h-12 w-auto" />
                 </div>
+
+                {/* Sidebar Navigation */}
                 <ul className="space-y-4">
-                    <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "dashboard" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("dashboard")}>
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "dashboard" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("dashboard")}
+                    >
                         <FaHome className="text-xl" />
                         <span>Dashboard</span>
                     </li>
-                    <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("projects")}>
+
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("projects")}
+                    >
                         <FaProjectDiagram className="text-xl" />
-                        <span>My Projects</span>
+                        <span>Your Projects</span>
                     </li>
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
-                        <FaEnvelope className="text-xl" />
-                        <span>Messages</span>
+
+                    {/* Notifications Section */}
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "notifications" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("notifications")}
+                    >
+                        <FaBell className="text-xl" />
+                        <span>Notifications</span>
+                        {unreadCount > 0 && (
+                            <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                {unreadCount}
+                            </span>
+                        )}
                     </li>
-                    <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "profile" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("profile")}>
+
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "profile" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("profile")}
+                    >
                         <FaUser className="text-xl" />
                         <span>My Profile</span>
                     </li>
@@ -114,52 +143,31 @@ const FreelancerDashboard = () => {
                         <FaBars />
                     </button>
                     <h2 className="text-2xl font-bold">Hello {freelancer ? freelancer.freelancerName : "Freelancer"}</h2>
-                    <div className="flex items-center space-x-4">
-                        <div className="relative">
-                            <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="relative flex items-center justify-center p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700">
-                                <FaBell className="w-6 h-6" />
-                                {unreadCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                                        {unreadCount}
-                                    </span>
-                                )}
-                            </button>
 
-                            {isDropdownOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-96 bg-white border border-gray-300 shadow-xl rounded-lg overflow-hidden z-50">
-                                    <div className="p-4">
-                                        <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Notifications</h3>
-                                        {notifications.length === 0 ? (
-                                            <p className="text-gray-500 text-center text-sm py-4">No new notifications</p>
-                                        ) : (
-                                            <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-                                                {notifications.map(notification => (
-                                                    <div
-                                                        key={notification._id}
-                                                        className="flex items-start justify-between p-3 bg-gray-50 hover:bg-gray-100 transition border-b"
-                                                    >
-                                                        <div className="flex flex-col">
-                                                            <p className="text-gray-800 text-sm font-medium">
-                                                                {notification.message}
-                                                            </p>
-                                                            <span className="text-xs text-gray-500 mt-1">
-                                                                {new Date(notification.createdAt).toLocaleString()}
-                                                            </span>
-                                                        </div>
-                                                        <button
-                                                            className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition"
-                                                            onClick={() => handleMarkAsRead(notification._id)}
-                                                        >
-                                                            Mark as Read
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                    {/* Right Section: Theme Toggle + Sign Out Button */}
+                    <div className="flex items-center space-x-4">
+                        {/* Theme Toggle Button */}
+                        <button
+                            className={`flex items-center justify-center p-3 rounded-lg transition ${theme === "dark"
+                                ? "bg-gray-700 text-white hover:bg-gray-600"
+                                : "bg-gray-200 text-black hover:bg-gray-300"
+                                }`}
+                            onClick={handleThemeToggle}
+                        >
+                            {theme === "dark" ? (
+                                <>
+                                    <FaSun className="text-yellow-400 mr-2" />
+                                    <span>Light Mode</span>
+                                </>
+                            ) : (
+                                <>
+                                    <FaMoon className="text-blue-400 mr-2" />
+                                    <span>Dark Mode</span>
+                                </>
                             )}
-                        </div>
+                        </button>
+
+                        {/* Sign Out Button */}
                         <button onClick={() => navigate("/login")} className="bg-black text-white px-4 py-2 rounded">
                             Sign Out
                         </button>
@@ -175,20 +183,16 @@ const FreelancerDashboard = () => {
                 {activeSection === "dashboard" && (
                     <div className="text-center">
                         <h2 className="text-2xl font-bold mb-4">Welcome to your Freelancer Dashboard</h2>
-                        {/* Add custom content like stats, notifications, etc. */}
                     </div>
                 )}
-                {activeSection === "projects" && (
-                    <FreelancerProjects freelancerId={freelancerId} />)}
-                {activeSection === "biddingSection" && selectedBidId && (
-                    <>
-                        hello</>
-                )}
-                {activeSection === "profile" && (
-                    <FreelancerProfile freelancerId={freelancerId} />
-                )}
+                {activeSection === "projects" && <FreelancerProjects freelancerId={freelancerId} />}
+                {activeSection === "notifications" && <NotificationsSection notifications={notifications} onMarkAsRead={handleMarkAsRead} />}
+                {activeSection === "profile" && <FreelancerProfile freelancerId={freelancerId} />}
             </div>
         </div>
+
+
+
     );
 };
 

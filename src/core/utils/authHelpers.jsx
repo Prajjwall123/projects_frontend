@@ -98,7 +98,7 @@ const getUserProfile = async () => {
             },
         });
 
-        // console.log(response.data);
+        console.log(response.data);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : { message: "Error fetching user profile" };

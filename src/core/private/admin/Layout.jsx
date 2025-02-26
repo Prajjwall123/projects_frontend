@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanyById } from "../../utils/companyHelpers";
+import { fetchNotifications, markNotificationAsRead } from "../../utils/notificationHelpers";
 import { FaHome, FaProjectDiagram, FaBell, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
 
 import PostProjectForm from "./Projects/PostProjectForm";
@@ -9,8 +10,9 @@ import ProjectsSection from "./Projects/ProjectsSection";
 import BiddingSection from "./Bidding/BiddingSection";
 import CompanyProfile from "./dashboard/companyProfile";
 import Dashboard from "./dashboard/dashboard";
+import NotificationsSection from "./notifications/NotificationsSection";
 import logo from "../../../assets/logo.png";
-
+import Navbar from "../../../components/navbar";
 
 const Layout = () => {
     const navigate = useNavigate();
@@ -20,6 +22,24 @@ const Layout = () => {
     const [activeSection, setActiveSection] = useState("dashboard");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
+    const userId = localStorage.getItem("userId");
+    const userType = localStorage.getItem("role");
+
+    // Fetch Notifications
+    const { data: notifications = [], refetch } = useQuery({
+        queryKey: ["notifications", userId, userType],
+        queryFn: () => fetchNotifications(userId, userType),
+        enabled: !!userId && !!userType,
+    });
+
+    const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
+
+    const handleMarkAsRead = async (notificationId) => {
+        await markNotificationAsRead(notificationId);
+        refetch();
+    };
+
+    // Fetch Company Details
     const { data: company, isLoading, error } = useQuery({
         queryKey: ["company", companyId],
         queryFn: () => getCompanyById(companyId),
@@ -27,7 +47,8 @@ const Layout = () => {
         retry: false,
     });
 
-    React.useEffect(() => {
+    // Apply Theme Changes
+    useEffect(() => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
     }, [theme]);
@@ -67,31 +88,64 @@ const Layout = () => {
                 <button className="absolute top-4 right-4 md:hidden" onClick={() => setIsSidebarOpen(false)}>
                     <FaTimes className="text-2xl" />
                 </button>
+
+                {/* Display Company Logo */}
                 {company && (
                     <div className="flex items-center justify-center mb-6">
                         <img src={logo} alt="Company Logo" className="h-12 w-auto" />
                     </div>
                 )}
+
+                {/* Sidebar Navigation */}
                 <ul className="space-y-4">
-                    <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "dashboard" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("dashboard")}>
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "dashboard" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("dashboard")}
+                    >
                         <FaHome className="text-xl" />
                         <span>Dashboard</span>
                     </li>
-                    <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("projects")}>
+
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("projects")}
+                    >
                         <FaProjectDiagram className="text-xl" />
                         <span>Your Projects</span>
                     </li>
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
+
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "notifications" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("notifications")}
+                    >
                         <FaBell className="text-xl" />
                         <span>Notifications</span>
+                        {unreadCount > 0 && (
+                            <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                {unreadCount}
+                            </span>
+                        )}
                     </li>
-                    <li className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "companyProfile" ? "bg-gray-700" : ""}`} onClick={() => setActiveSection("companyProfile")}>
+
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "companyProfile" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("companyProfile")}
+                    >
                         <FaUser className="text-xl" />
                         <span>Company Profile</span>
                     </li>
                 </ul>
+
+                {/* Post New Project Button */}
                 <div className="absolute bottom-6 left-6 right-6">
-                    <button className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition" onClick={() => setActiveSection("postProject")}>
+                    <button
+                        className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition"
+                        onClick={() => setActiveSection("postProject")}
+                    >
                         <FaPlus className="inline-block mr-2" />
                         Post New Project
                     </button>
@@ -127,6 +181,8 @@ const Layout = () => {
                         <Dashboard company={company} theme={theme} />
                     </>
                 )}
+                {activeSection === "notifications" && <NotificationsSection notifications={notifications} onMarkAsRead={handleMarkAsRead} />}
+
                 {activeSection === "postProject" && (
                     <div className={`min-h-screen p-6 rounded shadow ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
                         <h2 className="text-2xl font-bold mb-4">Post a New Project</h2>
