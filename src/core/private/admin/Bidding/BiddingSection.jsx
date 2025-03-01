@@ -8,18 +8,15 @@ import { updateProjectStatus, deleteBid } from "../../../utils/projectHelpers";
 
 const BiddingSection = ({ bidId, theme, onClose }) => {
 
-    // Fetch bid details
     const { data: bid, isLoading, error } = useQuery({
         queryKey: ["bidDetails", bidId],
         queryFn: () => getBidById(bidId),
         retry: false,
     });
 
-    // Extract freelancerId from bid data
     const freelancerId = bid?.data?.freelancer?._id;
     const projectId = bid?.data?.project?._id;
 
-    // Fetch freelancer details
     const { data: freelancer, isLoading: freelancerLoading, error: freelancerError } = useQuery({
         queryKey: ["freelancerDetails", freelancerId],
         queryFn: () => getFreelancerById(freelancerId),
@@ -53,7 +50,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
     };
 
 
-    // Fetch all skills
     const { data: allSkills, isLoading: skillsLoading, error: skillsError } = useQuery({
         queryKey: ["skills"],
         queryFn: fetchSkills,
@@ -68,7 +64,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
         return <div className="text-center p-6 text-red-500">Failed to load data. Please try again.</div>;
     }
 
-    // Extract bid and freelancer data
     const { project, amount, message, fileName, createdAt } = bid?.data || {};
     const freelancerSkills = allSkills && freelancer?.skills
         ? allSkills.filter(skill => freelancer.skills.includes(skill._id))
@@ -76,7 +71,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
 
     return (
         <div className={`p-8 rounded-lg shadow-xl space-y-8 transition-all ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"}`}>
-            {/* Header */}
             <div className="flex justify-between items-center border-b pb-4 border-gray-300 dark:border-gray-700">
                 <h3 className="text-3xl font-bold">Bid Details</h3>
                 <button
@@ -87,12 +81,10 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                 </button>
             </div>
 
-            {/* Freelancer Profile Section */}
             <div className={`min-h-screen py-8 transition-all duration-300 ${theme === "dark" ? "bg-gray-900 text-gray-200" : "bg-gray-100 text-gray-900"}`}>
                 <div className="container mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 px-6">
 
-                        {/* Left Sidebar (Profile & Skills) - Made Wider */}
                         <div className="col-span-1 lg:col-span-2 space-y-6 sticky top-8 h-fit">
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-lg font-bold uppercase mb-4">Profile</h2>
@@ -113,7 +105,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                                         <strong>Experience:</strong> {freelancer.experienceYears ? `${freelancer.experienceYears} years` : "Not specified"}
                                     </p>
 
-                                    {/* View Portfolio Button */}
                                     {freelancer.portfolio && (
                                         <a
                                             href={freelancer.portfolio.startsWith("http") ? freelancer.portfolio : `http://${freelancer.portfolio}`}
@@ -127,7 +118,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                                 </div>
                             </div>
 
-                            {/* Skills Section */}
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-lg font-bold uppercase mb-4">Skills</h2>
                                 <ul className="list-disc list-inside">
@@ -142,9 +132,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                             </div>
                         </div>
 
-                        {/* Right Content (About Me, Experience & Certifications) */}
                         <div className="col-span-1 lg:col-span-3 pr-2">
-                            {/* About Me Section */}
                             <div className={`shadow-lg rounded-lg p-6 mb-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-2xl font-bold mb-4">About Me</h2>
                                 <p className="text-lg mb-6">{freelancer.aboutMe || "Not specified"}</p>
@@ -169,7 +157,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                                 </div>
                             </div>
 
-                            {/* Experience Section */}
                             <div className={`shadow-lg rounded-lg p-6 mb-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-gray-50 text-gray-900"}`}>
                                 <h2 className="text-2xl font-bold mb-4">Experience</h2>
                                 {freelancer.experience?.length > 0 ? (
@@ -191,7 +178,6 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                             </div>
 
 
-                            {/* Certifications Section */}
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-2xl font-bold mb-4">Certifications</h2>
                                 {freelancer.certifications?.length > 0 ? (
@@ -211,31 +197,26 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                 </div>
             </div>
 
-            {/* Bid Information Section */}
             <div className={`rounded-lg p-6 shadow-xl border ${theme === "dark" ? "bg-gray-900 border-gray-700 text-white" : "bg-white border-gray-300 text-gray-900"}`}>
                 <h4 className="text-2xl font-bold mb-5 text-center"> Bid Information</h4>
 
                 <div className="space-y-4">
-                    {/* Bid Amount */}
                     <div className={`flex items-center justify-between p-4 rounded-lg shadow-md border ${theme === "dark" ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-black"}`}>
                         <span className="font-semibold">Bid Amount:</span>
                         <span className="text-xl font-bold text-blackdark:text-white">NRs {amount}</span>
                     </div>
 
-                    {/* Bid Date */}
                     <div className={`flex items-center justify-between p-4 rounded-lg shadow-md border ${theme === "dark" ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-black"}`}>
                         <span className="font-semibold">Bid Date:</span>
                         <span className="text-md">{new Date(createdAt).toLocaleString()}</span>
                     </div>
 
-                    {/* Message Section */}
                     <div className={`p-5 rounded-lg shadow-md border ${theme === "dark" ? "bg-gray-800 border-gray-700 text-white" : "bg-white border-gray-300 text-black"}`}>
                         <h4 className="text-lg font-semibold mb-2 flex items-center">
                         </h4>
                         <p className="text-md italic">{message || "No additional message provided."}</p>
                     </div>
 
-                    {/* Attachment Section (Now inside the Bid Section) */}
                     {fileName && (
                         <div className={`p-5 rounded-lg shadow-md border ${theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-300"}`}>
                             <h4 className="text-lg font-semibold mb-3 flex items-center">
@@ -252,9 +233,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                         </div>
                     )}
 
-                    {/* Approve Bid Button */}
                     <div />
-                    {/* Approve & Reject Bid Buttons */}
                     <div className="flex justify-center mt-6 space-x-4">
                         <button
                             className="bg-green-500 text-white px-6 py-3 text-lg font-bold rounded-lg hover:bg-green-600 transition"

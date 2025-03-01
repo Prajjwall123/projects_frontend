@@ -38,7 +38,6 @@ const Bank = ({ freelancerId }) => {
         fetchWalletBalance();
     }, [freelancerId]);
 
-    // Function to handle wallet loading
     const handleLoadWallet = async () => {
         if (!amount || isNaN(amount) || parseInt(amount, 10) <= 0) {
             alert("Please enter a valid amount.");
@@ -60,16 +59,13 @@ const Bank = ({ freelancerId }) => {
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-lg rounded-xl p-8 text-center border border-gray-200 transform transition-all duration-300 hover:shadow-2xl hover:scale-105">
-            {/* Khalti Logo with Subtle Animation */}
             <div className="flex justify-center items-center mb-4">
                 <img src={khaltiLogo} alt="Khalti Logo" className="w-16 h-auto " />
             </div>
 
-            {/* Title */}
             <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Wallet Balance</h2>
             <p className="text-gray-500 text-sm mb-4"> Manage your Khalti balance</p>
 
-            {/* Loading/Error/Balance Display */}
             {loading ? (
                 <p className="text-gray-600 text-lg font-medium animate-pulse">Loading...</p>
             ) : error ? (
@@ -80,10 +76,9 @@ const Bank = ({ freelancerId }) => {
                         Balance: <span className="text-green-600">NPR {balance}</span>
                     </p>
 
-                    {/* Load Wallet Button */}
                     <button
                         className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md transform hover:scale-105"
-                        onClick={() => setIsModalOpen(true)} // Open the modal
+                        onClick={() => setIsModalOpen(true)}
                     >
                         Load Wallet
                     </button>

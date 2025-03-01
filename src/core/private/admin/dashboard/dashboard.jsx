@@ -1,11 +1,7 @@
-import StatsSection from "../../../../components/StatsSection"
-import ChartsSection from "../../../../components/ChartsSection"
-
-const Dashboard = ({ company, theme }) => {
+const Dashboard = ({ company }) => {
     return (
         <>
-            <StatsSection company={company} theme={theme} />
-            <ChartsSection />
+            Hello {company};
         </>
     );
 };

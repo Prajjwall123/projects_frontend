@@ -37,20 +37,17 @@ const uploadImage = async (imageFile) => {
 };
 
 
-// Handle Updating the Company Profile
 export const handleUpdateProfile = async (formData, companyId) => {
     try {
         let logoUrl = formData.logo;
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Authorization token not found");
 
-        // Check if the logo is a newly selected image and upload it
         if (formData.logo.startsWith("blob:")) {
             const imageFile = document.getElementById("logoInput").files[0];
-            logoUrl = await uploadImage(imageFile); // Await the image upload
+            logoUrl = await uploadImage(imageFile);
         }
 
-        // Prepare the updated profile data
         const updatedProfile = {
             companyName: formData.companyName,
             companyBio: formData.companyBio,
@@ -63,7 +60,6 @@ export const handleUpdateProfile = async (formData, companyId) => {
             logo: logoUrl,
         };
 
-        // Update the company profile
         await API.put(`companies/${companyId}`, updatedProfile, {
             headers: {
                 Authorization: `Bearer ${token}`,

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getProjectsByCompany, updateProject } from "../../../utils/projectHelpers";
-import { transferMoney } from "../../../utils/paymentHelpers"; // Import transfer function
+import { transferMoney } from "../../../utils/paymentHelpers";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -97,8 +97,10 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
     );
 
     return (
-        <div className={`p-6 rounded-lg shadow-lg ${theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black"}`}>
+        <div className={`p-6 rounded-lg shadow-lg  transition-all duration-300 
+            ${theme === "dark" ? "bg-gray-900 border-gray-800 text-white" : "bg-gray-100 border-gray-300 text-black"}`}>
             <h2 className="text-2xl font-bold mb-6">Underway Projects</h2>
+
 
             {underwayProjects.length === 0 && (
                 <p className="text-gray-600">No underway projects at the moment.</p>
@@ -106,41 +108,48 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {underwayProjects.map((project) => (
-                    <div key={project._id} className={`p-5 rounded-lg shadow-md border ${theme === "dark" ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"} flex flex-col`}>
-                        {/* Title & View Details */}
-                        <div className="flex justify-between items-center">
-                            <h4 className="text-xl font-bold">{project.title}</h4>
+                    <div
+                        key={project._id}
+                        className={`p-6 rounded-xl shadow-lg border transition-transform duration-300 hover:scale-105 ${theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+                            } flex flex-col`}
+                    >
+                        <div className="flex justify-between items-center mb-3">
+                            <h4 className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
+                                {project.title}
+                            </h4>
                             <button
                                 onClick={() => navigate(`/project-details/${project._id}`)}
-                                className={`px-3 py-1 rounded-md transition ${theme === "dark" ? "bg-gray-600 text-white hover:bg-gray-500" : "bg-gray-700 text-white hover:bg-gray-900"}`}
+                                className="px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-gray-700 transition-all"
                             >
                                 View Details
                             </button>
                         </div>
 
-                        {/* Description */}
-                        <p className="text-sm mb-3">{project.description.substring(0, 100)}...</p>
+                        <p className={`text-sm mb-4 ${theme === "dark" ? "text-gray-300" : "text-black"}`}>
+                            {project.description.substring(0, 100)}...
+                        </p>
 
-                        {/* Separator Line */}
-                        <hr className={`my-3 ${theme === "dark" ? "border-gray-500" : "border-gray-300"}`} />
 
-                        {/* Actions */}
-                        <div className="flex justify-between items-center">
+                        <hr className="border-gray-300 dark:border-gray-600 my-4" />
+
+                        <div className="flex justify-between">
                             <button
                                 onClick={() => handleOpenFeedbackModal(project)}
-                                className="px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-700"
+                                className="flex-1 px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold text-sm hover:bg-blue-600 transition-all"
                             >
-                                View Feedback Request
+                                View Feedback
                             </button>
+
                             <button
                                 onClick={() => handleOpenResponseModal(project)}
-                                className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-700"
+                                className="flex-1 mx-2 px-4 py-2 rounded-lg bg-green-500 text-white font-semibold text-sm hover:bg-green-600 transition-all"
                             >
                                 Respond
                             </button>
+
                             <button
                                 onClick={() => handleOpenPaymentModal(project)}
-                                className="px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-700"
+                                className="flex-1 px-4 py-2 rounded-lg bg-red-500 text-white font-semibold text-sm hover:bg-red-600 transition-all"
                             >
                                 Pay Freelancer
                             </button>
@@ -149,7 +158,7 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                 ))}
             </div>
 
-            {/* Payment Modal */}
+
             {isPaymentModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="p-6 rounded-lg shadow-lg w-96 bg-white text-black">
@@ -181,7 +190,6 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
-            {/* Modal for Responding to Feedback */}
             {isResponseModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className={`p-6 rounded-lg shadow-lg w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
@@ -211,7 +219,6 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
-            {/* Modal for Viewing Freelancer Feedback */}
             {isFeedbackModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className={`p-6 rounded-lg shadow-lg w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>

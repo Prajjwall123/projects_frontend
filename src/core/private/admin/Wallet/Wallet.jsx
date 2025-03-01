@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getWalletBalance, loadWallet } from "../../../utils/paymentHelpers";
+import khaltiLogo from '../../../../assets/khalti-icon.png';
 
 const Wallet = ({ companyId, freelancerId }) => {
     const [balance, setBalance] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [amount, setAmount] = useState("");
 
     useEffect(() => {
         const fetchWalletBalance = async () => {
@@ -34,47 +37,84 @@ const Wallet = ({ companyId, freelancerId }) => {
         fetchWalletBalance();
     }, [companyId, freelancerId]);
 
-    // Function to handle wallet loading
     const handleLoadWallet = async () => {
-        const amount = prompt("Enter the amount to load into your wallet:");
+        const numericAmount = parseFloat(amount.trim());
 
-        if (!amount || isNaN(amount) || amount <= 0) {
+        if (!numericAmount || numericAmount <= 0) {
             alert("Please enter a valid amount.");
             return;
         }
 
         try {
-            const data = await loadWallet(parseInt(amount, 10));
+            const data = await loadWallet(numericAmount);
             if (data.payment_url) {
                 window.location.href = data.payment_url;
             }
         } catch (error) {
             alert(error.message || "Failed to initiate wallet load.");
         }
+
+        setIsModalOpen(false);
+        setAmount("");
     };
 
     return (
-        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 text-center">
-            <h2 className="text-2xl font-bold mb-4">Wallet Balance</h2>
+        <div className="max-w-md mx-auto bg-gradient-to-br from-white to-gray-100 shadow-xl rounded-2xl p-8 text-center border border-gray-200 transition-all duration-300 hover:shadow-2xl">
+            <div className="flex justify-center items-center mb-4">
+                <img src={khaltiLogo} alt="Khalti Logo" className="w-16 h-auto " />
+            </div>
+
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Wallet Balance</h2>
+            <p className="text-gray-500 text-sm mb-4">Manage your Khalti balance easily</p>
 
             {loading ? (
-                <p className="text-gray-600">Loading...</p>
+                <p className="text-gray-600 text-lg font-medium animate-pulse">Loading...</p>
             ) : error ? (
-                <p className="text-red-500">{error}</p>
+                <p className="text-red-500 text-lg font-medium">{error}</p>
             ) : (
                 <>
-                    <p className="text-lg font-semibold text-gray-800 mb-4">
+                    <p className="text-2xl font-bold text-gray-900 mb-6">
                         Balance: <span className="text-green-600">NPR {balance}</span>
                     </p>
 
-                    {/* Load Wallet Button */}
                     <button
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                        onClick={handleLoadWallet}
+                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md transform hover:scale-105"
+                        onClick={() => setIsModalOpen(true)}
                     >
                         Load Wallet
                     </button>
                 </>
+            )}
+
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">Load Wallet</h3>
+
+                        <input
+                            type="number"
+                            placeholder="Enter amount (NPR)"
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                        />
+
+                        <div className="flex justify-between mt-4">
+                            <button
+                                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                                onClick={() => setIsModalOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleLoadWallet}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

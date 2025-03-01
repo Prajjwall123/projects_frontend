@@ -11,7 +11,6 @@ function FreelancerProfile() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [freelancer, setFreelancer] = useState(null);
 
-    // Fetch freelancer data
     const { data, isLoading: freelancerLoading, error: freelancerError } = useQuery({
         queryKey: ["freelancerProfile", freelancerId],
         queryFn: () => getFreelancerById(freelancerId),
@@ -19,14 +18,12 @@ function FreelancerProfile() {
         retry: false,
     });
 
-    // Fetch all skills
     const { data: allSkills, isLoading: skillsLoading, error: skillsError } = useQuery({
         queryKey: ["skills"],
         queryFn: fetchSkills,
         retry: false,
     });
 
-    // Update the freelancer state when data is available
     useEffect(() => {
         if (data) {
             setFreelancer(data);
@@ -34,7 +31,6 @@ function FreelancerProfile() {
         }
     }, [data]);
 
-    // Extract freelancer skills based on the new format
     const freelancerSkills = freelancer?.skills?.map(skill => skill.name) || [];
 
     if (freelancerLoading || skillsLoading) {
@@ -53,7 +49,6 @@ function FreelancerProfile() {
                 <div className="container mx-auto">
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 px-6">
 
-                        {/* Left Sidebar (Profile & Skills) - Made Wider */}
                         <div className="col-span-1 lg:col-span-2 space-y-6 sticky top-8 h-fit">
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-lg font-bold uppercase mb-4">Profile</h2>
@@ -74,7 +69,6 @@ function FreelancerProfile() {
                                         <strong>Experience:</strong> {freelancer.experienceYears ? `${freelancer.experienceYears} years` : "Not specified"}
                                     </p>
 
-                                    {/* View Portfolio Button */}
                                     {freelancer.portfolio && (
                                         <a
                                             href={freelancer.portfolio.startsWith("http") ? freelancer.portfolio : `http://${freelancer.portfolio}`}
@@ -88,7 +82,6 @@ function FreelancerProfile() {
                                 </div>
                             </div>
 
-                            {/* Skills Section */}
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-lg font-bold uppercase mb-4">Skills</h2>
                                 {freelancerSkills.length > 0 ? (
@@ -104,9 +97,7 @@ function FreelancerProfile() {
 
                         </div>
 
-                        {/* Right Content (About Me, Experience & Certifications) */}
                         <div className="col-span-1 lg:col-span-3 pr-2">
-                            {/* About Me Section */}
                             <div className={`shadow-lg rounded-lg p-6 mb-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-2xl font-bold mb-4">About Me</h2>
                                 <p className="text-lg mb-6">{freelancer.aboutMe || "Not specified"}</p>
@@ -131,7 +122,6 @@ function FreelancerProfile() {
                                 </div>
                             </div>
 
-                            {/* Experience Section */}
                             <div className={`shadow-lg rounded-lg p-6 mb-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-gray-50 text-gray-900"}`}>
                                 <h2 className="text-2xl font-bold mb-4">Experience</h2>
                                 {freelancer.experience?.length > 0 ? (
@@ -153,7 +143,6 @@ function FreelancerProfile() {
                             </div>
 
 
-                            {/* Certifications Section */}
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-2xl font-bold mb-4">Certifications</h2>
                                 {freelancer.certifications?.length > 0 ? (
@@ -169,7 +158,6 @@ function FreelancerProfile() {
                                 )}
                             </div>
 
-                            {/* Update Profile Button (Now Positioned at the Bottom) */}
                             <div className="flex justify-center mt-10">
                                 <button
                                     className="bg-blue-500 text-white px-6 py-3 text-lg rounded-lg hover:bg-blue-600 transition"
@@ -179,7 +167,6 @@ function FreelancerProfile() {
                                 </button>
                             </div>
 
-                            {/* Render the modal only when isModalOpen is true */}
                             {isModalOpen && (
                                 <UpdateProfileModal
                                     freelancer={freelancer}

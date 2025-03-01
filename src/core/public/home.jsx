@@ -9,14 +9,13 @@ import { fetchProjectsByCategory } from "../utils/projectHelpers";
 
 const Home = ({ theme, toggleTheme }) => {
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [searchQuery, setSearchQuery] = useState(""); // State for search query
+    const [searchQuery, setSearchQuery] = useState(""); 
 
     const { data: projects, isLoading, error } = useQuery({
         queryKey: ["projects", selectedCategory],
         queryFn: () => fetchProjectsByCategory(selectedCategory),
     });
 
-    // Filter projects based on the search query (title match)
     const filteredProjects = projects?.filter((project) =>
         project.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -31,7 +30,7 @@ const Home = ({ theme, toggleTheme }) => {
                 <SearchBar
                     className="w-3/4 mx-auto"
                     setSelectedCategory={setSelectedCategory}
-                    setSearchQuery={setSearchQuery} // Pass search query state
+                    setSearchQuery={setSearchQuery} 
                 />
             </div>
 

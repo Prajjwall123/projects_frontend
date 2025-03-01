@@ -61,9 +61,7 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
             <div className="bg-white p-8 rounded-lg shadow-xl w-[600px] max-h-[85vh] overflow-y-auto">
                 <h2 className="text-2xl font-bold text-black mb-6 text-center">Update Profile</h2>
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* Profile Image Upload */}
                     <div className="flex flex-col items-center space-y-3">
-                        {/* Circular Avatar */}
                         <label htmlFor="profileImageUpload" className="cursor-pointer group">
                             <div className="relative w-32 h-32 rounded-full border-4 border-blue-500 overflow-hidden shadow-lg transition-transform transform group-hover:scale-105">
                                 <img
@@ -71,14 +69,12 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
-                                {/* Overlay on Hover */}
                                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                     <p className="text-white text-sm">Change Photo</p>
                                 </div>
                             </div>
                         </label>
 
-                        {/* Hidden File Input */}
                         <input
                             type="file"
                             id="profileImageUpload"
@@ -97,11 +93,9 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             }}
                         />
 
-                        {/* Instruction Text */}
                         <p className="text-gray-600 text-sm">Click to update your profile picture</p>
                     </div>
 
-                    {/* Name */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Full Name</label>
                         <input type="text" name="freelancerName" value={formData.freelancerName}
@@ -109,7 +103,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
                     </div>
 
-                    {/* Profession */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Profession</label>
                         <input type="text" name="profession" value={formData.profession}
@@ -117,7 +110,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
                     </div>
 
-                    {/* Location */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Location</label>
                         <input type="text" name="location" value={formData.location}
@@ -125,7 +117,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
                     </div>
 
-                    {/* About Me */}
                     <div>
                         <label className="block text-black font-semibold mb-1">About Me</label>
                         <textarea name="aboutMe" value={formData.aboutMe}
@@ -133,7 +124,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"></textarea>
                     </div>
 
-                    {/* Availability */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Availability</label>
                         <input type="text" name="availability" value={formData.availability}
@@ -141,7 +131,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
                     </div>
 
-                    {/* Work At */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Current Workplace</label>
                         <input type="text" name="workAt" value={formData.workAt}
@@ -149,7 +138,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
                     </div>
 
-                    {/* Experience Years */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Years of Experience</label>
                         <input type="number" name="experienceYears" value={formData.experienceYears}
@@ -158,7 +146,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             min="0" max="100" />
                     </div>
 
-                    {/* Languages */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Languages</label>
                         <input type="text" name="languages" value={formData.languages}
@@ -167,7 +154,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
                     </div>
 
-                    {/* Portfolio */}
                     <div>
                         <label className="block text-black font-semibold mb-1">Portfolio URL</label>
                         <input type="url" name="portfolio" value={formData.portfolio}
@@ -176,7 +162,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                     </div>
 
 
-                    {/* Experience Section */}
                     <div>
                         <h3 className="text-lg font-bold text-black mb-2">Experience</h3>
                         {formData.experience.map((exp, index) => (
@@ -223,7 +208,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                                     </div>
                                 </div>
 
-                                {/* Job Description */}
                                 <label className="block text-black font-semibold mt-2">Job Description</label>
                                 <textarea name={`expDescription${index}`} value={exp.description || ""}
                                     onChange={(e) => {
@@ -233,7 +217,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                                     }} placeholder="Describe your role and responsibilities"
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400"></textarea>
 
-                                {/* Remove Experience Button */}
                                 {formData.experience.length > 1 && (
                                     <button
                                         className="bg-red-500 text-white px-3 py-1 mt-3 rounded-md"
@@ -247,7 +230,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             </div>
                         ))}
 
-                        {/* Add Experience Button */}
                         <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-3"
                             onClick={() => setFormData({
                                 ...formData,
@@ -258,7 +240,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                     </div>
 
 
-                    {/* Certifications Section */}
                     <div>
                         <h3 className="text-lg font-bold text-black mb-2">Certifications</h3>
 
@@ -282,7 +263,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                                     }} placeholder="Enter issuing organization"
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400" />
 
-                                {/* Remove Certification Button */}
                                 {formData.certifications.length > 1 && (
                                     <button
                                         className="bg-red-500 text-white px-3 py-1 mt-3 rounded-md"
@@ -296,7 +276,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                             </div>
                         ))}
 
-                        {/* Add Certification Button */}
                         <button className="bg-blue-500 text-white px-4 py-2 rounded-md mt-3"
                             onClick={() => setFormData({
                                 ...formData,
@@ -307,7 +286,6 @@ function UpdateProfileModal({ freelancer, onClose, onUpdate }) {
                     </div>
 
 
-                    {/* Action Buttons */}
                     <div className="flex justify-end space-x-3">
                         <button type="button" className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded-md" onClick={onClose}>
                             Cancel

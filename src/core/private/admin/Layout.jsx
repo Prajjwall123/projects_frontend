@@ -20,13 +20,12 @@ const Layout = () => {
     const { companyId } = useParams();
     const [selectedBidId, setSelectedBidId] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState("dashboard");
+    const [activeSection, setActiveSection] = useState("projects");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
     const userId = localStorage.getItem("userId");
     const userType = localStorage.getItem("role");
 
-    // Fetch Notifications
     const { data: notifications = [], refetch } = useQuery({
         queryKey: ["notifications", userId, userType],
         queryFn: () => fetchNotifications(userId, userType),
@@ -40,7 +39,6 @@ const Layout = () => {
         refetch();
     };
 
-    // Fetch Company Details
     const { data: company, isLoading, error } = useQuery({
         queryKey: ["company", companyId],
         queryFn: () => getCompanyById(companyId),
@@ -48,7 +46,6 @@ const Layout = () => {
         retry: false,
     });
 
-    // Apply Theme Changes
     useEffect(() => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
@@ -81,7 +78,6 @@ const Layout = () => {
 
     return (
         <div className={`flex h-screen ${theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black"}`}>
-            {/* Sidebar */}
             <div
                 className={`fixed md:relative bg-black text-white w-3/4 md:w-1/5 p-6 transition-transform transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     } md:translate-x-0 h-screen overflow-y-auto shadow-lg z-50`}
@@ -90,32 +86,30 @@ const Layout = () => {
                     <FaTimes className="text-2xl" />
                 </button>
 
-                {/* Display Company Logo */}
                 {company && (
                     <div className="flex items-center justify-center mb-6">
                         <img src={logo} alt="Company Logo" className="h-12 w-auto" />
                     </div>
                 )}
 
-                {/* Sidebar Navigation */}
                 <ul className="space-y-4">
                     <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "dashboard" ? "bg-gray-700" : ""
                             }`}
-                        onClick={() => setActiveSection("dashboard")}
+                        onClick={() => setActiveSection("projects")}
                     >
                         <FaHome className="text-xl" />
                         <span>Dashboard</span>
                     </li>
 
-                    <li
+                    {/* <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
                             }`}
                         onClick={() => setActiveSection("projects")}
                     >
                         <FaProjectDiagram className="text-xl" />
                         <span>Your Projects</span>
-                    </li>
+                    </li> */}
 
                     <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "notifications" ? "bg-gray-700" : ""
@@ -150,7 +144,6 @@ const Layout = () => {
                     </li>
                 </ul>
 
-                {/* Post New Project Button */}
                 <div className="absolute bottom-6 left-6 right-6">
                     <button
                         className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition"
@@ -162,7 +155,6 @@ const Layout = () => {
                 </div>
             </div>
 
-            {/* Main Content */}
             <div className="flex-1 h-screen overflow-y-auto p-6">
                 <div className="flex justify-between items-center mb-6">
                     <button className="md:hidden text-2xl" onClick={() => setIsSidebarOpen(true)}>
@@ -179,13 +171,11 @@ const Layout = () => {
                     </div>
                 </div>
 
-                {/* Search Bar */}
                 <div className="flex items-center bg-white p-3 rounded shadow-md mb-6">
                     <FaSearch className="text-gray-500 mr-2" />
                     <input type="text" placeholder="Find Freelancers..." className="w-full outline-none" />
                 </div>
 
-                {/* Dynamic Content */}
                 {activeSection === "dashboard" && (
                     <>
                         <Dashboard company={company} theme={theme} />

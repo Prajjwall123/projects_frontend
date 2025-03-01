@@ -72,7 +72,6 @@ const FreelancerDashboard = () => {
 
     return (
         <div className={`flex h-screen ${theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-black"}`}>
-            {/* Sidebar */}
             <div
                 className={`fixed md:relative bg-black text-white w-3/4 md:w-1/5 p-6 transition-transform transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     } md:translate-x-0 h-screen overflow-y-auto shadow-lg z-50`}
@@ -81,12 +80,10 @@ const FreelancerDashboard = () => {
                     <FaTimes className="text-2xl" />
                 </button>
 
-                {/* Display Company Logo */}
                 <div className="flex items-center justify-center mb-6">
                     <img src={logo} alt="Logo" className="h-12 w-auto" />
                 </div>
 
-                {/* Sidebar Navigation */}
                 <ul className="space-y-4">
                     <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
@@ -139,7 +136,6 @@ const FreelancerDashboard = () => {
                 </ul>
             </div>
 
-            {/* Main Content */}
             <div className="flex-1 h-screen overflow-y-auto p-6">
                 <div className="flex justify-between items-center mb-6">
                     <button className="md:hidden text-2xl" onClick={() => setIsSidebarOpen(true)}>
@@ -147,9 +143,7 @@ const FreelancerDashboard = () => {
                     </button>
                     <h2 className="text-2xl font-bold">Hello {freelancer ? freelancer.freelancerName : "Freelancer"}</h2>
 
-                    {/* Right Section: Theme Toggle + Sign Out Button */}
                     <div className="flex items-center space-x-4">
-                        {/* Theme Toggle Button */}
                         <button
                             className={`flex items-center justify-center p-3 rounded-lg transition ${theme === "dark"
                                 ? "bg-gray-700 text-white hover:bg-gray-600"
@@ -170,7 +164,6 @@ const FreelancerDashboard = () => {
                             )}
                         </button>
 
-                        {/* Sign Out Button */}
                         <button onClick={() => navigate("/login")} className="bg-black text-white px-4 py-2 rounded">
                             Sign Out
                         </button>

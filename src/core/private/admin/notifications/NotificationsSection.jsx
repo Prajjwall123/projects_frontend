@@ -27,7 +27,7 @@ const NotificationsSection = ({ notifications, onMarkAsRead, theme }) => {
                                     {new Date(notification.createdAt).toLocaleString()}
                                 </span>
                             </div>
-                            {!notification.isRead && ( // Show button only if notification is unread
+                            {!notification.isRead && ( 
                                 <button
                                     className={`text-xs font-semibold px-3 py-1 rounded transition ${theme === "dark"
                                             ? "bg-blue-500 text-white hover:bg-blue-600"

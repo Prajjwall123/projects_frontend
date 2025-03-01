@@ -28,7 +28,6 @@ const Card = ({ project, theme }) => {
         }
     };
 
-    // Function to truncate text to approximately 50 words
     const truncateText = (text, wordLimit) => {
         if (!text) return "None specified.";
         const words = text.split(" ");

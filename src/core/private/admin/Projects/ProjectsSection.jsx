@@ -127,7 +127,7 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects
-                    .filter((project) => project.status === "posted") // ✅ Filter projects with status "posted"
+                    .filter((project) => project.status === "posted")
                     .map((project) => (
                         <div key={project._id} className={`p-4 rounded shadow relative flex flex-col h-full ${cardClass}`}>
                             <div className="flex justify-between items-center">
@@ -181,7 +181,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                     <div className="relative bg-white p-8 rounded-lg shadow-lg max-w-3xl w-full overflow-auto">
                         <h3 className="text-2xl font-bold mb-6 text-center text-black">Update Project</h3>
                         <div className="space-y-4">
-                            {/* Project Title */}
                             <div>
                                 <label className="block font-medium text-black">Project Title</label>
                                 <input
@@ -193,7 +192,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                                 />
                             </div>
 
-                            {/* Description */}
                             <div>
                                 <label className="block font-medium text-black">Description</label>
                                 <textarea
@@ -204,7 +202,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                                 />
                             </div>
 
-                            {/* Categories (Skills Tags) */}
                             <div>
                                 <label className="block font-medium  text-black">Categories </label>
                                 <div className="w-full p-2 border border-gray-300 rounded-md flex flex-wrap gap-2  text-black">
@@ -221,7 +218,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                                 </div>
                             </div>
 
-                            {/* Duration */}
                             <div>
                                 <label className="block font-medium  text-black">Duration (in weeks)</label>
                                 <input
@@ -233,7 +229,6 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                                 />
                             </div>
 
-                            {/* Requirements */}
                             <div>
                                 <label className="block font-medium  text-black">Requirements</label>
                                 <textarea

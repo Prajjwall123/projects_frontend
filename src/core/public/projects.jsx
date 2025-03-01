@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProjectsByFreelancerId, updateProjectStatusInBackend } from "../utils/projectHelpers";
 
-// Status options
 const STATUS_OPTIONS = ["To Do", "In Progress", "Feedback Requested", "Done"];
 
 const FreelancerProjectsTable = ({ theme }) => {
@@ -10,7 +9,7 @@ const FreelancerProjectsTable = ({ theme }) => {
     const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
-    const [modalType, setModalType] = useState(""); // "feedbackRequested" or "feedbackResponse"
+    const [modalType, setModalType] = useState("");
     const [modalData, setModalData] = useState({ link: "", message: "" });
 
     useEffect(() => {
@@ -29,7 +28,6 @@ const FreelancerProjectsTable = ({ theme }) => {
         fetchProjects();
     }, [freelancerId]);
 
-    // Handle status change
     const handleStatusChange = (projectId, newStatus) => {
         if (newStatus === "Feedback Requested") {
             const project = projects.find((p) => p.projectId === projectId);
@@ -40,13 +38,11 @@ const FreelancerProjectsTable = ({ theme }) => {
         }
     };
 
-    // Open modal for viewing feedback response
     const handleShowFeedback = (project) => {
         setSelectedProject(project);
         setModalType("feedbackResponse");
     };
 
-    // Save project update (direct update or via modal)
     const saveProjectUpdate = async (projectId, newStatus, link = "", message = "") => {
         try {
             await updateProjectStatusInBackend(projectId, newStatus, link, message);
@@ -124,7 +120,6 @@ const FreelancerProjectsTable = ({ theme }) => {
                 </table>
             </div>
 
-            {/* Modal for Feedback Requested */}
             {modalType === "feedbackRequested" && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className={`p-6 rounded-lg shadow-lg w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black border border-gray-300"}`}>
@@ -153,7 +148,6 @@ const FreelancerProjectsTable = ({ theme }) => {
                 </div>
             )}
 
-            {/* Modal for Viewing Feedback Response */}
             {modalType === "feedbackResponse" && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96">

@@ -23,11 +23,10 @@ const SearchBar = ({ className = "", setSelectedCategory, setSearchQuery, theme 
         setSelectedCategory(selectedValue === "" ? "" : selectedValue);
     };
 
-    // Handle input change and provide suggestions
     const handleSearchChange = (e) => {
         const input = e.target.value;
         setQuery(input);
-        setSearchQuery(input); // Pass query to Home component
+        setSearchQuery(input);
 
         if (input.length > 0) {
             const filteredSuggestions = projects?.filter((project) =>
@@ -39,11 +38,10 @@ const SearchBar = ({ className = "", setSelectedCategory, setSearchQuery, theme 
         }
     };
 
-    // Handle clicking on a suggestion
     const handleSuggestionClick = (title) => {
         setQuery(title);
         setSearchQuery(title);
-        setSuggestions([]); // Hide suggestions
+        setSuggestions([]);
     };
 
     return (
@@ -71,7 +69,6 @@ const SearchBar = ({ className = "", setSelectedCategory, setSearchQuery, theme 
                         value={query}
                         onChange={handleSearchChange}
                     />
-                    {/* Suggestions dropdown */}
                     {suggestions.length > 0 && (
                         <ul className={`absolute top-12 left-0 w-full border rounded-md shadow-md max-h-40 overflow-auto z-10 ${theme === "dark" ? "bg-gray-700 text-black" : "bg-white text-gray-900"}`}>
                             {suggestions.map((project) => (

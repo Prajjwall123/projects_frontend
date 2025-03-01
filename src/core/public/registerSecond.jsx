@@ -142,9 +142,7 @@ const RegisterSecond = () => {
                         <img src={Logo} alt="logo" className="w-80 mb-8 mx-auto block" />
                     </a>
 
-                    {/* Stepper */}
                     <ol className="items-center w-full flex justify-center space-x-8 sm:space-y-0 mb-6">
-                        {/* Step 1: Account Info (Inactive step) */}
                         <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
                             <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
                                 1
@@ -155,7 +153,6 @@ const RegisterSecond = () => {
                             </span>
                         </li>
 
-                        {/* Step 2: Profile Info (Active step) */}
                         <li className="flex items-center text-xl text-blue-600 dark:text-blue-500 space-x-2.5 rtl:space-x-reverse">
                             <span className="flex items-center justify-center w-8 h-8 border border-blue-600 rounded-full shrink-0 dark:border-blue-500">
                                 2
@@ -166,7 +163,6 @@ const RegisterSecond = () => {
                             </span>
                         </li>
 
-                        {/* Step 3: OTP Verification (Inactive step) */}
                         <li className="flex items-center text-gray-500 dark:text-gray-400 space-x-2.5 rtl:space-x-reverse">
                             <span className="flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full shrink-0 dark:border-gray-400">
                                 3

@@ -15,7 +15,6 @@ const PostProjectForm = ({ companyId, onProjectCreated, theme }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
-    // Fetch categories using React Query
     const { data: categories, isLoading: categoriesLoading, error: categoriesError } = useQuery({
         queryKey: ["categories"],
         queryFn: fetchSkills,
