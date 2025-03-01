@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanyById } from "../../utils/companyHelpers";
 import { fetchNotifications, markNotificationAsRead } from "../../utils/notificationHelpers";
-import { FaHome, FaProjectDiagram, FaBell, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon } from "react-icons/fa";
+import { FaHome, FaProjectDiagram, FaBell, FaUser, FaSearch, FaBars, FaTimes, FaPlus, FaSun, FaMoon, FaWallet } from "react-icons/fa";
 
 import PostProjectForm from "./Projects/PostProjectForm";
 import ProjectsSection from "./Projects/ProjectsSection";
@@ -11,6 +11,7 @@ import BiddingSection from "./Bidding/BiddingSection";
 import CompanyProfile from "./dashboard/companyProfile";
 import Dashboard from "./dashboard/dashboard";
 import NotificationsSection from "./notifications/NotificationsSection";
+import Wallet from "./Wallet/Wallet";
 import logo from "../../../assets/logo.png";
 import Navbar from "../../../components/navbar";
 
@@ -138,6 +139,15 @@ const Layout = () => {
                         <FaUser className="text-xl" />
                         <span>Company Profile</span>
                     </li>
+
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("Wallet")}
+                    >
+                        <FaWallet className="text-xl" />
+                        <span>Your Wallet</span>
+                    </li>
                 </ul>
 
                 {/* Post New Project Button */}
@@ -187,6 +197,13 @@ const Layout = () => {
                     <div className={`min-h-screen p-6 rounded shadow ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
                         <h2 className="text-2xl font-bold mb-4">Post a New Project</h2>
                         <PostProjectForm companyId={companyId} onProjectCreated={() => setActiveSection("projects")} theme={theme} />
+                    </div>
+                )}
+
+                {activeSection === "Wallet" && (
+                    <div className={`min-h-screen p-6 rounded shadow ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                        <h2 className="text-2xl font-bold mb-4">Your Wallet</h2>
+                        <Wallet companyId={companyId} onProjectCreated={() => setActiveSection("Wallet")} theme={theme} />
                     </div>
                 )}
                 {activeSection === "projects" && (

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getFreelancerById } from "../utils/freelancerHelpers";
-import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon, FaBell, FaPlus } from "react-icons/fa";
+import { FaHome, FaProjectDiagram, FaEnvelope, FaUser, FaSearch, FaBars, FaTimes, FaSun, FaMoon, FaBell, FaPlus, FaWallet } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import SearchBar from "../../components/SearchBar";
 import FreelancerProfile from "../../components/FreelancerProfile";
 import { fetchNotifications, markNotificationAsRead } from "../utils/notificationHelpers";
 import FreelancerProjects from "./projects";
 import NotificationsSection from "../private/admin/notifications/NotificationsSection";
+import Bank from "./Bank";
 
 const FreelancerDashboard = () => {
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ const FreelancerDashboard = () => {
     React.useEffect(() => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
+        localStorage.setItem("freelancerId", freelancerId);
     }, [theme]);
 
     const handleOpenBidSection = (bidId) => {
@@ -124,7 +126,14 @@ const FreelancerDashboard = () => {
                             </span>
                         )}
                     </li>
-
+                    <li
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "Bank" ? "bg-gray-700" : ""
+                            }`}
+                        onClick={() => setActiveSection("Bank")}
+                    >
+                        <FaWallet className="text-xl" />
+                        <span>Bank</span>
+                    </li>
                     <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "profile" ? "bg-gray-700" : ""
                             }`}
@@ -186,6 +195,7 @@ const FreelancerDashboard = () => {
                     </div>
                 )}
                 {activeSection === "projects" && <FreelancerProjects freelancerId={freelancerId} />}
+                {activeSection === "Bank" && <Bank freelancerId={freelancerId} />}
                 {activeSection === "notifications" && <NotificationsSection notifications={notifications} onMarkAsRead={handleMarkAsRead} />}
                 {activeSection === "profile" && <FreelancerProfile freelancerId={freelancerId} />}
             </div>

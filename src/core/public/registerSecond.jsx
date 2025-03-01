@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchSkills, uploadImage, registerUser } from "../utils/authHelpers";
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '../../assets/black-logo.png';
-
+import { toast } from "react-toastify";
 
 const RegisterSecond = () => {
     const navigate = useNavigate();

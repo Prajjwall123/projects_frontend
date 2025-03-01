@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getProjectsByCompany, updateProject } from "../../../utils/projectHelpers";
-import { format } from "date-fns";
+import { transferMoney } from "../../../utils/paymentHelpers"; // Import transfer function
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,6 +11,8 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
     const [responseMessage, setResponseMessage] = useState("");
     const [isResponseModalOpen, setIsResponseModalOpen] = useState(false);
     const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [paymentAmount, setPaymentAmount] = useState("");
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -45,12 +47,41 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
         setIsResponseModalOpen(true);
     };
 
+    const handleOpenPaymentModal = (project) => {
+        setSelectedProject(project);
+        setPaymentAmount("");
+        setIsPaymentModalOpen(true);
+    };
+
     const submitFeedbackResponse = () => {
         if (!selectedProject || !responseMessage.trim()) return;
         updateProjectMutation.mutate({
             projectId: selectedProject._id,
             projectData: { feedbackRespondMessage: responseMessage },
         });
+    };
+
+    const handleTransferMoney = async () => {
+        if (!selectedProject || !paymentAmount || isNaN(paymentAmount) || paymentAmount <= 0) {
+            toast.error("Please enter a valid amount.");
+            return;
+        }
+
+        const senderId = localStorage.getItem("userId");
+        const receiverId = selectedProject.awardedTo;
+
+        if (!senderId || !receiverId) {
+            toast.error("Invalid sender or receiver ID.");
+            return;
+        }
+
+        try {
+            const response = await transferMoney(senderId, receiverId, parseFloat(paymentAmount));
+            toast.success(response.message);
+            setIsPaymentModalOpen(false);
+        } catch (error) {
+            toast.error(error.message || "Failed to transfer money.");
+        }
     };
 
     if (isLoading) {
@@ -93,53 +124,63 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                         {/* Separator Line */}
                         <hr className={`my-3 ${theme === "dark" ? "border-gray-500" : "border-gray-300"}`} />
 
-                        {/* Feedback Actions */}
+                        {/* Actions */}
                         <div className="flex justify-between items-center">
                             <button
                                 onClick={() => handleOpenFeedbackModal(project)}
-                                className={`px-3 py-1 rounded-md transition ${theme === "dark" ? "bg-blue-600 text-white hover:bg-blue-500" : "bg-blue-500 text-white hover:bg-blue-700"}`}
+                                className="px-3 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-700"
                             >
                                 View Feedback Request
                             </button>
                             <button
                                 onClick={() => handleOpenResponseModal(project)}
-                                className={`px-3 py-1 rounded-md transition ${theme === "dark" ? "bg-green-600 text-white hover:bg-green-500" : "bg-green-500 text-white hover:bg-green-700"}`}
+                                className="px-3 py-1 rounded-md bg-green-500 text-white hover:bg-green-700"
                             >
                                 Respond
+                            </button>
+                            <button
+                                onClick={() => handleOpenPaymentModal(project)}
+                                className="px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-700"
+                            >
+                                Pay Freelancer
                             </button>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Modal for Viewing Freelancer Feedback */}
-            {isFeedbackModalOpen && selectedProject && (
+            {/* Payment Modal */}
+            {isPaymentModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className={`p-6 rounded-lg shadow-lg w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
-                        <h3 className="text-lg font-bold mb-3">Feedback Request</h3>
+                    <div className="p-6 rounded-lg shadow-lg w-96 bg-white text-black">
+                        <h3 className="text-lg font-bold mb-3">Pay Freelancer</h3>
                         <p className="mb-3">
-                            <strong>Message:</strong> {selectedProject.feedbackRequestedMessage || "No feedback provided."}
+                            Enter the amount to transfer to the freelancer for <strong>{selectedProject.title}</strong>.
                         </p>
-                        {selectedProject.link && (
-                            <p>
-                                <strong>Progress Link:</strong>{" "}
-                                <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
-                                    View Progress
-                                </a>
-                            </p>
-                        )}
-                        <div className="flex justify-end">
+                        <input
+                            type="number"
+                            placeholder="Enter amount"
+                            value={paymentAmount}
+                            onChange={(e) => setPaymentAmount(e.target.value)}
+                            className="w-full p-2 border rounded mb-3"
+                        />
+                        <div className="flex justify-end gap-2">
                             <button
-                                className={`px-4 py-2 rounded-md transition ${theme === "dark" ? "bg-gray-600 text-white hover:bg-gray-500" : "bg-gray-500 text-white hover:bg-gray-700"}`}
-                                onClick={() => setIsFeedbackModalOpen(false)}
+                                className="px-4 py-2 rounded-md bg-gray-500 text-white hover:bg-gray-700"
+                                onClick={() => setIsPaymentModalOpen(false)}
                             >
-                                Close
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-700"
+                                onClick={handleTransferMoney}
+                            >
+                                Transfer Money
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-
             {/* Modal for Responding to Feedback */}
             {isResponseModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -170,7 +211,35 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                     </div>
                 </div>
             )}
+            {/* Modal for Viewing Freelancer Feedback */}
+            {isFeedbackModalOpen && selectedProject && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className={`p-6 rounded-lg shadow-lg w-96 ${theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+                        <h3 className="text-lg font-bold mb-3">Feedback Request</h3>
+                        <p className="mb-3">
+                            <strong>Message:</strong> {selectedProject.feedbackRequestedMessage || "No feedback provided."}
+                        </p>
+                        {selectedProject.link && (
+                            <p>
+                                <strong>Progress Link:</strong>{" "}
+                                <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
+                                    View Progress
+                                </a>
+                            </p>
+                        )}
+                        <div className="flex justify-end">
+                            <button
+                                className={`px-4 py-2 rounded-md transition ${theme === "dark" ? "bg-gray-600 text-white hover:bg-gray-500" : "bg-gray-500 text-white hover:bg-gray-700"}`}
+                                onClick={() => setIsFeedbackModalOpen(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+
     );
 };
 

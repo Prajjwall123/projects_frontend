@@ -17,6 +17,7 @@ const Freelancer = lazy(() => import("./core/public/freelancer"));
 const Layout = lazy(() => import("./core/private/admin/Layout"));
 const ProjectDetails = lazy(() => import("./core/public/projectDetails"));
 const CompanyView = lazy(() => import("./core/public/companyView"));
+const PaymentCallback = lazy(() => import("./core/public/PaymentCallback"));
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -41,6 +42,8 @@ function App() {
     { path: "/freelancer/:freelancerId", element: <Suspense fallback={<div>Loading...</div>}><Freelancer theme={theme} toggleTheme={toggleTheme} /></Suspense> },
     { path: "/project-details/:projectId", element: <Suspense fallback={<div>Loading...</div>}><ProjectDetails /></Suspense> },
     { path: "/company-view/:companyId", element: <Suspense fallback={<div>Loading...</div>}><CompanyView theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+    { path: "/payment-callback/", element: <Suspense fallback={<div>Loading...</div>}><PaymentCallback theme={theme} toggleTheme={toggleTheme} /></Suspense> },
+
 
     {
       path: "/company/:companyId",
