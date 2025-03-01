@@ -17,10 +17,9 @@ const FreelancerDashboard = () => {
     const [selectedBidId, setSelectedBidId] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState("dashboard");
+    const [activeSection, setActiveSection] = useState("projects");
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
-    // Fetch freelancer data using React Query
     const { data: freelancer, isLoading, error } = useQuery({
         queryKey: ["freelancer", freelancerId],
         queryFn: () => getFreelancerById(freelancerId),
@@ -28,7 +27,6 @@ const FreelancerDashboard = () => {
         retry: false,
     });
 
-    // Handle theme persistence
     React.useEffect(() => {
         document.documentElement.className = theme;
         localStorage.setItem("theme", theme);
@@ -40,23 +38,19 @@ const FreelancerDashboard = () => {
         setActiveSection("biddingSection");
     };
 
-    // Fetch notifications
     const { data: notifications = [], refetch } = useQuery({
         queryKey: ["notifications", freelancerId],
         queryFn: () => fetchNotifications(freelancerId, "Freelancer"),
         enabled: !!freelancerId,
     });
 
-    // Count unread notifications
     const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
 
-    // ✅ Mark notification as read and refetch
     const handleMarkAsRead = async (notificationId) => {
         await markNotificationAsRead(notificationId);
         refetch();
     };
 
-    // ✅ Fix: Define and use this function instead of `toggleTheme`
     const handleThemeToggle = () => {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
     };
@@ -95,22 +89,22 @@ const FreelancerDashboard = () => {
                 {/* Sidebar Navigation */}
                 <ul className="space-y-4">
                     <li
-                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "dashboard" ? "bg-gray-700" : ""
+                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
                             }`}
-                        onClick={() => setActiveSection("dashboard")}
+                        onClick={() => setActiveSection("projects")}
                     >
                         <FaHome className="text-xl" />
                         <span>Dashboard</span>
                     </li>
 
-                    <li
+                    {/* <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "projects" ? "bg-gray-700" : ""
                             }`}
                         onClick={() => setActiveSection("projects")}
                     >
                         <FaProjectDiagram className="text-xl" />
                         <span>Your Projects</span>
-                    </li>
+                    </li> */}
 
                     {/* Notifications Section */}
                     <li
@@ -188,12 +182,12 @@ const FreelancerDashboard = () => {
                     <SearchBar />
                 </div>
 
-                {/* Dynamic Content */}
+                {/* Dynamic Content
                 {activeSection === "dashboard" && (
                     <div className="text-center">
                         <h2 className="text-2xl font-bold mb-4">Welcome to your Freelancer Dashboard</h2>
                     </div>
-                )}
+                )} */}
                 {activeSection === "projects" && <FreelancerProjects freelancerId={freelancerId} />}
                 {activeSection === "Bank" && <Bank freelancerId={freelancerId} />}
                 {activeSection === "notifications" && <NotificationsSection notifications={notifications} onMarkAsRead={handleMarkAsRead} />}
