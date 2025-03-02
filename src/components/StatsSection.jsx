@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getCompanyById } from "../core/utils/companyHelpers"; // Ensure correct import path
-import { FaFolder, FaAward, FaCheckCircle } from "react-icons/fa"; // Importing icons from react-icons
+import { getCompanyById } from "../core/utils/companyHelpers";
+import { FaFolder, FaAward, FaCheckCircle } from "react-icons/fa";
 
 const StatsSection = ({ companyId, theme }) => {
     const [company, setCompany] = useState(null);
@@ -11,7 +11,7 @@ const StatsSection = ({ companyId, theme }) => {
         console.log("Fetching data for companyId:", companyId);
 
         if (!companyId) {
-            console.error("❌ Error: companyId is missing or invalid!");
+            console.error(" Error: companyId is missing or invalid!");
             setError("Invalid company ID.");
             setLoading(false);
             return;
@@ -20,10 +20,10 @@ const StatsSection = ({ companyId, theme }) => {
         const fetchCompanyData = async () => {
             try {
                 const data = await getCompanyById(companyId);
-                console.log("✅ Successfully fetched company data:", data);
+                console.log("Successfully fetched company data:", data);
                 setCompany(data);
             } catch (error) {
-                console.error("❌ API Error fetching company data:", error.response ? error.response.data : error);
+                console.error(" API Error fetching company data:", error.response ? error.response.data : error);
                 setError("Failed to load company stats.");
             } finally {
                 setLoading(false);

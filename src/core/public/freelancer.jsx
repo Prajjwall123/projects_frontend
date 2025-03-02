@@ -94,7 +94,6 @@ const FreelancerDashboard = () => {
             className={`flex h-screen ${theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"
                 }`}
         >
-            {/* Sidebar */}
             <div
                 className={`fixed md:relative bg-black text-white w-3/4 sm:w-2/3 md:w-1/5 p-4 sm:p-6 transition-transform transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     } md:translate-x-0 h-screen overflow-y-auto shadow-2xl z-50 backdrop-blur-md border-r border-gray-800/50`}
@@ -157,9 +156,7 @@ const FreelancerDashboard = () => {
                 </ul>
             </div>
 
-            {/* Main Content Area */}
             <div className="flex-1 h-screen overflow-y-auto p-3 sm:p-4 md:p-6">
-                {/* Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
                     <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                         <button
@@ -205,12 +202,10 @@ const FreelancerDashboard = () => {
                     </div>
                 </div>
 
-                {/* Search Bar */}
                 <div className="w-full mb-4 sm:mb-6">
                     <SearchBar theme={theme} />
                 </div>
 
-                {/* Dynamic Content */}
                 <div className="transition-opacity duration-300">
                     {activeSection === "projects" && <FreelancerProjects freelancerId={freelancerId} theme={theme} />}
                     {activeSection === "Bank" && <Bank freelancerId={freelancerId} />}

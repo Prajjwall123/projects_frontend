@@ -88,7 +88,6 @@ const Layout = () => {
             className={`flex h-screen ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
                 }`}
         >
-            {/* Sidebar */}
             <div
                 className={`fixed md:relative bg-black/90 text-white w-3/4 sm:w-2/3 md:w-1/5 p-4 sm:p-6 transition-transform transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                     } md:translate-x-0 h-screen overflow-y-auto shadow-2xl z-50 backdrop-blur-md border-r border-gray-800/50`}
@@ -166,9 +165,7 @@ const Layout = () => {
                 </div>
             </div>
 
-            {/* Main Content Area */}
             <div className="flex-1 h-screen overflow-y-auto p-4 sm:p-6">
-                {/* Header */}
                 <div className="flex justify-between items-center mb-4 sm:mb-6">
                     <button
                         className="md:hidden text-2xl sm:text-3xl text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
@@ -198,7 +195,6 @@ const Layout = () => {
                     </div>
                 </div>
 
-                {/* Search Bar */}
                 <div
                     className={`flex items-center p-2 sm:p-3 rounded-lg shadow-md mb-4 sm:mb-6 transition-all duration-200 ${theme === "dark"
                         ? "bg-gray-800 border-gray-700"
@@ -217,7 +213,6 @@ const Layout = () => {
                     />
                 </div>
 
-                {/* Content Sections */}
                 <div className="transition-opacity duration-300">
                     {activeSection === "notifications" && (
                         <NotificationsSection

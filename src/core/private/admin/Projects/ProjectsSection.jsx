@@ -124,10 +124,8 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
             className={`p-4 sm:p-6 rounded-xl shadow-lg transition-all duration-300 border backdrop-blur-sm ${theme === "dark" ? "bg-gray-900/80 border-gray-800 text-white" : "bg-gray-100/80 border-gray-200 text-black"
                 }`}
         >
-            {/* Stats Section */}
             <StatsSection companyId={companyId} theme={theme} />
 
-            {/* Current Projects Section */}
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 mt-6 sm:mt-8 tracking-tight">
                 Your Current Projects
             </h2>
@@ -217,13 +215,11 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
                     ))}
             </div>
 
-            {/* Divider between sections */}
             <hr
                 className={`my-6 sm:my-8 border-opacity-30 ${theme === "dark" ? "border-gray-600" : "border-gray-300"
                     }`}
             />
 
-            {/* Underway Projects Section */}
             <UnderwayProjectsSection companyId={companyId} theme={theme} />
 
             {isModalOpen && (

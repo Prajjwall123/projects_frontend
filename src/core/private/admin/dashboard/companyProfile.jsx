@@ -82,7 +82,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                 }`}
         >
             <div className="container mx-auto">
-                {/* Profile Header */}
                 <div className="flex flex-col sm:flex-row items-center mb-4 sm:mb-6 md:mb-8">
                     <div className="flex flex-col items-center mb-3 sm:mb-0">
                         <label htmlFor="logoInput" className="cursor-pointer">
@@ -117,7 +116,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                     </div>
                 </div>
 
-                {/* Stats Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
                     <div
                         className={`p-3 sm:p-4 md:p-6 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 backdrop-blur-md border border-opacity-20 border-white/10 ${theme === "dark" ? "bg-blue-800/90 text-blue-100" : "bg-blue-100 text-blue-900"
@@ -148,7 +146,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                     </div>
                 </div>
 
-                {/* Company Information */}
                 <div
                     className={`p-3 sm:p-4 md:p-6 rounded-xl shadow-lg backdrop-blur-md border border-opacity-20 border-white/10 ${theme === "dark" ? "bg-gray-800/90 text-gray-200" : "bg-gray-200/90 text-gray-700"
                         }`}
@@ -199,7 +196,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                     </ul>
                 </div>
 
-                {/* Update Profile Button */}
                 <div className="text-center mt-4 sm:mt-6 md:mt-8">
                     <button
                         onClick={() => setIsModalOpen(true)}
@@ -212,7 +208,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                     </button>
                 </div>
 
-                {/* Modal */}
                 {isModalOpen && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
                         <div
@@ -237,7 +232,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                                 Edit Company Profile
                             </h2>
 
-                            {/* Company Logo */}
                             <div className="flex flex-col items-center mb-3 sm:mb-4 md:mb-6">
                                 <label htmlFor="logoInput" className="cursor-pointer">
                                     <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full overflow-hidden shadow-md hover:shadow-lg transition-all duration-200">
@@ -257,7 +251,6 @@ const CompanyProfile = ({ companyId, theme }) => {
                                 <input id="logoInput" type="file" onChange={handleImageChange} className="hidden" />
                             </div>
 
-                            {/* Form Fields */}
                             <div className="space-y-3 sm:space-y-4">
                                 {[
                                     "companyName",

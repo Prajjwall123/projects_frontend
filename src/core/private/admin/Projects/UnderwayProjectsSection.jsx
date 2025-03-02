@@ -186,7 +186,6 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                 ))}
             </div>
 
-            {/* Payment Modal */}
             {isPaymentModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
                     <div
@@ -241,7 +240,6 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                 </div>
             )}
 
-            {/* Response Modal */}
             {isResponseModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
                     <div
@@ -294,7 +292,6 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
                 </div>
             )}
 
-            {/* Feedback Modal */}
             {isFeedbackModalOpen && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
                     <div

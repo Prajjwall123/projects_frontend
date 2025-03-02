@@ -62,9 +62,7 @@ function FreelancerProfile() {
         >
             <div className="container mx-auto px-3 sm:px-4 md:px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
-                    {/* Profile Card (Sticky on Larger Screens) */}
                     <div className="col-span-1 lg:col-span-2 space-y-4 sm:space-y-6 sticky top-4 sm:top-8 h-fit">
-                        {/* Profile Section */}
                         <div
                             className={`shadow-lg rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                                 }`}
@@ -108,8 +106,8 @@ function FreelancerProfile() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className={`mt-3 sm:mt-4 px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                                ? "bg-blue-600 text-white hover:bg-blue-500"
-                                                : "bg-blue-500 text-white hover:bg-blue-600"
+                                            ? "bg-blue-600 text-white hover:bg-blue-500"
+                                            : "bg-blue-500 text-white hover:bg-blue-600"
                                             }`}
                                     >
                                         View Portfolio
@@ -118,7 +116,6 @@ function FreelancerProfile() {
                             </div>
                         </div>
 
-                        {/* Skills Section */}
                         <div
                             className={`shadow-lg rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                                 }`}
@@ -132,8 +129,8 @@ function FreelancerProfile() {
                                         <li
                                             key={index}
                                             className={`px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium ${theme === "dark"
-                                                    ? "bg-gray-700 text-gray-200"
-                                                    : "bg-gray-200 text-gray-800"
+                                                ? "bg-gray-700 text-gray-200"
+                                                : "bg-gray-200 text-gray-800"
                                                 }`}
                                         >
                                             {skillName}
@@ -148,9 +145,7 @@ function FreelancerProfile() {
                         </div>
                     </div>
 
-                    {/* Main Content */}
                     <div className="col-span-1 lg:col-span-3 space-y-4 sm:space-y-6">
-                        {/* About Me Section */}
                         <div
                             className={`shadow-lg rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                                 }`}
@@ -204,7 +199,6 @@ function FreelancerProfile() {
                             </div>
                         </div>
 
-                        {/* Experience Section */}
                         <div
                             className={`shadow-lg rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                                 }`}
@@ -242,7 +236,6 @@ function FreelancerProfile() {
                             )}
                         </div>
 
-                        {/* Certifications Section */}
                         <div
                             className={`shadow-lg rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"
                                 }`}
@@ -266,12 +259,11 @@ function FreelancerProfile() {
                             )}
                         </div>
 
-                        {/* Update Profile Button */}
                         <div className="flex justify-center mt-6 sm:mt-8 md:mt-10">
                             <button
                                 className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base md:text-lg font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                        ? "bg-blue-600 text-white hover:bg-blue-500"
-                                        : "bg-blue-500 text-white hover:bg-blue-600"
+                                    ? "bg-blue-600 text-white hover:bg-blue-500"
+                                    : "bg-blue-500 text-white hover:bg-blue-600"
                                     }`}
                                 onClick={() => setIsModalOpen(true)}
                             >
