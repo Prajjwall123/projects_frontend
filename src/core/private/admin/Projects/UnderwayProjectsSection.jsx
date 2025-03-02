@@ -77,7 +77,7 @@ const UnderwayProjectsSection = ({ companyId, theme }) => {
 
         try {
             const response = await transferMoney(senderId, receiverId, parseFloat(paymentAmount));
-            toast.success(response.message);
+            toast.success(paymentAmount, "sent to freelancer");
             setIsPaymentModalOpen(false);
         } catch (error) {
             toast.error(error.message || "Failed to transfer money.");

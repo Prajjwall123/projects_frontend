@@ -25,7 +25,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
     });
 
     const handleApproveBid = async () => {
-        toast.success(freelancerId, projectId);
+        // toast.success(freelancerId, projectId);
 
         if (!freelancerId || !projectId) {
             toast.error("Missing freelancer id or bid id");
@@ -33,7 +33,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
         }
         try {
             const updatedProject = await updateProjectStatus(projectId, freelancerId);
-            toast.error("Project awarded successfully");
+            toast.success("Project awarded successfully");
 
         } catch (error) {
             toast.error(" Failed to approve bid. Please try again.");
@@ -121,8 +121,8 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                             <div className={`shadow-lg rounded-lg p-6 ${theme === "dark" ? "bg-gray-800 text-gray-200" : "bg-white text-gray-900"}`}>
                                 <h2 className="text-lg font-bold uppercase mb-4">Skills</h2>
                                 <ul className="list-disc list-inside">
-                                    {freelancerSkills.length > 0 ? (
-                                        freelancerSkills.map((skill, index) => (
+                                    {allSkills?.length > 0 ? (
+                                        allSkills.map((skill, index) => (
                                             <li key={index} className="mb-2">{skill.name}</li>
                                         ))
                                     ) : (
@@ -130,6 +130,7 @@ const BiddingSection = ({ bidId, theme, onClose }) => {
                                     )}
                                 </ul>
                             </div>
+
                         </div>
 
                         <div className="col-span-1 lg:col-span-3 pr-2">

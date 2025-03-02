@@ -4,6 +4,7 @@ export const getCompanyById = async (companyId) => {
     try {
         const response = await API.get(`companies/${companyId}`);
         // console.log(companyId);
+        console.log(response.data)
         return response.data;
     } catch (error) {
         console.error('Error fetching company data:', error);

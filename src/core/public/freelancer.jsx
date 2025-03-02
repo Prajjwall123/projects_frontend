@@ -123,7 +123,7 @@ const FreelancerDashboard = () => {
                         onClick={() => setActiveSection("Bank")}
                     >
                         <FaWallet className="text-xl" />
-                        <span>Bank</span>
+                        <span>Wallet</span>
                     </li>
                     <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700 ${activeSection === "profile" ? "bg-gray-700" : ""

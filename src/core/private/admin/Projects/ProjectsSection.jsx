@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UnderwayProjectsSection from "./UnderwayProjectsSection";
+import StatsSection from "../../../../components/StatsSection";
 
 const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
     const [activeMenu, setActiveMenu] = useState(null);
@@ -119,6 +120,7 @@ const ProjectsSection = ({ companyId, theme, handleOpenBidSection }) => {
 
     return (
         <div className={`${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"} p-6 rounded shadow-md`}>
+            <StatsSection companyId={companyId} theme="dark" />
             <h2 className="text-2xl font-bold mb-6">Your Current Projects</h2>
             {projectsLoading && <p className="text-gray-600">Loading projects...</p>}
             {projectsError && <p className="text-red-600">{error}</p>}

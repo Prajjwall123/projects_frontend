@@ -1,4 +1,5 @@
 import API from './api';
+import { toast } from 'react-toastify';
 
 export const fetchProjects = async () => {
     try {
@@ -213,9 +214,6 @@ export const deleteBid = async (bidId) => {
         console.error("Bid ID is required to delete a bid.");
         return;
     }
-
-    const confirmDelete = window.confirm("Are you sure you want to reject this bid?");
-    if (!confirmDelete) return;
 
     try {
         const token = localStorage.getItem("token");
