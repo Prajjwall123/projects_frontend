@@ -64,8 +64,8 @@ const FreelancerProjectsTable = ({ theme }) => {
     return (
         <div
             className={`p-3 sm:p-4 md:p-6 rounded-xl shadow-lg transition-all duration-300 border ${theme === "dark"
-                    ? "bg-gray-900 border-gray-800 text-white"
-                    : "bg-gray-100 border-gray-200 text-gray-900"
+                ? "bg-gray-900 border-gray-800 text-white"
+                : "bg-gray-100 border-gray-200 text-gray-900"
                 }`}
         >
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 tracking-tight">
@@ -105,8 +105,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                                 <tr
                                     key={project.projectId}
                                     className={`${theme === "dark"
-                                            ? "border-gray-700 hover:bg-gray-700"
-                                            : "border-gray-300 hover:bg-gray-100"
+                                        ? "border-gray-700 hover:bg-gray-700"
+                                        : "border-gray-300 hover:bg-gray-100"
                                         } transition-all duration-200 border-b`}
                                 >
                                     <td className="p-2 sm:p-3 text-xs sm:text-sm md:text-base">
@@ -121,8 +121,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                                     <td className="p-2 sm:p-3">
                                         <select
                                             className={`border p-1 sm:p-2 rounded-lg text-xs sm:text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${theme === "dark"
-                                                    ? "bg-gray-700 text-white border-gray-600"
-                                                    : "bg-gray-100 text-gray-900 border-gray-300"
+                                                ? "bg-gray-700 text-white border-gray-600"
+                                                : "bg-gray-100 text-gray-900 border-gray-300"
                                                 }`}
                                             value={project.status}
                                             onChange={(e) => handleStatusChange(project.projectId, e.target.value)}
@@ -137,8 +137,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                                     <td className="p-2 sm:p-3 flex flex-col sm:flex-row gap-1 sm:gap-2">
                                         <button
                                             className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                                    ? "bg-blue-600 text-white hover:bg-blue-500"
-                                                    : "bg-blue-500 text-white hover:bg-blue-600"
+                                                ? "bg-blue-600 text-white hover:bg-blue-500"
+                                                : "bg-blue-500 text-white hover:bg-blue-600"
                                                 }`}
                                             onClick={() => handleShowFeedback(project)}
                                         >
@@ -146,8 +146,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                                         </button>
                                         <button
                                             className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                                    ? "bg-green-600 text-white hover:bg-green-500"
-                                                    : "bg-green-500 text-white hover:bg-green-600"
+                                                ? "bg-green-600 text-white hover:bg-green-500"
+                                                : "bg-green-500 text-white hover:bg-green-600"
                                                 }`}
                                             onClick={() => navigate(`/project-details/${project.projectId}`)}
                                         >
@@ -171,13 +171,12 @@ const FreelancerProjectsTable = ({ theme }) => {
                 </table>
             </div>
 
-            {/* Feedback Requested Modal */}
             {modalType === "feedbackRequested" && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-3 sm:p-4 z-50 overflow-y-auto">
                     <div
                         className={`relative p-4 sm:p-6 md:p-8 rounded-xl shadow-xl w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto border backdrop-blur-md ${theme === "dark"
-                                ? "bg-gray-800 border-gray-700 text-white"
-                                : "bg-gray-100 border-gray-200 text-gray-900"
+                            ? "bg-gray-800 border-gray-700 text-white"
+                            : "bg-gray-100 border-gray-200 text-gray-900"
                             }`}
                         style={{
                             background: theme === "dark"
@@ -201,8 +200,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                         <input
                             type="text"
                             className={`w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm md:text-base focus:outline-none focus:ring-2 ${theme === "dark"
-                                    ? "bg-gray-700 border-gray-600 text-white focus:ring-blue-500"
-                                    : "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"
+                                ? "bg-gray-700 border-gray-600 text-white focus:ring-blue-500"
+                                : "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"
                                 }`}
                             placeholder="Enter progress link..."
                             value={modalData.link}
@@ -213,8 +212,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                         </label>
                         <textarea
                             className={`w-full p-2 sm:p-3 border rounded-lg text-xs sm:text-sm md:text-base focus:outline-none focus:ring-2 resize-none h-24 ${theme === "dark"
-                                    ? "bg-gray-700 border-gray-600 text-white focus:ring-blue-500"
-                                    : "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"
+                                ? "bg-gray-700 border-gray-600 text-white focus:ring-blue-500"
+                                : "bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-400"
                                 }`}
                             placeholder="Enter feedback message..."
                             value={modalData.message}
@@ -223,8 +222,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                         <div className="flex justify-end gap-2 sm:gap-3 mt-3 sm:mt-4 md:mt-6">
                             <button
                                 className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                        ? "bg-gray-600 text-white hover:bg-gray-500"
-                                        : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                    ? "bg-gray-600 text-white hover:bg-gray-500"
+                                    : "bg-gray-300 text-gray-800 hover:bg-gray-400"
                                     }`}
                                 onClick={() => setSelectedProject(null)}
                             >
@@ -232,8 +231,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                             </button>
                             <button
                                 className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                        ? "bg-blue-600 text-white hover:bg-blue-500"
-                                        : "bg-blue-500 text-white hover:bg-blue-600"
+                                    ? "bg-blue-600 text-white hover:bg-blue-500"
+                                    : "bg-blue-500 text-white hover:bg-blue-600"
                                     }`}
                                 onClick={() =>
                                     saveProjectUpdate(
@@ -251,13 +250,12 @@ const FreelancerProjectsTable = ({ theme }) => {
                 </div>
             )}
 
-            {/* Feedback Response Modal */}
             {modalType === "feedbackResponse" && selectedProject && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-3 sm:p-4 z-50 overflow-y-auto">
                     <div
                         className={`relative p-4 sm:p-6 md:p-8 rounded-xl shadow-xl w-full max-w-xs sm:max-w-sm md:max-w-md max-h-[90vh] overflow-y-auto border backdrop-blur-md ${theme === "dark"
-                                ? "bg-gray-800 border-gray-700 text-white"
-                                : "bg-gray-100 border-gray-200 text-gray-900"
+                            ? "bg-gray-800 border-gray-700 text-white"
+                            : "bg-gray-100 border-gray-200 text-gray-900"
                             }`}
                         style={{
                             background: theme === "dark"
@@ -283,8 +281,8 @@ const FreelancerProjectsTable = ({ theme }) => {
                         <div className="flex justify-end">
                             <button
                                 className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm md:text-base font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                        ? "bg-gray-600 text-white hover:bg-gray-500"
-                                        : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                    ? "bg-gray-600 text-white hover:bg-gray-500"
+                                    : "bg-gray-300 text-gray-800 hover:bg-gray-400"
                                     }`}
                                 onClick={() => setSelectedProject(null)}
                             >
