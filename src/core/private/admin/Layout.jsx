@@ -112,14 +112,6 @@ const Layout = () => {
                 )}
 
                 <ul className="space-y-2 sm:space-y-3">
-                    <li
-                        className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg transition-all duration-200 hover:bg-gray-700/80 ${activeSection === "dashboard" ? "bg-gray-700" : ""
-                            }`}
-                        onClick={() => setActiveSection("dashboard")}
-                    >
-                        <FaHome className="text-lg sm:text-xl" />
-                        <span className="text-sm sm:text-base">Dashboard</span>
-                    </li>
 
                     <li
                         className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg transition-all duration-200 hover:bg-gray-700/80 ${activeSection === "projects" ? "bg-gray-700" : ""
@@ -127,7 +119,7 @@ const Layout = () => {
                         onClick={() => setActiveSection("projects")}
                     >
                         <FaProjectDiagram className="text-lg sm:text-xl" />
-                        <span className="text-sm sm:text-base">Your Projects</span>
+                        <span className="text-sm sm:text-base">Dashboard</span>
                     </li>
 
                     <li
@@ -197,8 +189,8 @@ const Layout = () => {
                         <button
                             onClick={() => navigate("/login")}
                             className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 hover:scale-105 ${theme === "dark"
-                                    ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                                 }`}
                         >
                             Sign Out
@@ -209,8 +201,8 @@ const Layout = () => {
                 {/* Search Bar */}
                 <div
                     className={`flex items-center p-2 sm:p-3 rounded-lg shadow-md mb-4 sm:mb-6 transition-all duration-200 ${theme === "dark"
-                            ? "bg-gray-800 border-gray-700"
-                            : "bg-white border-gray-200"
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
                         } border`}
                 >
                     <FaSearch
@@ -227,13 +219,11 @@ const Layout = () => {
 
                 {/* Content Sections */}
                 <div className="transition-opacity duration-300">
-                    {activeSection === "dashboard" && (
-                        <Dashboard company={company} theme={theme} />
-                    )}
                     {activeSection === "notifications" && (
                         <NotificationsSection
                             notifications={notifications}
                             onMarkAsRead={handleMarkAsRead}
+                            theme={theme}
                         />
                     )}
                     {activeSection === "postProject" && (
@@ -290,6 +280,7 @@ const Layout = () => {
                             </h2>
                             <CompanyProfile
                                 companyId={companyId}
+                                theme={theme}
                                 onProfileUpdated={() =>
                                     navigate("/company", { state: { activeSection: "companyProfile" } })
                                 }
